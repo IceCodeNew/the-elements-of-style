@@ -1,0 +1,59 @@
+[
+ {
+  "id": "en-tech-spec-modals",
+  "skills": [
+   "writing-tech",
+   "writing-en"
+  ],
+  "source": "EOS-V06, EOS-V50, BH-AG-W05, BH-P02c",
+  "prompt": "Write two versions of the \"Caching and retries\" section of the HTTP API spec for `ordersvc`, from the same facts. Output each version under its label (### 1 and ### 2) and nothing else.\n\n### 1. Public spec\nThe public spec does not use RFC 2119 keywords.\n\n### 2. Internal spec\nThe internal spec starts with this sentence: \"The key words MUST, MUST NOT, SHOULD and MAY in this document are to be interpreted as described in RFC 2119.\"\n\nFacts:\n- Clients are allowed to cache a `GET /orders/{id}` response for up to 60 seconds.\n- Clients are required to send an `Idempotency-Key` header with every `POST /orders` request.\n- Clients are able to resume an interrupted upload with a `Range` header. The server supports this from v2.3 on.\n- Clients are advised to use exponential backoff after a `429` response.\n- The server is required to NEVER return a cached response to a `POST` request.",
+  "checks": [
+   {
+    "id": "permission-may",
+    "rule": "en.spec-modals",
+    "kind": "judge",
+    "text": "In version 1, does the output use 'may' (not 'can') for the clients' permission to cache the response for up to 60 seconds?"
+   },
+   {
+    "id": "requirement-must",
+    "rule": "en.spec-modals",
+    "kind": "judge",
+    "text": "In version 1, does the output state both requirements (the `Idempotency-Key` header and no cached response to a `POST`) with 'must' or 'must not', and not with 'shall', 'will', 'needs to' or 'is required to'?"
+   }
+  ]
+ },
+ {
+  "id": "en-tech-pr-edit-wording",
+  "skills": [
+   "writing-tech",
+   "writing-en"
+  ],
+  "source": "EOS-R13b, EOS-V07, EOS-V08, EOS-V24, EOS-V57, BH-P18, BH-P10, SS-P04, WP-H02, STE-9",
+  "prompt": "Edit the pull request description below. Keep every fact, both headings and all code; change only the wording. Output only the edited description.\n\n## Summary\n\nThis PR adds a robust, seamless retry mechanism that serves as the backbone of the upload client. In order to reduce failed uploads, the client now uses exponential backoff. Due to the fact that the old client retried immediately, it had the ability to overload the server in the event that the server was slow. The new upload client retry backoff cap is 30 seconds.\n\n## Testing\n\nIt is important to note that the new test case covers the edge case where the server returns `503` three times in a row. The feature flag `upload.retry_v2` gates the new behavior, and it is very easy to turn off. In many cases, retries finish in real-time, and the metrics on the dashboard stay up-to-date. The well documented `RetryPolicy` type boasts a configurable cap.",
+  "checks": [
+   {
+    "id": "no-wordy-phrases",
+    "rule": "en.plain-words",
+    "kind": "absent",
+    "text": "(?i)\\b(in order to|due to the fact that|ha(s|d) the ability to|in the event that|in many cases)\\b"
+   }
+  ]
+ },
+ {
+  "id": "en-personal-notes-edit",
+  "skills": [
+   "writing-personal",
+   "writing-en"
+  ],
+  "source": "BH-P15, BH-P18, BH-P10, EOS-R06",
+  "prompt": "Edit this paragraph from my blog post. Keep my facts, my opinions and my first-person voice; change only the wording that needs it. Output only the edited paragraph.\n\nLast spring I finally moved my notes from Evernote to plain Markdown files in a Git repo, marking a turning point in how I work. The repo now serves as my single source of truth, and it boasts over 2,000 notes. In order to sync it to my phone, I use Working Copy, which has the ability to pull in the background. The sync isn't real-time, but my notes are up-to-date by the time I sit down at my desk, reflecting the reliability of a simple setup. It took two weekends. Worth it.",
+  "checks": [
+   {
+    "id": "hyphen-open-after-verb",
+    "rule": "en.hyphenation",
+    "kind": "absent",
+    "text": "(?i)\\b(isn['’]t|is not|wasn['’]t|was not) real-time\\b|\\b(are|stay|is) up-to-date\\b"
+   }
+  ]
+ }
+]

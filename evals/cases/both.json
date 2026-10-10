@@ -1,0 +1,88 @@
+[
+ {
+  "id": "tech-incident-causes-en",
+  "skills": [
+   "writing-tech"
+  ],
+  "source": "new; JTW-2.3, JTW-2.2, JTW-2.1, JTW-2.5, OP-P01, OP-C11, BH-W2.3",
+  "prompt": "Write the \"Causes\" section of the incident report for the data loss on 2026-08-15. The readers are the platform team. Use only the facts below. Output only the section, starting with its heading.\n\nFacts:\n- On 2026-08-15, the major-version upgrade of the PostgreSQL cluster `prod` failed. The team restored the last good backup. The restore lost every write made after that backup.\n- The upgrade failed because the installed version of the `pg_partman` extension does not support PostgreSQL 17.\n- The last good backup was from 2026-08-09. After the DNS migration on 2026-08-10, the nightly backup job failed every night, because its configuration still used the old database hostname.\n- The backup-failure alert was muted during the DNS migration. Nobody unmuted it, so nobody saw the failed jobs.\n- The upgrade runbook did not check the age of the last backup before the upgrade.\n- Write traffic on 2026-08-15 was 30% higher than usual. Nobody has found a link between the traffic and the failure.\n- The team does not know yet whether the storage bucket still holds partial backups from 2026-08-10 to 2026-08-14.",
+  "checks": [
+   {
+    "id": "no-invented-actor",
+    "rule": "both.name-the-actor",
+    "kind": "judge",
+    "text": "Does the output avoid naming a person, role or team as the one who muted the alert, since the facts do not say who muted it?"
+   }
+  ]
+ },
+ {
+  "id": "tech-concepts-terms-en",
+  "skills": [
+   "writing-tech"
+  ],
+  "source": "STE-7, JTW-4.5, JTW-3.4, JTW-2.10, JTW-2.5, EOS-R15, OP-V05, WP-S03, JTW-5.3",
+  "prompt": "Write the \"Concepts\" section of the README for `leasekeeper`, a Go library for leader election. Use only the facts below. Output only the section, starting with its heading.\n\nFacts:\n- A worker becomes the leader by acquiring a lease on a key in etcd. In code comments the maintainers also call it \"the lock\", and the dashboard labels it \"claim\". It is the same object.\n- A lease has a TTL (default 15 s). The leader renews the lease every TTL/3 (default 5 s).\n- Each time a worker acquires the lease, etcd increments a 64-bit fencing token and returns it to that worker.\n- The storage layer rejects any write that carries a lower fencing token than the highest one it has seen. This stops a former leader that paused (for example in a long GC pause) from writing after another worker took over.\n- Options: `WithTTL(d)` sets the TTL; `WithRenewInterval(d)` sets the renew interval; `WithOnLost(fn)` registers a callback that runs when the worker loses the lease.",
+  "checks": [
+   {
+    "id": "token-kind-first",
+    "rule": "tech.first-mention",
+    "kind": "judge",
+    "text": "In the sentence where 'fencing token' first appears, does the output say what kind of thing it is (a number or counter that etcd increments)?"
+   }
+  ]
+ },
+ {
+  "id": "tech-edit-scheduler-en",
+  "skills": [
+   "writing-tech"
+  ],
+  "source": "WP-L02, SS-P03, EOS-R10c, EOS-V60, SS-P04, SS-P02, SS-P09, SS-ST22, EOS-R11b, JTW-3.3, EOS-R16, OP-C07, EOS-R13d, EOS-R04b, EOS-R08, BH-W2.1",
+  "prompt": "Edit this passage from the design doc of `jobd`, a job scheduler. Keep every fact. Output only the edited text.\n\nThe scheduler serves as the central component that is responsible for the assignment of jobs to workers, and it is very important to note that it leverages a priority queue. Workers send a heartbeat every 10 seconds. The scheduler marks a worker dead after 3 missed heartbeats. This is not uncommon on busy nodes. The scheduler then takes the jobs of the dead worker. The scheduler puts the jobs of the dead worker back in the queue. The scheduler does not support Windows workers. In June we carried out an investigation of the duplicate-run bug and the implications are significant: two scheduler replicas ran at the same time during a deploy and both of them picked the same job.",
+  "checks": [
+   {
+    "id": "positive-common",
+    "rule": "both.positive-form",
+    "kind": "absent",
+    "text": "(?i)not uncommon"
+   },
+   {
+    "id": "names-referent",
+    "rule": "both.one-reading",
+    "kind": "judge",
+    "text": "In the sentence about busy nodes, does the output name what is common there (missed heartbeats, or workers being marked dead) instead of a bare 'This'?"
+   }
+  ]
+ },
+ {
+  "id": "pers-reply-comment-ja",
+  "skills": [
+   "writing-personal"
+  ],
+  "source": "BH-P26, JTW-3.1c, JTW-8.10, BH-P05, OP-C05, BH-K01",
+  "prompt": "自分のブログ記事（自宅サーバーを rootless Docker に移行した話）に、読者から次のコメントが付きました。\n\n「Jellyfin を 8096 番ポートにしたのはなぜですか？ 80 番のままにはできなかったのでしょうか。」\n\nこのコメントへの返信を日本語で書いてください。使える事実:\n- rootless Docker では、コンテナが 1024 未満のポートを直接使えない。\n- 著者は最初 `sysctl net.ipv4.ip_unprivileged_port_start=80` を試したが、ホスト全体の設定を変えるのが嫌でやめた。\n- そこで Jellyfin を 8096 番で動かし、前段に Caddy をリバースプロキシとして置いて 80 番と 443 番で受けている。\n- コメントした読者は記事を読んでいて、rootless Docker が何かを知っている。\n\n返信だけを出力してください。",
+  "checks": [
+   {
+    "id": "answer-first",
+    "rule": "pers.end-on-the-point",
+    "kind": "judge",
+    "text": "Apart from an opening thanks or greeting, does the first sentence of the reply give the reason (rootless containers cannot bind ports below 1024, or the author did not want to change the host-wide setting) rather than background or a restatement of the question?"
+   }
+  ]
+ },
+ {
+  "id": "pers-keyboard-review-en",
+  "skills": [
+   "writing-personal"
+  ],
+  "source": "new: cross-genre test of both.sparing-bold, both.lists-vs-prose, both.parallel-form, both.positive-form, both.one-reading",
+  "prompt": "Write a personal blog post of 250 to 350 words: my review of the split keyboard I have used for six months. Use only these facts from my notes:\n\n- I bought it in April because my wrists hurt after long days of typing.\n- After about two months the wrist pain was gone. I also changed my chair in May, so I can't say the keyboard alone fixed it.\n- Learning it took about three weeks. My typing speed dropped from 85 to 40 words per minute in the first week and was back to 80 by week three.\n- Things I like: the halves can sit shoulder-width apart; the thumb keys take over Space, Enter and Backspace; the firmware lets me remap any key.\n- Things I don't like: it is not uncommon for the left half's cable to work loose; it costs 340 euros; carrying it in a backpack is awkward.\n- I would buy it again, but I would tell a friend to try a cheaper split keyboard first.\n\nOutput only the post, starting with its title.",
+  "checks": [
+   {
+    "id": "no-not-uncommon",
+    "rule": "both.positive-form",
+    "kind": "absent",
+    "text": "(?i)not (un)?common|not unusual|not infrequent"
+   }
+  ]
+ }
+]
