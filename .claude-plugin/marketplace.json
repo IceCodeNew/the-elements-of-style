@@ -1,20 +1,53 @@
 {
-  "name": "elements-of-style-dev",
-  "description": "Development marketplace for elements-of-style",
+  "name": "elements-of-style",
+  "owner": {
+    "name": "IceCodeNew",
+    "url": "https://github.com/IceCodeNew"
+  },
+  "metadata": {
+    "description": "Writing skills: install one genre skill (writing-tech or writing-personal) and the language skills you write in (writing-en, writing-ja, writing-zh)",
+    "version": "2.0.0"
+  },
   "plugins": [
     {
-      "name": "elements-of-style",
-      "description": "Writing guidance based on William Strunk Jr.'s The Elements of Style (1918)",
-      "version": "1.0.0",
+      "name": "writing-tech",
+      "description": "Rules for technical text in any language: docs, READMEs, runbooks, code comments, commit messages, PR descriptions, error and log text, postmortems",
+      "version": "2.0.0",
       "source": "./",
-      "author": {
-        "name": "Jesse Vincent",
-        "url": "https://github.com/obra"
-      }
+      "strict": false,
+      "skills": ["./skills/writing-tech"]
+    },
+    {
+      "name": "writing-personal",
+      "description": "Rules for personal writing in any language: blog posts, essays, newsletters, social posts",
+      "version": "2.0.0",
+      "source": "./",
+      "strict": false,
+      "skills": ["./skills/writing-personal"]
+    },
+    {
+      "name": "writing-en",
+      "description": "English-only rules; use with writing-tech or writing-personal",
+      "version": "2.0.0",
+      "source": "./",
+      "strict": false,
+      "skills": ["./skills/writing-en"]
+    },
+    {
+      "name": "writing-ja",
+      "description": "Japanese-only rules; use with writing-tech or writing-personal",
+      "version": "2.0.0",
+      "source": "./",
+      "strict": false,
+      "skills": ["./skills/writing-ja"]
+    },
+    {
+      "name": "writing-zh",
+      "description": "Chinese-only rules; use with writing-tech or writing-personal",
+      "version": "2.0.0",
+      "source": "./",
+      "strict": false,
+      "skills": ["./skills/writing-zh"]
     }
-  ],
-  "owner": {
-    "name": "Jesse Vincent",
-    "url": "https://github.com/obra"
-  }
+  ]
 }

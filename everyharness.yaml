@@ -1,20 +1,32 @@
 name: elements-of-style
-version: 1.0.0
-description: Writing guidance based on William Strunk Jr.'s The Elements of Style (1918)
+version: 2.0.0
+description: Writing skills for technical and personal text, with English, Japanese and Chinese extensions
 author:
-  name: Jesse Vincent
-  url: https://github.com/obra
-license: Public Domain
-repository: https://github.com/obra/elements-of-style
-homepage: https://github.com/obra/elements-of-style
+  name: IceCodeNew
+  url: https://github.com/IceCodeNew
+license: See NOTICE.md in each skill directory
+repository: https://github.com/IceCodeNew/the-elements-of-style
+homepage: https://github.com/IceCodeNew/the-elements-of-style
 keywords:
   - writing
   - style
-  - grammar
+  - technical-writing
   - composition
   - clarity
-# Every harness everyharness targets discovers skills natively, and this
-# plugin ships exactly one skill with a description that already says when to
-# invoke it. A session-start injection would buy nothing and cost context in
-# every session.
+  - japanese
+  - chinese
+# Every harness everyharness targets discovers skills natively, and each skill
+# has a description that says when to invoke it. A session-start injection
+# would buy nothing and cost context in every session.
 bootstrap: none
+# Claude Code installs each skill as its own plugin from the hand-written
+# .claude-plugin/marketplace.json, so a user can pick a genre skill and the
+# language skills they need. everyharness generates one plugin per repository.
+# Codex, Droid and Grok install the one generated plugin from the
+# agents-marketplace descriptor.
+# everyharness 1.0.0 writes `muse plugins approve superpowers` into the muse
+# install doc for every plugin, so that doc gives a wrong command.
+harnesses:
+  exclude:
+    - claude-code
+    - muse
