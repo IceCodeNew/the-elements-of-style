@@ -2,3 +2,6 @@
 
 # Hermes imports .hermes-plugin/ as a Python package at load time
 __pycache__/
+
+# Model outputs and grades cached by evals/run.py
+evals/.cache/

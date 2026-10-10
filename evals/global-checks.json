@@ -1,0 +1,182 @@
+[
+ {
+  "id": "trope-negative-parallelism",
+  "rule": "both.real-contrasts",
+  "kind": "judge",
+  "text": "Does the output avoid negative parallelism: denying something no reader claimed so that the real point arrives as a reveal ('It's not a tool. It's a mindset.'), including 'X doesn't just Y, it Z', 'not because X but because Y', and countdowns that negate two or more options before the point ('Not a bug. Not a feature. A design flaw.'), in any language (不是……而是……, 〜ではなく〜だ)? A contrast that corrects a belief the reader plausibly holds, or one where both halves carry information from the task, is fine."
+ },
+ {
+  "id": "trope-staged-emphasis",
+  "rule": "both.state-dont-stage",
+  "kind": "judge",
+  "text": "Does the output state its points in plain sentences instead of staging them: a question it poses and answers at once ('The result? A 40% drop.'), a setup line that promises a reveal ('Here's the kicker:', ここがポイント, 关键来了), a run of fragments or one-sentence paragraphs that restates a point for effect ('Slow builds. Flaky tests. Endless review.'), or a quotable line that sounds like wisdom but adds no fact ('Every metric that rewards volume punishes leverage.')? A short sentence or one-line paragraph that carries a new fact, list items, headings, and a question the task asks the output to answer are fine."
+ },
+ {
+  "id": "trope-preamble",
+  "rule": "both.no-empty-previews",
+  "kind": "judge",
+  "text": "Does the output open with its content (the answer, news, decision or first fact) and avoid a preamble that announces what it will do, restates the task or question, or names the count or shape of what follows ('Two constraints shape the design.', 'In this post I'll walk you through...', 'Let's dive in.', 本文将介绍……, 今回は〜について書いていきます)? A greeting the medium expects, a line that introduces a list or code block, and a scope statement at the top of a long document are fine."
+ },
+ {
+  "id": "trope-reasoning-leak",
+  "rule": "both.no-empty-previews",
+  "kind": "judge",
+  "text": "Does the output avoid narrating its own writing or deliberation: sentences about what the text is doing, deciding or wants to be careful about instead of doing it ('I want to be exact about my own role here.', 'What this changes is worth being precise about.'), and notes about how the text was produced ('Based on the facts provided, ...')? A scope statement for a long document, and a source the reader can follow, are fine."
+ },
+ {
+  "id": "trope-premise-stacking",
+  "rule": "tech.point-first",
+  "kind": "judge",
+  "text": "Does the output avoid premise stacking: a run of supporting detail that already makes a point, followed by the point or question itself, so that it arrives restated (three sentences about conflicting docs, then 'So, is the feature live or not?')? In a request, reply, status update or expository section the point or question should come before its evidence. A narrative told in time order, or an essay that builds to a verdict it states only once, is fine."
+ },
+ {
+  "id": "trope-restating-close",
+  "rule": "both.say-it-once",
+  "kind": "judge",
+  "text": "Does the output stop once its last point is made, avoiding a close that restates or recaps what it already said ('So, to answer your question: yes, ...', 'In short, this gives you everything you need.'), a pile of extra clauses, morals or advice stacked after the point, and, in a blog post, essay, social post or newsletter, a label announcing the end ('In conclusion', 'To sum up', 总之, まとめると)? A summary at the start or end of a long document, a labeled summary in technical or academic text, and a closing next step, deadline or open question that the task supplies are fine."
+ },
+ {
+  "id": "trope-repetition",
+  "rule": "both.say-it-once",
+  "kind": "judge",
+  "text": "Does the output make each point once, avoiding one-point dilution (the same claim restated in new words or new metaphors across paragraphs) and duplicated passages (a paragraph that repeats an earlier one, or a section preview followed by a recap of that same short section)? A warning repeated at each step it applies to is fine."
+ },
+ {
+  "id": "trope-inflated-stakes",
+  "rule": "both.facts-not-praise",
+  "kind": "judge",
+  "text": "Does the output avoid claiming more importance or optimism than the task's facts support: stakes inflated to industry- or world-level change ('This will fundamentally reshape how we build software.'), invitations to imagine a better future ('Imagine a world where...', 想象一下, 想像してみてほしい), or a problem raised only to be waved away ('Despite these challenges, the project continues to thrive.', 尽管面临诸多挑战)? Significance or outcomes that the task states, and a concrete problem left as a problem, are fine."
+ },
+ {
+  "id": "trope-significance-tails",
+  "rule": "both.facts-not-praise",
+  "kind": "judge",
+  "text": "Does the output avoid hanging a tail on the end of a factual sentence to add significance the task does not state (', highlighting its importance', ', marking a turning point', ', contributing to the region's rich heritage', '，彰显了……', '，标志着……', 「〜を象徴している」), or an afterthought fragment after a comma whose relation to the sentence is left unstated (', mentoring.')? A trailing clause that gives a cause, purpose or result from the task is fine."
+ },
+ {
+  "id": "trope-promotional",
+  "rule": "both.facts-not-praise",
+  "kind": "judge",
+  "text": "Does the output describe its subject with facts instead of selling it, avoiding marketing praise such as 'a seamless experience that unlocks unprecedented productivity', 'game-changing', 'blazing fast', 'powerful', 极致体验, 一站式, 圧倒的な? Praise backed by a measure from the task ('starts in 0.4 s'), and an opinion the task attributes to the author, are fine."
+ },
+ {
+  "id": "trope-borrowed-authority",
+  "rule": "both.attribute-claims",
+  "kind": "judge",
+  "text": "Does the output avoid borrowed authority: claims credited to unnamed experts, reports or 'many people' ('Experts argue that...', 有专家指出, 〜と言われている), appeals to what everyone supposedly knows ('famously', 'a classic', 'as we all know', 众所周知, 言うまでもなく), or a parade of famous companies or technology eras offered as proof ('the web, mobile, cloud: every shift followed this pattern')? A source the task names, attributed to that source, is fine."
+ },
+ {
+  "id": "trope-unstable-terms",
+  "rule": "both.define-and-keep-terms",
+  "kind": "judge",
+  "text": "Does the output avoid both term faults: a coined compound label used as if it were an established term without being defined ('the supervision paradox', 'workload creep', ××陷阱, 〜の罠), and cycling synonyms for one referent so the reader may think a new thing is meant (the dashboard, then the interface, then the portal, then the analytics hub)? A label the output defines at first use, a term the task supplies, a pronoun, and an obviously identical short form are fine."
+ },
+ {
+  "id": "trope-self-echo",
+  "rule": "general",
+  "kind": "judge",
+  "text": "Does the output avoid self-echo: reusing a distinctive word or figurative phrase from earlier in the text as if it were a callback, when the later use adds no meaning ('quietly became the source of truth ... nothing can quietly disappear')? Repeating a defined term, a name or an identifier is fine and expected."
+ },
+ {
+  "id": "trope-forced-figures",
+  "rule": "both.literal-claims",
+  "kind": "judge",
+  "text": "Does the output avoid figurative language that does not clarify: a simile, analogy or coined metaphor added to sound clever or to explain what the reader already understands ('Think of it as a Swiss Army knife for your codebase'), a word from the task turned into a metaphor for something unrelated, or a picture verb where a literal one exists ('where the complexity actually lives', 住んでいる, 住在)? A figure that states a point more clearly or concretely than the literal wording could, or one taken from the author's own material, is fine."
+ },
+ {
+  "id": "trope-empty-emphasis",
+  "rule": "both.show-not-label",
+  "kind": "judge",
+  "text": "Does the output avoid words that only flag significance or interest without adding a fact: magic adverbs ('quietly orchestrating', 'deeply', 'fundamentally', 'remarkably', 悄然, 静かに) and filler transitions ('It's worth noting that', 'Importantly,', 'Interestingly,', 'Notably,', 值得一提的是, 注目すべきは)? An adverb with a literal meaning (a fan that runs quietly) and a connective that states a relation (because, however, for example) are fine."
+ },
+ {
+  "id": "trope-ornate-words",
+  "rule": "both.plain-words",
+  "kind": "judge",
+  "text": "Does the output use plain words where ornate ones add nothing, avoiding figurative 'tapestry', 'landscape', 'paradigm', 'synergy' or 'load-bearing'; 'delve', 'utilize', 'leverage' (as a verb), 'harness' or 'streamline' where 'examine', 'use' or 'simplify' would do; and 'serves as', 'stands as', 'marks' or 'represents' where 'is' says the same (赋能, 抓手, 扮演……的角色, 〜として機能する, 〜の役割を果たす)? Literal technical terms (a web framework, a test harness, the npm ecosystem, a node that represents a server) are fine."
+ },
+ {
+  "id": "trope-phantom-objections",
+  "rule": "both.no-phantom-objections",
+  "kind": "judge",
+  "text": "Does the output avoid belaboring the unnecessary: defending a minor or uncontroversial point against an objection nobody raised ('I don't mean any of that as cynicism about players.', 'This is not to say the old system was bad.')? Answering a doubt that the task or a plausible reader raises, and giving a reason the reader needs (for example why a number is not available yet), are fine."
+ },
+ {
+  "id": "trope-false-vulnerability",
+  "rule": "pers.specific-admission",
+  "kind": "judge",
+  "text": "Does the output avoid performed candor: polished, risk-free confessions or self-labels used for effect ('And yes, I'm openly in love with this platform.', 'This is not a rant; it's a diagnosis.', 'To be completely honest...', 正直に告白すると, 说实话)? An admission that names a specific bias, mistake or limit from the task and says what it changes is fine."
+ },
+ {
+  "id": "trope-vague-we",
+  "rule": "pers.first-person",
+  "kind": "judge",
+  "text": "Does the output keep the grammatical person the task gives, avoiding a vague inclusive 'we/us' that pulls the reader into a conclusion or replaces a single author's 'I' ('This gives us a much clearer picture.', 'As we move forward, our focus shifts to execution.', 让我们……, 私たちは〜していきましょう)? 'I' for a single author's experience, and 'we' for a team or group that includes the writer and actually did or decided the thing, are fine."
+ },
+ {
+  "id": "trope-ordinal-prose",
+  "rule": "both.lists-vs-prose",
+  "kind": "judge",
+  "text": "Does the output avoid a list disguised as prose: successive paragraphs or sentences that open with 'The first...', 'The second...', 'The third...' (第一……第二……, 一つ目は……二つ目は……) for points that do not build on each other? Numbered procedure steps, a real list, and ordinals inside reasoning where each point depends on the one before are fine."
+ },
+ {
+  "id": "trope-bold-labels",
+  "rule": "both.sparing-bold",
+  "kind": "judge",
+  "text": "Does the output avoid starting every list item with a bold label that only names or repeats the item ('**Performance**: Faster loading of pages.'), and bolding many phrases in one section? Bold on one or two warnings or key terms in a section, and bold terms in a glossary or parameter list the task asks for, are fine. If the output has no bold text, answer yes."
+ },
+ {
+  "id": "trope-padded-series",
+  "rule": "both.list-what-is-there",
+  "kind": "judge",
+  "text": "Does the output avoid padded series: a triad or longer series in which an item restates another or adds nothing, back-to-back triads or antitheses ('Products impress people; platforms empower them. Products solve problems; platforms create worlds. ...'), and 'from X to Y' spans whose ends are not on one scale ('from innovation to implementation to cultural transformation', 从……到……)? A list of distinct items from the task, and a range between two ends of one scale (from v1.2 to v1.4), are fine."
+ },
+ {
+  "id": "trope-anaphora",
+  "rule": "both.merge-repeated-referents",
+  "kind": "judge",
+  "text": "In running prose, does the output avoid anaphora for effect: three or more consecutive sentences or clauses that open with the same words to carry one idea ('They assume users will pay. They assume developers will build. They assume ecosystems will emerge.')? Procedure steps, list items and headings that share an opening are fine."
+ },
+ {
+  "id": "trope-heading-teasers",
+  "rule": "tech.headings-name-content",
+  "kind": "judge",
+  "text": "Does the output avoid headings that tease their section with a Wh-phrase or a slogan instead of naming its content ('What we do differently', 'Where the market is stuck today', 'The moment of truth')? A heading that names a real question the section answers ('Why Promote returns early'), and headings the task specifies, are fine. If the output has no headings, answer yes."
+ },
+ {
+  "id": "trope-title-case",
+  "rule": "en.heading-case",
+  "kind": "judge",
+  "text": "Does the output avoid Title Case in English headings and titles ('Understanding The Impact Of Modern Technology On Society'), using sentence case (first word, proper nouns and identifiers capitalized) instead? Answer yes if the output has no English heading or title, or if the task asks for title case or gives a house style or a document whose headings use it."
+ },
+ {
+  "id": "trope-dash-overuse",
+  "rule": "general",
+  "kind": "judge",
+  "text": "Does the output avoid dash and arrow overuse: more than three dashes (—, --, Chinese ——, Japanese ――) used for asides, pauses or pivots in the whole text, any dash used for a dramatic pause before a reveal ('The tinkerer spirit didn't die of natural causes — it was bought out.'), and arrows (→, ->) standing in for a verb in running prose ('better outcomes → higher engagement')? Hyphens, number and date ranges, dashes and arrows inside code, diagrams or quoted material, and list markers do not count."
+ },
+ {
+  "id": "trope-compulsive-counting",
+  "rule": "general",
+  "kind": "judge",
+  "text": "Does the output avoid compulsive counting: announcing how many items, reasons or points follow when the count does no work for the reader ('Four reasons why this will work', 'for two reasons', 三个原因, 3つのポイント)? Numbered procedure steps, a count stated in the task's facts, and a count the reader needs to act or check ('the command takes two arguments') are fine."
+ },
+ {
+  "id": "trope-re-ai-vocab",
+  "rule": "both.plain-words",
+  "kind": "absent",
+  "text": "(?i)\\b(?:delv(?:e|es|ed|ing)|tapestr(?:y|ies)|utili[sz](?:e|es|ed|ing))\\b"
+ },
+ {
+  "id": "trope-re-reveal-setups",
+  "rule": "both.no-empty-previews",
+  "kind": "absent",
+  "text": "(?i)\\bhere['’]s (?:the (?:thing|kicker|catch|deal|twist)\\b|what (?:most people|nobody|no one)\\b)|\\blet['’]s (?:dive|delve|unpack|break (?:this|it|that) down)\\b"
+ },
+ {
+  "id": "trope-re-worth-noting",
+  "rule": "both.show-not-label",
+  "kind": "absent",
+  "text": "(?i)\\b(?:it['’]?s|it is) worth (?:noting|mentioning|pointing out)\\b|\\bit bears (?:mentioning|noting|repeating)\\b|\\bit is important to note\\b"
+ }
+]

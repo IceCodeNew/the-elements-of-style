@@ -1,0 +1,184 @@
+[
+ {
+  "id": "tech-runbook-upgrade-en",
+  "skills": [
+   "writing-tech"
+  ],
+  "source": "new; STE-1, STE-12, STE-13, STE-14, STE-8 (principle)",
+  "prompt": "Write the runbook procedure for the major-version upgrade of the PostgreSQL cluster `prod` with `pgctl`. Audience: on-call engineers. Many read English as a second language, and some use machine translation. Use only these facts:\n\n- First run `pgctl setup --cluster prod`. It writes the local tool configuration. The team calls this step \"spinning up pgctl\".\n- Then run `pgctl backup run`. If an engineer skips it and the upgrade fails, every write since the last backup is lost.\n- Then run `pgctl replicas create --count 3 --temporary`. The team says \"spin up three throwaway replicas\".\n- Then run `pgctl upgrade --to 17`, and after it `pgctl check`.\n- Run `pgctl failover --to db-2`, then stop and page the database owner, but only if `pgctl check` reported an error.\n- Run `pgctl cleanup --old-version` if `pgctl check` reported no error.\n\nOutput only the procedure.",
+  "checks": [
+   {
+    "id": "one-action",
+    "rule": "tech.one-action-per-step",
+    "kind": "judge",
+    "text": "Does each numbered step ask the reader to do exactly one thing (run one command, or page one person)? Answer no if any step tells the reader to run two commands, or to run a command and also page someone."
+   },
+   {
+    "id": "warning-before-step",
+    "rule": "tech.warning-placement",
+    "kind": "judge",
+    "text": "Does the warning about skipping the backup appear before the `pgctl backup run` command (in that step or directly above it), and not after the command, in a later step, or in a notes section?"
+   },
+   {
+    "id": "no-team-slang",
+    "rule": "tech.established-terms",
+    "kind": "absent",
+    "text": "(?i)\\bspin(s|ning)?\\s+up\\b|\\bthrowaway\\b"
+   }
+  ]
+ },
+ {
+  "id": "tech-runbook-upgrade-ja",
+  "skills": [
+   "writing-tech"
+  ],
+  "source": "new; STE-1, STE-12, STE-13",
+  "prompt": "`pgctl` で本番クラスタ `prod` を PostgreSQL 17 にアップグレードする手順を、日本語で書いてください。読み手はオンコール担当のエンジニアです。次の事実だけを使ってください。\n\n- 最初に `pgctl backup run` を実行する。これを省いてアップグレードに失敗すると、前回のバックアップ以降の書き込みがすべて失われる。\n- 次に `pgctl backup verify` を実行する。検証に失敗すると、`pgctl` は `error: backup checksum mismatch` と表示する。この表示が出たら、先に進まずにデータベース担当者を呼び出す。\n- 次に `pgctl upgrade --to 17` を実行し、続けて `pgctl check` を実行する。\n- `pgctl failover --to db-2` を実行する。ただし、これは `pgctl check` がエラーを報告した場合だけである。\n\n手順だけを出力してください。",
+  "checks": [
+   {
+    "id": "condition-first",
+    "rule": "tech.condition-before-action",
+    "kind": "judge",
+    "text": "In the text that tells the reader to run `pgctl failover --to db-2`, does the condition (`pgctl check` reported an error) come before the command? And in the text about `error: backup checksum mismatch`, does the condition (the message appears) come before the action (stop and call the database owner)? Answer yes only if both hold."
+   },
+   {
+    "id": "warning-before-step",
+    "rule": "tech.warning-placement",
+    "kind": "judge",
+    "text": "Does the warning about skipping the backup appear before the `pgctl backup run` command (in that step or directly above it), and not after the command or at the end of the procedure?"
+   }
+  ]
+ },
+ {
+  "id": "tech-design-note-zh",
+  "skills": [
+   "writing-tech"
+  ],
+  "source": "new; EOS-R09, BH-AG-W01, BH-P20e, BH-V06, JTW-8.7a, STE-12, OP-V02",
+  "prompt": "为 PostgreSQL 运维工具 `pgctl` 的设计文档写一节，说明 `Promote` 为什么不等提升完成就返回。给这一节加一个二级标题。只使用下面的事实（来自团队讨论）。\n\n- 提升可能需要几十秒。很多用户要求 CLI 在这段时间里不要卡住。\n- 有人问：那为什么不等提升完成再返回？答：会卡住 CLI，用户不接受。\n- 所以 `Promote` 开始提升后立刻返回。调用方轮询 `Ready()`，直到它返回 true，再发送写入。\n- 过去有 1 次，调用方在 `Promote` 返回后马上发送写入。因为提升还在进行，写入失败了。\n- 团队负责人的意见：保留这个设计，另外给 CLI 加一个 `--wait` 参数，让需要等待的用户显式等待。这个参数还没有实现。\n\n只输出这一节。",
+  "checks": [
+   {
+    "id": "decision-first",
+    "rule": "tech.point-first",
+    "kind": "judge",
+    "text": "Does the first sentence after the heading state the design itself (`Promote` returns as soon as the promotion starts, and callers poll `Ready()`), rather than background such as how long a promotion takes or what users asked for?"
+   }
+  ]
+ },
+ {
+  "id": "tech-api-reference-en",
+  "skills": [
+   "writing-tech"
+  ],
+  "source": "BH-V06, BH-AG-W04, WP-H08, BH-AG-W02, STE-6, BH-AG-W05, BH-AG-W09",
+  "prompt": "Write the API reference entry for the method `Client.Get` of `kvstore-go`, a Go client for a key-value store. Use only the facts in these maintainer notes. Output only the entry, in Markdown.\n\n- \"Get is honestly our favorite part of the API. It's super fast and we love it.\"\n- \"Get(ctx, key) returns the value for key. It looks in the local cache first. On a miss in the store, it fetches the value from the server and saves it in the memo table.\" (In these notes, \"cache\", \"store\" and \"memo table\" all mean the same local cache.)\n- \"Callers really need to pass a ctx with a deadline. It's a good idea to keep keys under 1 KB. Callers are allowed to call Get from several goroutines at once.\"\n- \"Don't call Get unless the client hasn't been closed.\"\n- \"We leverage a singleflight group to facilitate deduplication of concurrent misses for the same key, so the server gets one request per key.\"\n- \"If the server does not have the key, Get returns ErrNotFound.\"",
+  "checks": [
+   {
+    "id": "requirement-levels-kept",
+    "rule": "tech.requirement-keywords",
+    "kind": "judge",
+    "text": "Does the entry state the context-deadline rule as mandatory (for example must or required) and the 1 KB key-size rule as a recommendation (for example should or recommended), without making the recommendation mandatory or the requirement optional?"
+   }
+  ]
+ },
+ {
+  "id": "tech-incident-causes-ja",
+  "skills": [
+   "writing-tech"
+  ],
+  "source": "JTW-4.6, JTW-7.3, JTW-7.3a, JTW-7.3b, JTW-1.2, BH-AG-W03, OP-V02",
+  "prompt": "障害報告書の「原因と今後の対策」節を日本語で書いてください。次の事実（チームのチャットから）だけを使い、節の本文だけを出力してください。\n\n- 2026-09-12 の 19:00〜19:40、iOS 向けのプッシュ通知の配送が止まった。約 12 万件の通知が届かなかった。\n- 直接の原因は、APNs 用の証明書が 19:00 に失効したこと。証明書の更新ジョブは 9 月 1 日から毎晩失敗していたが、このジョブの失敗は通知されない設定になっていた。\n- 19:40 に担当者が証明書を手動で更新し、配送が再開した。\n- チームの会話：「証明書の残り日数を監視するアラートを入れるのが一番効く」「失効の 14 日前に更新する案は筋がいい」。どちらもまだ実施していない。\n- 失効の 3 日前に配送遅延の問い合わせが 1 件あったが、今回の障害と関係があるかはわかっていない。",
+  "checks": [
+   {
+    "id": "field-term-haishin",
+    "rule": "tech.established-terms",
+    "kind": "absent",
+    "text": "配送"
+   },
+   {
+    "id": "cause-first",
+    "rule": "tech.point-first",
+    "kind": "judge",
+    "text": "Does the first sentence state the direct cause (the APNs certificate expired at 19:00)?"
+   }
+  ]
+ },
+ {
+  "id": "tech-doc-edit-zh",
+  "skills": [
+   "writing-tech"
+  ],
+  "source": "OP-O04, BH-P20e, WP-S04d, BH-P25a, BH-P25b, JTW-3.6a; op7418 tests/fixtures/structure.md",
+  "prompt": "下面是 `export.py` 的用户文档。修改它的写法，让它更清楚。不要添加新的事实。输出修改后的完整 Markdown 文档，不要输出其他内容。\n\n----- 文档开始 -----\n# 导出说明\n\n以下内容根据维护者的聊天记录整理，未确认的部分已标注。\n\n## 使用方法\n\n运行下面的命令导出草稿：\n\n```bash\npython export.py --input draft.md --format csv\n```\n\n输出文件是 `./out/result.csv`。各格式的大小限制见[限制](#限制)，导出完成后的检查方法见[见证奇迹的时刻](#见证奇迹的时刻)。\n\n## 限制\n\n### 大小\n\n| 格式 | 单文件上限 |\n|---|---|\n| CSV | 10 MB |\n| JSON | 25 MB |\n\n如上表所示，CSV 的单文件上限是 10 MB，JSON 的单文件上限是 25 MB。\n\n### 编码\n\n只支持 UTF-8 编码的输入文件。\n\n## 见证奇迹的时刻\n\n导出完成后，`export.py` 会打印 `done: 1 file written`。如果没有看到这一行，请按[使用方法](#使用方法)重新运行。\n\n## 实现说明\n\n`write_csv()` 以前每写一行都调用一次 `open()` 和 `close()`，导出 1 万行要 40 秒。v0.3 改成只打开一次文件，现在导出 1 万行只要 2 秒。\n----- 文档结束 -----",
+  "checks": [
+   {
+    "id": "no-stacked-heading",
+    "rule": "tech.no-stacked-headings",
+    "kind": "judge",
+    "text": "Does every heading that has subheadings have at least one sentence of body text between it and its first subheading? Answer yes if no heading has subheadings."
+   },
+   {
+    "id": "no-production-narration",
+    "rule": "tech.no-production-narration",
+    "kind": "absent",
+    "text": "聊天记录|整理而成|根据维护者|已标注|已标出"
+   },
+   {
+    "id": "current-state-only",
+    "rule": "tech.describe-current-state",
+    "kind": "judge",
+    "text": "Does the text about `write_csv()` describe only how it works now, without its earlier behavior (以前, 改成, v0.3, 40 秒)? Answer yes if the section was removed."
+   }
+  ]
+ },
+ {
+  "id": "tech-readme-errscan-en",
+  "skills": [
+   "writing-tech"
+  ],
+  "source": "new; BH-AG-W01, BH-AG-W04, BH-AG-W08, JTW-2.6, JTW-3.2, JTW-7.2a, BH-P25b, STE-2",
+  "prompt": "Write the README section that introduces `errscan` to Go developers who have not used it. Give the section a heading. Use only the facts in these maintainer notes. Output only the section.\n\n- \"errscan reports calls whose error result the code ignores.\"\n- \"The checker finds most ignored errors in hand-written code.\"\n- \"It knows which files are generated: the scanner skips every file whose first line starts with `// Code generated`, so it is blind to ignored errors in generated code.\"\n- \"The skip logic is `isGenerated()` in `internal/scan/gen.go`. It works on the SSA form of the code.\"\n- \"We estimate, without measurement, that the linter finds about 90% of real ignored-error bugs.\"\n\n(In these notes, \"the checker\", \"the scanner\" and \"the linter\" all mean errscan.)",
+  "checks": [
+   {
+    "id": "first-sentence-says-what",
+    "rule": "tech.point-first",
+    "kind": "judge",
+    "text": "Does the first sentence after the heading say what errscan does (reports calls whose error result the code ignores)?"
+   },
+   {
+    "id": "tool-kind-first",
+    "rule": "tech.first-mention",
+    "kind": "judge",
+    "text": "At or next to the first mention of errscan in the body, does the text say what kind of tool it is (for example a linter or a static analysis tool for Go)?"
+   },
+   {
+    "id": "ssa-expanded",
+    "rule": "tech.first-mention",
+    "kind": "judge",
+    "text": "If the output mentions SSA, does it expand the abbreviation (static single assignment) at its first use? Answer yes if SSA is not mentioned."
+   },
+   {
+    "id": "no-internal-identifiers",
+    "rule": "tech.identifiers-when-used",
+    "kind": "absent",
+    "text": "isGenerated|internal/scan/gen\\.go"
+   }
+  ]
+ },
+ {
+  "id": "tech-webhook-spec-zh",
+  "skills": [
+   "writing-tech"
+  ],
+  "source": "BH-AG-W05, EOS-V06 (principle), BH-AG-W09, STE-12; op7418 fixture progress_and_permission",
+  "prompt": "为 webhook 回调接口的规范文档写「接入方要求」一节，读者是接入方的开发者。只使用下面的事实（来自团队讨论记录），只输出这一节。\n\n- 接入方的服务一定要在 5 秒内返回 HTTP 200。（我个人觉得 5 秒有点短，不过先这样定。）\n- 接入方最好在响应里带上 `X-Request-Id` 头。\n- 接入方的服务不能不校验 `X-Signature` 签名。\n- 接入方没有回复确认邮件的，不视为已同意数据共享条款。\n- 接入方务必记录每次回调的 `event_id`。\n- 接入方可以对重复收到的同一事件去重。",
+  "checks": [
+   {
+    "id": "no-double-negative",
+    "rule": "both.positive-form",
+    "kind": "absent",
+    "text": "不能不|不得不|(没有|未)回复[^。\\n]*不视为"
+   }
+  ]
+ }
+]
