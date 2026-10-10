@@ -1,0 +1,281 @@
+[
+ {
+  "id": "jtw-tech-chapter-intro",
+  "skills": [
+   "writing-tech",
+   "writing-ja"
+  ],
+  "source": "jtw SKILL.md (gist 8f2d576) §6 L96-L101 (JTW-6.1 to 6.5 phrase lists), §6 L103-L104 (bad/good pairs 1-3), §6 L92 (JTW-6.0b book terms), §5 L85 (JTW-5.7 「重要なのは」 and the 「標語として言い換えれば」 exception)",
+  "prompt": "次は技術書『エージェントと設計』の第 4 章の冒頭の原稿です。本書では、第 1 章で、前に置いた前提や問いに後の章で答えることを「回収」と呼び、第 2 章で、どの判断を誰が下すかの割り当てを「判断の配置」と呼んでいます。この原稿を推敲して、そのまま入稿できる形にしてください。だ・である体を保ち、事実（章番号、年、件数、扱う範囲と扱わない範囲）は変えないでください。見出しは変えないでください。推敲後の原稿だけを出力してください。\n\n---\n# 第 4 章 レビューをどこまで任せられるか\n\n本章では、コードレビューをエージェントに任せられる範囲を正面から扱う。第 3 章で置いた前提（レビューの責任は最後に人間が持つ）も、ここで正面から回収する。\n\nここでは、まずレビューの作業を三つに分けて見ていく。差分の機械的な検査、仕様との照合、設計の妥当性の判断である。本章では前の二つを探求し、設計の妥当性の判断は第 6 章に回す。\n\nレビューを多角的に分析すると、重要なのは、正しさを誰が知っているかである。差分の機械的な検査では、正しさの基準はリンターと型検査の設定に書かれている。仕様との照合では、基準は仕様書に書かれている。設計の妥当性の判断では、基準はチームの頭の中にしかない。第 2 章の言葉で言えば、これは判断の配置の問題に他ならない。\n\nこの区別は、レビューの自動化において根本的で不可欠な鍵となる。さらに、基準が書かれている作業はエージェントに任せやすい。また、基準が書かれていない作業は人間に残る。加えて、両者の境界は、基準を書き足せば動かせる。\n\n標語として言い換えれば、「書かれた基準は任せられる」。\n\n本章では、この考え方を、筆者のチームが 2025 年に行った試行の記録をもとに包括的に掘り下げ、言語化する。試行では、6 か月の間に 412 件のプルリクエストをエージェントにレビューさせた。\n\n要するに、基準が書かれている作業は任せられ、書かれていない作業は任せられない。\n---\n",
+  "checks": [
+   {
+    "id": "no-empty-labels",
+    "rule": "both.show-not-label",
+    "kind": "absent",
+    "text": "多角的|包括的|総合的|核心的|根本的|不可欠|鍵となる|掘り下げ|深掘り|言語化"
+   }
+  ],
+  "probe": [
+   "trope-empty-emphasis",
+   "trope-restating-close",
+   "trope-posture-verbs"
+  ]
+ },
+ {
+  "id": "jtw-tech-postmortem-causes",
+  "skills": [
+   "writing-tech",
+   "writing-ja"
+  ],
+  "source": "jtw SKILL.md (gist 8f2d576) §2 L32-L37 (JTW-2.1 hedge forms; bad/good pair 提示し続けているかもしれない), §2 L38 (JTW-2.2 同じ決定を別々に下していた), §2 L39 (JTW-2.3 情報隠蔽の問題), §2 L41 (JTW-2.5 手順で分けると変更が全体に波及する), §2 L42 (JTW-2.6 必ず), §6 L100-L101 (JTW-6.5 において/観点から/側面から, JTW-6.6 と言えるだろう), §8 L136 (JTW-8.4 当然、経理部の月次処理も顧客の支払いも)",
+  "prompt": "次は障害報告書の「原因」と「再発防止」の節の原稿です。推敲して、そのまま公開できる形にしてください。だ・である体を保ち、事実（日付、数値、件数）は変えないでください。見出しは変えないでください。推敲後の 2 つの節だけを出力してください。\n\n---\n## 原因\n\n2026 年 9 月 3 日から 5 日まで、請求処理において、請求書の合計金額が明細の合計と 1 円ずれる不具合が、全顧客の約 2% で起きた。きっかけは、9 月 2 日にコーディングエージェントが金額計算のユーティリティに加えた変更である。差分を戻すと不具合は再現しなくなり、差分を当て直すと再現した。この変更が原因だったと言えるのではないかと思われる。\n\nこの事故は、丸ごと情報隠蔽の問題である。ユーティリティの契約、つまり外に約束する振る舞いは、どこにも書かれていなかった。丸め方も、仕様書にもコードのコメントにも書かれていなかった。また、請求書の工程も明細の工程も、ユーティリティ内部の金額の表現（浮動小数点数）をそのまま使っていた。\n\n端数の丸め方、通貨ごとの小数桁数、どの段階で丸めるかの三つは、どれも決まっていなかった。請求書チームと明細チームは、三つを自分の工程の都合で決めていた。どの段階で丸めるかが決まらないと、丸め方を決めても合計は揃わない。小数桁数も、丸め方と合わせて決める必要がある。つまり、両チームは同じ決定を別々に下していた。\n\nこのシステムは、処理の手順（計算、丸め、請求書の作成）でモジュールを分けている。手順で分けると、変更が全体に波及する。\n\nエージェントの作業ログを見る限り、エージェントは丸め方を明細の工程のコードから推測したようだ。エージェントは、ほかのモジュールの修正でも、同じ推測による丸め方を提示し続けているかもしれない。ほかのモジュールの差分は、まだ調べていない。\n\n運用の観点から見ると、復旧には 6 時間かかった。影響は請求の後工程にも及んだ。経理部の月次締めが止まった。顧客からの入金の消し込みも止まった。コストという側面からは、返金の対象は 1,840 件だった。\n\n## 再発防止\n\n型検査を導入する。型検査を入れれば、この種の不整合は必ず検出できる。型検査は、金額を float と Decimal で取り違えた箇所を検出する。同じ Decimal のまま丸め方だけが違う箇所は検出しない。\n---\n",
+  "checks": [
+   {
+    "id": "uncertain-kept",
+    "rule": "both.keep-certainty",
+    "kind": "judge",
+    "text": "Does the output keep both uncertain statements uncertain: that, judging from the work logs, the agent guessed the rounding from the line-item code (ようだ, らしい, と見られる, と推測される or similar), and that the agent may still be offering the same guessed rounding in other modules (かもしれない, 可能性がある or similar)? Neither may be stated as a fact."
+   },
+   {
+    "id": "two-causes",
+    "rule": "both.name-every-cause",
+    "kind": "judge",
+    "text": "Does the output name two separate causes instead of calling the incident only an information-hiding problem (情報隠蔽の問題): that the utility's contract, including the rounding rule, was written nowhere, and that the invoice and line-item steps used the utility's internal float representation of amounts directly?"
+   },
+   {
+    "id": "decisions-separate",
+    "rule": "both.name-every-cause",
+    "kind": "judge",
+    "text": "Does the output avoid calling the three open questions (the rounding method, the decimal places per currency, the stage at which to round) the same decision (同じ決定)? Answer yes if it names the three as distinct questions and says that they depend on one another or must be settled together (for example 丸め方だけでなく、小数桁数と丸める段階も合わせて決める必要がある, or どれも別々の決定であり、しかも互いに依存している). Answer no if it calls them one decision or the same decision, or leaves out that they depend on one another."
+   },
+   {
+    "id": "mechanism-stated",
+    "rule": "both.state-the-mechanism",
+    "kind": "judge",
+    "text": "Where the output says that splitting the modules by processing step makes a change spread through the whole system, does it give the mechanism in a sentence: the steps share one representation of amounts to pass them along (the utility's internal float), so changing that representation means changing every step?"
+   }
+  ],
+  "probe": [
+   "trope-stacked-hedges",
+   "trope-sweeping-claims"
+  ]
+ },
+ {
+  "id": "jtw-tech-book-staging",
+  "skills": [
+   "writing-tech"
+  ],
+  "source": "jtw SKILL.md (gist 8f2d576) §8 L139 (JTW-8.7a-b: one-word Q&A, 〜と感じたかもしれない。そのとおりである), §8 L140 (JTW-8.8 ここまでの話には自然な続きがある, 〜という発想である, その保守も任せればよいのではないだろうか), §8 L141 (JTW-8.9 本書もそれを否定しない, 〜に書かせる場合が多い), §8 L138 (JTW-8.6 それ自体はよいことである), §5 L79 (JTW-5.1 ここには〜が潜んでいる), §5 L81 (JTW-5.3 bold), §10 L159-L160 (JTW-10.1-10.2 contrived example, 十分あり得る状況だ)",
+  "prompt": "次は技術書の第 5 章の一節の原稿です。推敲して、そのまま入稿できる形にしてください。だ・である体を保ち、事実（秒数、行数、年、件数）と主張は変えないでください。見出しは変えないでください。推敲後の節だけを出力してください。\n\n---\n### 保守も任せられるか\n\n前節の例では、エージェントは **40 秒**ほどで不具合を直した。修正の差分は 3 行で、テストもすべて通った。\n\nこの例は作為的だと感じたかもしれない。そのとおりである。しかし、十分あり得る状況だ。筆者のチームでも、2025 年の 1 年間に、仕様書と実装の食い違いが **14 件**見つかっている。\n\nここまでの話には自然な続きがある。修正だけでなく、その後の保守もエージェントに任せるという発想である。\n\nここには**一つの落とし穴**が潜んでいる。前節の修正が 40 秒で済んだのは、丸め方が仕様書に書かれていたからだ。仕様書に書かれていない規則は、エージェントには守りようがない。では、保守を任せるには何が要るのか。**契約**である。ここでいう契約は、モジュールが外に約束する振る舞いを文書にしたものを指す。\n\n実務では、テストコードもエージェントに書かせる場合が多い。本書もそれを否定しない。それ自体はよいことである。ただし、テストが確かめられるのは、**契約に書かれた振る舞いだけ**だ。\n---\n",
+  "checks": [
+   {
+    "id": "no-acted-reaction",
+    "rule": "both.state-dont-stage",
+    "kind": "absent",
+    "text": "そのとおり|その通り"
+   },
+   {
+    "id": "idea-stated-directly",
+    "rule": "both.no-empty-previews",
+    "kind": "judge",
+    "text": "Does the output state the idea of leaving the later maintenance to the agent too directly, as a statement or as a question (for example その保守もエージェントに任せればよいのではないだろうか), without the meta frames ここまでの話には自然な続きがある and 〜という発想である?"
+   },
+   {
+    "id": "no-empty-evaluation",
+    "rule": "both.cut-needless-words",
+    "kind": "absent",
+    "text": "それ自体は"
+   }
+  ],
+  "probe": [
+   "trope-staged-emphasis",
+   "trope-phantom-objections",
+   "trope-bold-labels"
+  ]
+ },
+ {
+  "id": "jtw-tech-book-contracts",
+  "skills": [
+   "writing-tech"
+  ],
+  "source": "jtw SKILL.md (gist 8f2d576) §9 L151 (JTW-9.1 例に戻す, 〜を読み直す), §1 L20-L21 (JTW-1.6-1.7 その理由は『〜だから』ではない, もしAなら〜だっただろう), §1 L17 (JTW-1.3 であれば), §2 L40 (JTW-2.4 人間が決める / チームで合意する), §8 L133 (JTW-8.1 limit after a definition), §3 L59 (JTW-3.6c-d この2つ, 上記の例, property checked on one medium)",
+  "prompt": "次は技術書の第 5 章の原稿のうち、5.3 節と 5.4 節です。前提として、5.2 節では、設計上の決定を「エージェントに任せる」ものと「人間が決める」ものに分類し、丸め方のような業務の規則を「人間が決める」ものに入れています。著者のメモ：誤差が 1 円以内に収まることを確かめたのは、表 5.1 の 3 件の計算だけで、リスト 5.1 のコードは実行していません。\n\nこの原稿を推敲して、そのまま入稿できる形にしてください。だ・である体を保ち、事実と主張は変えないでください。見出しは内容に合わせて直してかまいません（節番号は残してください。この原稿の見出しには、まだどこからもリンクしていません）。表とコードはそのまま残してください。推敲後の原稿だけを出力してください。\n\n---\n## 5.3 例に戻す\n\n5.1 節の例で、エージェントが丸め方を誤った理由を考える。\n\nその理由は、エージェントの能力が足りなかったからではない。丸め方がどこにも書かれていなかったからだ。\n\n丸め方を書き足した仕様書を、同じエージェントに渡した。エージェントは 1 回目の試行で正しい修正を出した。\n\n保守で守らせたい規則も、文書に書いておけばエージェントに任せられる。ただし、丸め方は、チームで合意するものである。エージェントが自分で決めてよい規則ではない。\n\n## 5.4 契約を読み直す\n\n本書でいう契約とは、モジュールが外に約束する振る舞いを文書にしたものである。ただし、本書では、コードのコメントに書かれた約束は契約に含めない。\n\n金額計算のユーティリティの契約には、丸め方、丸める段階、通貨ごとの小数桁数を書く。表 5.1 は、明細ごとに丸める方式と、合計で丸める方式で、同じ 3 件の明細を計算した結果である。\n\n| 明細 | 明細ごとに丸める | 合計で丸める |\n|---|---|---|\n| 333.3 円 | 333 円 | 333.3 円 |\n| 333.3 円 | 333 円 | 333.3 円 |\n| 333.3 円 | 333 円 | 333.3 円 |\n| 合計 | 999 円 | 1,000 円 |\n\nリスト 5.1 は、合計で丸める方式の実装である。\n\n```python\ndef total(amounts):\n    return round(sum(amounts))\n```\n\n上記の例では、どちらの方式でも誤差は 1 円以内に収まる。この 2 つのどちらを選ぶかは、契約に書いておく必要がある。\n---\n",
+  "checks": [
+   {
+    "id": "relation-connective",
+    "rule": "both.name-the-relation",
+    "kind": "judge",
+    "text": "Does the sentence that says the rules to keep in maintenance can also be delegated once written down open with a connective that marks it as following from the evidence before it (であれば, だとすれば, それなら, したがって, つまり or similar), or is it joined to that evidence by another word that names the inference?"
+   },
+   {
+    "id": "category-term-kept",
+    "rule": "both.define-and-keep-terms",
+    "kind": "judge",
+    "text": "Does the output place the rounding rule in the 5.2 category under that category's name 人間が決める (for example 丸め方は、5.2 節の分類では「人間が決める」規則である), rather than describing it with a new label such as チームで合意するもの?"
+   }
+  ],
+  "probe": [
+   "trope-negative-parallelism"
+  ]
+ },
+ {
+  "id": "jtw-pers-blog-rounding",
+  "skills": [
+   "writing-personal",
+   "writing-ja"
+  ],
+  "source": "jtw SKILL.md (gist 8f2d576) §1 L15 (JTW-1.1 調査、報告、検証、評価 in one paragraph), §5 L80 (JTW-5.2a-b punchline paragraphs, ここまでわずか数十秒。), §5 L86 (JTW-5.8 AではなくBだった), §4 L73 (JTW-4.9 難しいです, 多いです; 重要です exempt), §6 L101 (JTW-6.6 非常に, 極めて, 大いに), §1 L25 (JTW-1.11 何もかもが解決するわけではない), §2 L33 (JTW-2.1 keep a grounded hedge)",
+  "prompt": "次の下書きは、私の個人ブログの記事です。公開できるように推敲してください。です・ます体のまま、私が書いたように聞こえるようにし、事実（数値、起きたこと）は変えないでください。推敲後の記事だけを出力してください。\n\n---\n# 家計簿アプリの 1 円のずれを、コーディングエージェントに直してもらった\n\n週末に作っている家計簿アプリで、月ごとの合計が 1 円ずれる不具合が出ました。\n\n原因を探すのは難しいです。金額を計算するコードが 3 か所に散らばっていて、どこで丸めているのかを自分でも覚えていませんでした。そこでコーディングエージェントに調査を頼むと、エージェントは 3 か所のコードを読み、1 か所だけ丸める段階が違うことを見つけて報告してくれました。報告は極めて正確で、直す差分も付いていました。差分を当ててテストを走らせると、全部通りました。非常に助かりましたし、大いに感心しました。\n\nここまでわずか数十秒。\n\n問題はコードではありませんでした。\n\n丸め方の決まりがどこにも書かれていなかったことでした。\n\nエージェントの速さではなく、仕様の有無でした。エージェントの賢さではなく、私の書き方でした。\n\nそれ以来、丸め方の決まりを README に 3 行で書いています。書くのは簡単です。ただ、エージェントへの頼み方で迷うことは多いです。これで何もかもが解決するわけではありません。README に書いた決まりを、エージェントが毎回読むとは限らないからです。\n\nたぶん、同じことは仕事のコードでも起きているのだと思います。\n---\n",
+  "checks": [
+   {
+    "id": "one-topic",
+    "rule": "both.one-topic-per-paragraph",
+    "kind": "judge",
+    "text": "In the output, are the agent's investigation and report on one side, and the test run that verified the fix on the other, in different paragraphs (rather than in one long paragraph that also holds the request and the author's reaction)?"
+   },
+   {
+    "id": "climax-taigen-kept",
+    "rule": "both.state-dont-stage",
+    "kind": "present",
+    "text": "数十秒。"
+   },
+   {
+    "id": "no-i-adj-desu",
+    "rule": "ja.i-adjective-desu",
+    "kind": "judge",
+    "text": "Does every sentence in the output avoid ending with an i-adjective directly followed by です (難しいです, 多いです, or any other, including 〜ない, 〜たい, 〜やすい, 〜にくい and past 〜かったです forms)? Na-adjectives and nouns followed by です (簡単です, 重要です, 正確でした) do not count."
+   },
+   {
+    "id": "na-adj-kept",
+    "rule": "ja.i-adjective-desu",
+    "kind": "present",
+    "text": "簡単です|簡単でした"
+   },
+   {
+    "id": "no-intensifiers",
+    "rule": "both.cut-needless-words",
+    "kind": "absent",
+    "text": "非常に|極めて|大いに"
+   },
+   {
+    "id": "no-vague-negation",
+    "rule": "both.show-not-label",
+    "kind": "judge",
+    "text": "Does the output avoid the vague negation これで何もかもが解決するわけではありません, either naming the specific proposition that does not hold (for example 「README に書けばエージェントが毎回その決まりに従う」わけではありません) or keeping only the specific limit (the agent does not necessarily read the README rules every time)?"
+   },
+   {
+    "id": "guess-kept",
+    "rule": "both.keep-certainty",
+    "kind": "judge",
+    "text": "Does the output keep the author's closing remark that the same thing probably happens in code at work as a guess (たぶん, と思います, かもしれません or similar), not as a fact?"
+   }
+  ],
+  "probe": [
+   "trope-staged-emphasis",
+   "trope-negative-parallelism",
+   "trope-generic-caution"
+  ]
+ },
+ {
+  "id": "jtw-pers-essay-shutdown",
+  "skills": [
+   "writing-personal"
+  ],
+  "source": "jtw SKILL.md (gist 8f2d576) §2 L38-L39 (JTW-2.2-2.3 lumping and single-cause reduction), §8 L140 (JTW-8.8 meta framing), §8 L138 (JTW-8.6 それ自体はよいことである), §5 L84 (JTW-5.6 stacked consequences), §5 L79 (JTW-5.1 ここには〜が潜んでいる), §2 L34 (JTW-2.1 keep the author's own uncertainty)",
+  "prompt": "次は note に載せる私のエッセイの下書きです。推敲して公開できる形にしてください。だ・である体のまま、私が書いたように聞こえるようにし、事実（数値、起きたこと）は変えないでください。推敲後のエッセイだけを出力してください。\n\n---\n# 個人開発の読書記録アプリを畳んだ\n\n3 年続けた個人開発の読書記録アプリを、先月畳んだ。利用者は最盛期で 1,200 人、最後は 300 人ほどだった。\n\nここには、個人開発の本質的な問題が潜んでいる。畳んだ理由を一言で言えば、時間の問題である。\n\n理由は三つあった。去年、子どもが生まれて、開発に使える時間が週 10 時間から 2 時間に減った。同じ頃、書誌情報の API の仕様が変わり、本の情報の取り込みを作り直す必要が出た。作り直しには半年ほどかかる見込みだった。さらに、サーバー代が月 8,000 円まで上がり、広告の収入では賄えなくなった。三つとも、同じ一つの問題が形を変えて現れたものだった。\n\nここまでの話には自然な続きがある。誰かに引き継げばよかったのではないか、という発想である。引き継ぎ先は探したが、見つからなかった。\n\n利用者には 3 か月前に告知し、データの書き出し機能を用意した。それ自体はよいことである。\n\n続けていれば、作り直しの半年の間に不具合が増え、利用者の読書記録が壊れ、問い合わせに追われ、家族との時間もなくなっていただろう。\n\n畳んだのが正しかったのかは、まだ分からない。\n---\n",
+  "checks": [
+   {
+    "id": "causes-separated",
+    "rule": "both.name-every-cause",
+    "kind": "judge",
+    "text": "Does the output present the three reasons for shutting the app down as separate reasons (development time fell from 10 to 2 hours a week after the child was born; the book-data API change meant rebuilding the import, about half a year of work; server costs rose to 8,000 yen a month and ad income no longer covered them), without reducing them to one cause such as 時間の問題 or calling them 同じ一つの問題?"
+   },
+   {
+    "id": "idea-stated-directly",
+    "rule": "both.no-empty-previews",
+    "kind": "judge",
+    "text": "Does the output state the idea of handing the app over to someone else directly, as a statement or as a question (for example 誰かに引き継げばよかったのではないか), without the meta frames ここまでの話には自然な続きがある and 〜という発想である?"
+   },
+   {
+    "id": "no-stacked-consequences",
+    "rule": "both.facts-not-praise",
+    "kind": "judge",
+    "text": "Does the output avoid stacking the escalating hypothetical consequences of keeping the app (more bugs during the half-year rebuild, users' reading records breaking, being swamped by inquiries, losing time with the family), so that at most one of them, or one plain statement of the risk, remains?"
+   }
+  ],
+  "probe": [
+   "trope-staged-emphasis"
+  ]
+ },
+ {
+  "id": "jtw-tech-agent-scene",
+  "skills": [
+   "writing-tech"
+  ],
+  "source": "jtw SKILL.md (gist 8f2d576) §4 L65 (JTW-4.1 特定され、判明した), §4 L66 (JTW-4.2 入社2年目のエンジニアが), §3 L61 (JTW-3.8 時刻, HTTP ステータス, カバレッジ率), §3 L55 (JTW-3.2 仕様書, 金額計算のユーティリティ), §4 L68-L69 (JTW-4.4-4.5 AI, ツール), §8 L135 (JTW-8.3 このような作業は、ほぼ完全に任せられる)",
+  "prompt": "次は技術記事の一節で、例を示す節の原稿です。この節の問いは「この種の修正をエージェントに任せられるか」です。記事の読者はこのリポジトリを見られません。推敲して、そのまま公開できる形にしてください。だ・である体を保ち、節の問いに関わる事実は変えないでください。見出しは変えないでください。推敲後の節だけを出力してください。\n\n---\n## 例：丸め誤差の修正を任せる\n\n入社 2 年目のエンジニアの田中さんが、請求書の合計が明細の合計と 1 円ずれるという報告を受けたとしよう。田中さんは、コーディングエージェント（以下、エージェント）に調査を頼んだ。\n\n依頼が送られたのは 14:03:12 だった。リポジトリが調査され、`src/billing/round_util.py` の `round_half_up_v2()` だけが明細ごとに丸めていることが特定され、`docs/spec/billing-2024.md` の記述と食い違っていることが判明した。14:03:52 に、AI は修正の差分と、`tests/billing/test_round_util.py` に追加したテストを報告した。報告には、CI の API が HTTP 200 を返したこと、テストがすべて通ったこと、カバレッジが 87.3% から 87.6% に上がったことが並んでいた。ここまでわずか数十秒。田中さんは差分を読み、仕様書の記述と合っていることを確かめてマージした。\n\nまとめると、ツールは不具合を調査し、原因を特定し、修正とテストを書き、田中さんはそれを確かめてマージした。このような作業は、ほぼ完全に任せられる。\n---\n",
+  "checks": [
+   {
+    "id": "no-persona",
+    "rule": "both.be-specific",
+    "kind": "absent",
+    "text": "入社|2\\s*年目|二年目"
+   },
+   {
+    "id": "no-decorative-precision",
+    "rule": "both.be-specific",
+    "kind": "judge",
+    "text": "Does the output leave out the decorative precision of the log and the agent's report: the clock times (14:03:12, 14:03:52), the HTTP status (HTTP 200) and the coverage figures (87.3%, 87.6%)?"
+   },
+   {
+    "id": "needed-specifics-kept",
+    "rule": "both.be-specific",
+    "kind": "judge",
+    "text": "Does the output keep the details the section's question needs: that the agent found the cause (one place rounded per line item, against the spec), that it reported both a fix and a new test, that all tests passed, that this took only tens of seconds (数十秒, 40 秒 or similar), and that the engineer read the diff, checked it against the spec and merged it? Answer yes only if all five are kept."
+   },
+   {
+    "id": "no-unused-identifiers",
+    "rule": "tech.identifiers-when-used",
+    "kind": "absent",
+    "text": "round_util|round_half_up_v2|billing-2024|test_round_util"
+   }
+  ],
+  "probe": [
+   "trope-unstable-terms",
+   "trope-restating-close",
+   "trope-hidden-actor"
+  ]
+ },
+ {
+  "id": "jtw-tech-book-names-terms",
+  "skills": [
+   "writing-tech",
+   "writing-ja"
+  ],
+  "source": "jtw SKILL.md (gist 8f2d576) §4 L71 (JTW-4.7 Lehman, Bainbridge; katakana for eponymous concepts), §4 L67 (JTW-4.3 あなた, 〜としよう), §4 L72 (JTW-4.8 経路), §1 L22 (JTW-1.8a-e contrast definition: same predicate form, 〜だと説明した, explicit contrast connective, inherited subject), §4 L69 (JTW-4.5 K and the retreat to 文脈)",
+  "prompt": "次は技術書の第 6 章の一節の原稿です。推敲して、そのまま入稿できる形にしてください。だ・である体を保ち、事実と主張は変えないでください。見出しは変えないでください。推敲後の節だけを出力してください。\n\n---\n## 6.2 保守を任せたあとに残るもの\n\nソフトウェアの保守については、レーマンが、使われ続けるプログラムは変更され続け、変更のたびに複雑になると指摘した。保守を自動化すると、別の問題も生じる。ベインブリッジは、自動化が進むほど、例外の処理に必要な人間の技能が衰えると述べた。組織の構造がシステムの構造に写るというコンウェイの法則も、保守を担うのが人間からエージェントに替わったあとまで成り立つかは分からない。\n\n6.1 節では、K はエージェントが変更のときに読む文書の集まりだと説明した。L は、レビュアーが変更を確かめるときに読むためのものである。L は、エージェントには読ませない。\n\nあなたがエージェントに保守を任せているとしよう。丸め方は仕様書に書かれているが、例外の規則はコードのコメントにしか書かれていない。\n\nあなたは、K に書かれていない規則をエージェントに守らせることはできない。エージェントは、文脈に書かれたことしか守れないからである。\n\n不具合が起きてから開発者が気付くまでには、監視、チケット、エージェント、レビューという経路がある。経路が長いほど、開発者が不具合に気付く機会は減る。\n---\n",
+  "checks": [
+   {
+    "id": "original-spelling",
+    "rule": "ja.person-names",
+    "kind": "absent",
+    "text": "レーマン|ベインブリッジ"
+   },
+   {
+    "id": "no-anata",
+    "rule": "ja.no-anata",
+    "kind": "judge",
+    "text": "Apart from the scene-setting sentence that ends in 〜としよう (あなたがエージェントに保守を任せているとしよう), does the output avoid calling the reader あなた, using a role name such as 開発者 or 読者, or no subject, instead?"
+   },
+   {
+    "id": "contrast-connective",
+    "rule": "both.name-the-relation",
+    "kind": "judge",
+    "text": "Is the contrast between K and L marked with a connective such as 一方, それに対して, これに対し or 対して?"
+   }
+  ],
+  "probe": [
+   "trope-unstable-terms"
+  ]
+ }
+]

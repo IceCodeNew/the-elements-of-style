@@ -1,0 +1,553 @@
+[
+ {
+  "id": "deslop-zh-tech-cache-article",
+  "skills": [
+   "writing-tech"
+  ],
+  "source": "ninehills deslop-zh SKILL.md §3.3 L91-92 (example 3), §3.1 L71-74, §3.4 L95, §3.12 L157, §3.13 L164, §二 L59; talk-normal prompt.md L22 (necessary-condition exception, as the kept conclusion)",
+  "prompt": "下面是一篇技术博客文章中的一节草稿，讲商品详情页延迟升高的一次排查。修改它，准备发布：保留所有事实、数字和结论，只改写法。只输出修改后的这一节。\n\n## 商品详情页的延迟问题\n\n真拆开看，这次延迟升高有两个原因。这背后是同一个变化：大促前我们把商品详情的缓存过期时间从 30 分钟改成了 5 分钟。\n\n第一个原因是缓存击穿。热门商品的缓存一过期，几百个请求同时打到 MySQL，数据库连接池在 2 秒内被占满。我们先把连接池从 100 加到 200，2 秒内照样被占满。数据告诉我们，这类请求集中在 3% 的商品上。监控数据显示，过期时间改动后，命中率从 95% 降到了 78%。通过以上分析，可以看出，缓存击穿是延迟升高的一个重要原因。\n\n第二个原因是锁竞争。逻辑很清晰：同一个商品只让一个请求回源，所以我们加了一个进程内的互斥锁。性能瓶颈已经不是 I/O，而是锁竞争：压测时 CPU 有 40% 的时间花在等锁上。\n\n真正关键的问题是锁的粒度。讨论了两轮，决策浮现了：先改锁，再调过期时间。更干净：把全局锁换成按商品 ID 分段的 64 把锁。改完以后，服务扛住了 3 万 QPS 不崩，连接池也不爆了，p99 延迟从 800 ms 降到了 120 ms。线上 p99 仍有 260 ms，因为线上请求还会经过网关和鉴权。\n\n到这里，我们已经看到了缓存击穿和锁竞争这两个问题，以及它们的解决办法。由此可见，命中率低于 80% 时，只给数据库加连接数没有用，要先把过期时间改回去。",
+  "checks": [
+   {
+    "id": "recap-cut",
+    "rule": "both.say-it-once",
+    "kind": "judge",
+    "text": "Does the output avoid sentences that only restate what the section already said, such as 「通过以上分析，可以看出，缓存击穿是延迟升高的一个重要原因」 or 「到这里，我们已经看到了……这两个问题，以及它们的解决办法」?"
+   },
+   {
+    "id": "plain-effect",
+    "rule": "tech.plain-effect",
+    "kind": "absent",
+    "text": "扛住|不崩|不爆"
+   }
+  ],
+  "probe": [
+   "trope-hidden-actor"
+  ]
+ },
+ {
+  "id": "deslop-zh-pers-book-note",
+  "skills": [
+   "writing-personal"
+  ],
+  "source": "talk-normal regressions/rule-17-negation-frame.md L7 (test input), L15, L33-36, L42-46; talk-normal prompt.md L8-15, L22-23; ninehills deslop-zh SKILL.md §3.3 L83-89 (examples 1-2), §3.4 L95, §3.5 L102-103",
+  "prompt": "用中文为我的读书博客写一篇 400 到 600 字的读书笔记：先概括这本书的观点，再写我的看法。只使用下面的事实。只输出文章，从标题开始。\n\n事实：\n- 书名《少数派》，作者林岚做了十二年早期投资。\n- 书的核心论点：能把反常识的想法做成公司的人很少，因为这需要五种特质同时很高：开放性、尽责性、低随和性（敢于和多数人唱反调）、高智商、长期承受压力的能力。\n- 作者认为，单看每一项，具备的人都不算少；五项同时很高的人极少。\n- 书里用了 14 位创始人的访谈作例子，其中 9 位做的是企业软件。\n- 书的腰封写着：“看懂这五项，就能挑出下一个独角兽。”\n- 我的看法：这五项是一份筛选创始人的清单，可以帮投资人少看漏人；但它不能当投资信号用，书里没有给出任何按这五项挑出来的公司后来的回报数据。\n- 我对“低随和性”这一项拿不准：我见过的几位做成事的创始人都很好相处，但我也说不清这是不是因为我只见过他们好相处的一面。\n- 第三章讲创始人怎么熬过融资失败的那两年，是我觉得全书最好看的一章。我打算推荐给两位刚开始做早期投资的朋友。",
+  "checks": [],
+  "probe": [
+   "trope-negative-parallelism",
+   "trope-restating-close"
+  ]
+ },
+ {
+  "id": "deslop-zh-pers-market-reply",
+  "skills": [
+   "writing-personal"
+  ],
+  "source": "talk-normal README.md L73-525 (GPT-5.4 before: L75, L77, L81-83, L126, L154, L240, L257, L471-475, L520-523, bold throughout) and L528-617 (after, as the list of facts); README_CN.md L73-617 (same text); talk-normal prompt.md L32-33",
+  "prompt": "朋友在微信群里发了一段英文交易员评论，问“这段话到底在说什么”。下面是我的回复草稿。帮我改成可以直接发出去的回复：保留所有判断、数字和把握程度，不要加新内容。只输出改写后的回复。\n\n这段话本质上是在讲：市场对“海峡很快恢复通行”这件事反应过头了。我给你分层解读。\n\n作者的核心观点是：海峡会逐步恢复通行，但冲突会拖得比较久，因为伊朗、美国、海湾国家和以色列之间关系复杂。这是全文最核心的一句。\n\n为什么原油曲线会变平？因为近月合约跌了 15%，远月的 CLZ6 却收涨了，说明市场在交易“最坏情况缓解，但风险没消失”。\n\n作者认为，今天石化、化肥、油轮、炼油这些股票**跌得太过头**，**很可能在本周内收复**。这是全文另一个关键句。\n\n他还说，从 6 个月看，战争通常对股市**偏利多**；**只有海峡被长期关闭**才会真正伤害股市。这句话有点反直觉，但他的意思是：油价全年在 90 美元而不是 70 美元，对股市不算大事。\n\n他看好上一篇文章里的能源安全组合，举了 Verbio 的例子：一天跌了 16%，他觉得是很容易的买点。他还提醒，上周的预测过度悲观，现在又开始出现过度乐观的预测；最后的建议是不要每天跟着新闻改观点。\n\n如果用更通俗的话总结，这段话可以翻成一句大白话：市场前几天太害怕，现在又有点太乐观，别每天跟着新闻改主意。\n\n如果你愿意，我还可以继续帮你做两件事之一：\n1. 把这段话翻成更自然的中文全文\n2. 提炼成可执行的交易思路清单",
+  "checks": [
+   {
+    "id": "answer-first",
+    "rule": "both.answer-first-in-replies",
+    "kind": "judge",
+    "text": "Does the first sentence of the reply state what the commentary says (for example that the market overreacted to the idea that the strait will reopen quickly), with no label or announcement before it such as 这段话本质上是在讲：, 我给你分层解读, 作者的核心观点是： or 核心是一句话：?"
+   },
+   {
+    "id": "no-rewording",
+    "rule": "both.say-it-once",
+    "kind": "absent",
+    "text": "通俗的话|大白话|翻成人话|换句话说|简单来说|说人话"
+   },
+   {
+    "id": "no-offer",
+    "rule": "both.answer-first-in-replies",
+    "kind": "absent",
+    "text": "如果你愿意|我还可以|如果你告诉我|我下一步可以|需要的话我(?:还)?可以"
+   }
+  ],
+  "probe": [
+   "trope-staged-emphasis",
+   "trope-bold-labels",
+   "trope-preamble",
+   "trope-chat-pleasantries"
+  ]
+ },
+ {
+  "id": "deslop-zh-tech-paper-abstract",
+  "skills": [
+   "writing-tech"
+  ],
+  "source": "ninehills deslop-zh SKILL.md §4.5 L235-241, §3.7 L121-122, L126; §二 L59 (数据表明 guard, audit DZ-2.13)",
+  "prompt": "下面是一篇流行病预测论文的中文摘要草稿。修改它的写法，准备投稿：保留所有结果、数字和限定，不要添加原文没有的信息或文献。只输出修改后的摘要。\n\n长期以来人们认识到，集成预测通常优于单一模型。有研究者指出，按历史表现加权的集成能进一步提高准确度，这一范式转变具有深远意义，是流感预测的转折点。本研究评估了 2022—23 年流感季的 54 个州级预测。据观察，预测提前量越长，模型表现越差：提前量每增加一周，平均加权区间评分（WIS）约上升 15%。结果表明，按历史表现加权的集成只在 54 个州中的 21 个州优于等权集成。依据多家媒体报道，州级流感预测已在公共卫生决策中具一定能见度。尽管加权集成有其意义，但其面临的挑战有：本研究只覆盖一个流感季；各模型的训练数据不统一。",
+  "checks": [
+   {
+    "id": "finding-kept",
+    "rule": "both.name-the-actor",
+    "kind": "judge",
+    "text": "Does the output present the study's measured results (WIS rising by about 15% per week of lead time; the weighted ensemble beating the equal-weight ensemble in only 21 of the 54 states) as findings of this study, without crediting them to a person or group that the draft does not name (such as 作者, 研究团队, or 我们发现 in place of 结果表明)? A frame such as 结果表明 or 结果显示 counts, and so does stating the results right after the sentence on what 本研究 evaluated."
+   }
+  ],
+  "probe": [
+   "trope-borrowed-authority",
+   "trope-inflated-stakes",
+   "trope-hidden-actor"
+  ]
+ },
+ {
+  "id": "deslop-zh-tech-search-article",
+  "skills": [
+   "writing-tech"
+  ],
+  "source": "ninehills deslop-zh SKILL.md §4.2 L198, L203; §3.11 L154; §二 L53; §3.12 L160; §3.4 L96; §3.1 L71; §4.6 L251; §4.1 L188",
+  "prompt": "下面是一篇技术文章中的两节草稿，读者是做后端开发的同事。修改它的写法，准备发布：保留所有事实和数字，不要添加新内容。只输出修改后的文字。\n\n## 为什么要加向量检索\n\n关键词检索只能匹配字面。说白了，搜“部署失败”找不到写着“发布报错”的笔记。你会发现，用户最常搜的 20 个词里，有 7 个都有这个问题，谁能想到会这么多。工程上的现实比这些数字难看：这 7 个词占了全部搜索的 35%。\n\n上面这些讲的是为什么要改，下面我们看怎么改。\n\n## 实现\n\n不懂技术的同学可能会问 embedding 是什么。你必须先明白：embedding 是一串数字，意思相近的文本，这串数字也相近。\n\n我们在写入笔记时用同一个模型算出 embedding，也就是一串表示文本意思的数字，存进 SQLite 的向量扩展表。查询时，把用户的输入也转成 embedding，再取余弦相似度最高的 20 条。你可以看到，5 万条笔记时，一次检索从 1.8 秒降到了 0.2 秒。这说明新方案让检索快了很多。这本身就是一个不小的改进。\n\n为了不重复计算，我们把每条笔记的向量放进 cache，cache 的 key 是笔记内容的哈希值，笔记改动后旧的 cache 会失效。很多人以为这一层离不开 Redis，其实进程内的 LRU 就够用：5 万条笔记的向量只占 300 MB 内存。",
+  "checks": [
+   {
+    "id": "cache-term",
+    "rule": "tech.established-terms",
+    "kind": "absent",
+    "text": "(?<![A-Za-z_`（(])cache(?![A-Za-z_`）)])"
+   }
+  ],
+  "probe": [
+   "trope-staged-emphasis"
+  ]
+ },
+ {
+  "id": "deslop-zh-pers-travel-post",
+  "skills": [
+   "writing-personal"
+  ],
+  "source": "ninehills deslop-zh SKILL.md §3.7 L122-126, §五 L281",
+  "prompt": "下面是我的旅行博客草稿。改写它，准备发布：保留我的经历、引语和看法，不要添加新的事实或信息来源。只输出改写后的文章。\n\n## 青石镇的周末\n\n上个月我在青石镇住了两晚。老街坐落于镇子东边，全长 800 米，两边是清末留下来的木板铺面，充分展现了江南水乡的文化底蕴和自然之美。\n\n街上的店大多卖桂花糕和竹编，反映了当代中国社会的变迁。依据多家媒体报道，青石镇近年在旅游业中具一定能见度。据业内人士指出，这里周末的游客是平日的三倍。有评论认为，老街的修缮做得过了头。现在是青石镇发展的关键时刻。\n\n我在一家开了四十年的茶铺坐了一下午。老板说：“现在的客人大多拍了照就走，很少有人坐下来喝完一壶。”\n\n尽管青石镇有其意义，但其面临的挑战有：老街的铺面有一半租给了外地商户，镇上的年轻人大多去了县城工作。\n\n我下次还想在淡季去一次，看看平日的老街。",
+  "checks": [
+   {
+    "id": "no-praise",
+    "rule": "both.facts-not-praise",
+    "kind": "absent",
+    "text": "底蕴|自然之美|文化遗产|充分展现|充分体现|关键时刻"
+   },
+   {
+    "id": "problems-plain",
+    "rule": "both.facts-not-praise",
+    "kind": "judge",
+    "text": "Does the output state the two problems (half the shops on the old street are rented to outside merchants; most young people have left for jobs in the county town) as plain facts, without the 「尽管……有其意义，但其面临的挑战有」 frame and without added reassurance or outlook?"
+   }
+  ],
+  "probe": [
+   "trope-significance-tails",
+   "trope-promotional",
+   "trope-borrowed-authority"
+  ]
+ },
+ {
+  "id": "deslop-zh-pers-rewrite-blog",
+  "skills": [
+   "writing-personal"
+  ],
+  "source": "ninehills deslop-zh SKILL.md §3.2 L79-80, §3.6 L110, §3.5 L102-103, §4.2 L198 (其实 that marks doubt); talk-normal prompt.md L23 (一句话收尾)",
+  "prompt": "下面是我的个人博客草稿。帮我改得自然一些，准备发布：保留我的经历、数字和看法，不要替我添加新的感想或建议。只输出改写后的文章。\n\n## 把部署脚本从 Bash 改成 Go\n\n先说结论：我把团队的部署脚本从 Bash 改成了 Go，前后用了三周。这次想把这个改动的来龙去脉讲清楚。\n\n原来的脚本有 1200 行，其中 400 行在处理参数。每加一个参数，要在三个地方改代码；最近半年有 4 次部署失败，都是因为参数顺序写错了。\n\n改成 Go 以后，参数解析交给了 cobra 库，主程序剩下 300 行。其实我一开始并不确定值不值得，我担心同事不熟悉 Go。后来两位同事各花了一个下午读懂了代码，到现在还没有因为参数出过错。\n\n一句话收尾：重写让脚本短了四分之三，也不再因为参数出错。这其实和产品设计一样：好的抽象不是为了炫技，而是为了让使用者少犯错。",
+  "checks": [
+   {
+    "id": "no-moral",
+    "rule": "pers.end-on-the-point",
+    "kind": "judge",
+    "text": "Does the post end on its point (the rewrite made the script about three-quarters shorter, and parameter errors stopped) without a general moral or comparison after it, such as 「这其实和产品设计一样：好的抽象……」?"
+   }
+  ],
+  "probe": [
+   "trope-restating-close",
+   "trope-negative-parallelism"
+  ]
+ },
+ {
+  "id": "deslop-zh-pers-reply-comments",
+  "skills": [
+   "writing-personal"
+  ],
+  "source": "ninehills deslop-zh SKILL.md §3.12 L157-158; talk-normal prompt.md L23-24 (好问题 as \"Great question\", 首先我们需要, 让我们一起来看看), L32-33",
+  "prompt": "一位读者在我的博客文章（讲我把家里的 NAS 从群晖换成自己装的 TrueNAS）下面留了评论。下面是评论和我的回复草稿。把回复改得像正常人说话，保留我的意思和所有事实。只输出改写后的回复。\n\n读者评论：“两个问题：1. 你说 TrueNAS 更省电，有数据吗？2. 自己装的机器坏了没人保修，你不担心吗？”\n\n回复草稿：\n\n好问题！你这几条我都接住了，这两个点都很锋利。让我们一起来看看。\n\n首先我们需要说第一条。我用插座电量计测过：群晖空闲时 28 瓦，新机器空闲时 19 瓦。不过这只是空闲功耗，我没测过满载。翻成人话就是：平时开着，新机器每小时少用 9 瓦。\n\n第二条，你这个假设把我打穿了。我确实担心过，所以买了三年延保的硬盘，主板坏了就只能自己换。\n\n如果你愿意，我还可以把测量方法写成一篇文章；如果你告诉我你的 NAS 型号，我就能帮你估算能省多少电。希望对你有帮助！",
+  "checks": [
+   {
+    "id": "answer-first",
+    "rule": "both.answer-first-in-replies",
+    "kind": "judge",
+    "text": "Does the reply open with the answer to the first question (the idle power measurements, 28 W versus 19 W), with nothing before it except at most a short thanks? 好问题, praise of the questions, and lead-ins such as 让我们一起来看看 or 首先我们需要 fail."
+   }
+  ],
+  "probe": [
+   "trope-chat-pleasantries"
+  ]
+ },
+ {
+  "id": "deslop-zh-tech-arch-note",
+  "skills": [
+   "writing-tech"
+  ],
+  "source": "ninehills deslop-zh SKILL.md §七 example 3 L327-330, §二 L62; talk-normal prompt.md L11-12 (Y，而不是X), L22 (chained 不是A，不是B，而是C; necessary-and-sufficient exception)",
+  "prompt": "下面是一份架构决策记录的草稿。修改它的写法：保留所有事实、理由和被否决的方案。只输出修改后的文字。\n\n## 决定：把订单模块拆成独立服务\n\n拆分前，组里普遍认为服务拆得越小越好。微服务架构的价值不在\"微\"，而在于边界清晰：订单和库存各有一个团队，接口由双方约定。\n\n我们拆服务不是为了赶时髦，也不是为了写进简历，而是为了让两个团队能各自发布。现在两个团队共用一个发布窗口，每周只能发一次。\n\n我们讨论过两种拆法：按业务边界拆，和按技术分层拆（接口层、逻辑层、数据层各一个服务）。订单服务按业务边界拆分，而不是按技术分层拆分，因为按分层拆时，一个需求仍要改三个服务。\n\n接口有契约测试，是两个服务能独立部署的必要条件，但不是充分条件：两个服务还要用各自的数据库。\n\n- **发布频率**：从每周一次变成每天可以发布。\n- **数据库**：订单库和库存库在 6 月底前分开。\n- **风险**：分库期间要双写两周。",
+  "checks": [],
+  "probe": [
+   "trope-negative-parallelism",
+   "trope-bold-labels"
+  ]
+ },
+ {
+  "id": "deslop-zh-tech-k8s-blog",
+  "skills": [
+   "writing-tech",
+   "writing-zh"
+  ],
+  "source": "ninehills deslop-zh SKILL.md §七 example 1 L304-312, §3.6 L106-110, §4.5 L239, §一 L22, §3.8 L132, §4.1 L182",
+  "prompt": "下面是一篇技术博客的开头和三个小节的草稿。修改它，准备发布：保留所有事实和数字，只改写法，不要添加草稿里没有的经历、数字或结论。只输出修改后的文字。\n\n# 我们在 Kubernetes 上踩过的坑\n\n众所周知，随着云原生技术的不断发展，Kubernetes 已经成为了容器编排领域的事实标准。值得注意的是，虽然 K8s 本身功能强大，但在实际落地过程中，很多同学会发现它并不是银弹。本文将从多个维度深入探讨我们团队落地 Kubernetes 时遇到的问题，希望能为正在考虑或已经踏上云原生之旅的各位带来一些启发。\n\n## etcd 写延迟\n\n随着集群节点从 20 台增加到 200 台，etcd 的写延迟从 5 毫秒涨到了 40 毫秒。我们把 etcd 挪到了单独的 NVMe 盘上，写延迟回到了 8 毫秒。\n\n## 镜像拉取\n\n在当今数字化浪潮中，镜像仓库是交付链路的重要一环。我们有 3 个集群共用一个镜像仓库，发布高峰时拉取一个 2 GB 的镜像要 6 分钟。我们给每个集群加了一个拉取缓存，现在同一个镜像只从主仓库拉一次。\n\n## 服务网格\n\n近年来，服务网格受到了越来越多的关注。在当今日新月异的技术领域中，我们也试过 Istio：每个 Pod 多一个 sidecar，内存多占 60 MB。我们只在两个需要双向 TLS 的服务上保留了它。\n\n希望本文能给大家带来启发，让我们共同期待云原生更美好的明天。",
+  "checks": [
+   {
+    "id": "openers-cut",
+    "rule": "zh.background-opener",
+    "kind": "absent",
+    "text": "随着[^。，\\n]{0,12}(?:不断)?发展|在当今|数字化浪潮|日新月异|近年来[^。\\n]{0,20}越来越多的关注"
+   },
+   {
+    "id": "no-invented-facts",
+    "rule": "both.claims-match-evidence",
+    "kind": "judge",
+    "text": "Does the output avoid adding experiences, numbers or conclusions that the draft does not contain, for example how long the team has run Kubernetes in production, a count of problems (五个坑), a 止损方案 for each, or a summary claim such as Kubernetes moving complexity elsewhere?"
+   }
+  ],
+  "probe": [
+   "trope-borrowed-authority",
+   "trope-empty-emphasis",
+   "trope-promotional",
+   "trope-preamble",
+   "trope-generic-caution",
+   "trope-posture-verbs"
+  ]
+ },
+ {
+  "id": "deslop-zh-tech-api-quickstart",
+  "skills": [
+   "writing-tech",
+   "writing-zh"
+  ],
+  "source": "ninehills deslop-zh SKILL.md §七 example 2 L314-322, §3.7 L113-118 (keep 行业固定术语), §3.7 L123, §4.1 L182, L189-190, §3.9 L142, §五 L270, §3.10 L150, §一 L30",
+  "prompt": "下面是推荐服务 API 文档的开头草稿，读者是接入方的开发者。修改它，准备发布：保留所有事实，代码、路径和字段名保持原样，不要添加草稿里没有的功能或章节。只输出修改后的文字。\n\n# 推荐 API\n\n你好！欢迎使用我们的推荐 API 服务！我们的平台提供领先的、强大的推荐能力，能够赋能您的业务，助力您在数字化转型的赛道上实现弯道超车。推荐 API 上线一年，调用量超过 10 亿次，充分彰显了平台的技术实力。\n\n推荐 API 基于协同过滤，根据用户的历史行为返回推荐商品。接口是 `GET /v2/recommendations?user_id=<ID>&limit=<N>`，`limit` 默认 20，最大 100。\n\n每个响应都带有 `trace_id` 字段，用于链路追踪：排查问题时，把它发给值班工程师，就能查到这次请求经过的每个服务。我们通过数据沉淀赋能业务闭环，拉通运营和算法团队，打通数据孤岛，对标行业头部，与业务方对齐目标，形成用户心智。\n\n使用前，您需要先进行 API Key 的申请，并对回调地址进行配置。",
+  "checks": [
+   {
+    "id": "point-first",
+    "rule": "tech.point-first",
+    "kind": "judge",
+    "text": "Does the first sentence after the heading say what the API does (returns recommended products based on a user's history, using collaborative filtering)?"
+   }
+  ],
+  "probe": [
+   "trope-promotional",
+   "trope-nominalized-verbs"
+  ]
+ },
+ {
+  "id": "deslop-zh-tech-ops-note",
+  "skills": [
+   "writing-tech",
+   "writing-zh"
+  ],
+  "source": "ninehills deslop-zh SKILL.md §3.9 L141, L143-145 (dash ban narrowed to zh.dash-form; 打电报), §4.6 L247, §3.10 L150",
+  "prompt": "下面是运维值班手册里的一节草稿。修改它的写法：保留所有事实和步骤，命令保持原样。只输出修改后的这一节。\n\n## 磁盘告警\n\n磁盘使用率超过 90% 时，监控会发告警。它会先发到值班群。它会在 10 分钟后打电话给值班人。它会在 30 分钟后升级给组长。\n\n收到告警后按下面的步骤处理：\n\n1. 登录告警里的主机。\n2. 运行 `du -sh /var/log/* | sort -h | tail -5`，找出最大的目录。\n3. 如果最大的是 `/var/log/app`，运行 `logrotate -f /etc/logrotate.d/app`。\n4. 运行 `grep \"No space left\" /var/log/app/error.log`，确认应用是否已经写入失败。\n\n`logrotate` 通常能把使用率降到 70% 以下——数据库主机除外。数据库主机上的大文件在 `/data` 下，不要删除。\n\n很多人以为告警的阈值是 \"95%\"，其实从 3 月起已经改成了 \"90%\"。",
+  "checks": [
+   {
+    "id": "code-quotes-kept",
+    "rule": "zh.full-width-punct",
+    "kind": "present",
+    "text": "grep \"No space left\" /var/log/app/error\\.log"
+   }
+  ]
+ },
+ {
+  "id": "deslop-en-tech-readme",
+  "skills": [
+   "writing-tech"
+  ],
+  "source": "ninehills deslop-en SKILL.md L54 (remarkably), L182, L188, L234, L236, L241, L244, L249, L251-252, L254, L256, L262, L264; skill-deslop references/structures.md L32, L85, L222-223; references/phrases.md L46, L48, L69, L71-72, L76, L122, L215",
+  "prompt": "Edit the README section below for `quillpress`, a static site generator. Keep every fact and all code. Output only the edited section.\n\n## Why quillpress\n\nIn the ever-evolving landscape of web publishing, quillpress is something entirely new: a groundbreaking, indispensable static site generator that streamlines your workflows, decisions, and interactions. Think of it as a Swiss Army knife for your blog. It's worth noting that it is remarkably fast: each build leverages all CPU cores, and it builds 1,000 pages in about 4 seconds on a 2023 laptop. Let's explore what it does.\n\n### Features\n\n- **SEO:** Generates `sitemap.xml` and a canonical link tag for every page.\n- **Themes:** Ships with three themes; the demo site showcases all of them.\n- **Search:** Builds a client-side search index with lunr.js at build time.\n- **Plugins:** Plugins are ordinary packages from the npm ecosystem. They get access to your content — not recklessly, not completely, but enough: they can read every page and its front matter, and they cannot write outside `dist/`.\n\nEvery build runs Markdown → HTML → gzip, so the output folder holds only compressed files.\n\nAdditionally, the plugin API facilitates custom build steps and cultivates a robust community. The project has garnered 2,300 GitHub stars.",
+  "checks": [
+   {
+    "id": "sequence-in-words",
+    "rule": "both.name-the-relation",
+    "kind": "judge",
+    "text": "In running prose, does the output state the build sequence in words (for example: converts Markdown to HTML, then compresses it with gzip) rather than with arrows (→ or ->)? Arrows inside a code block or diagram are fine."
+   }
+  ],
+  "probe": [
+   "trope-forced-figures",
+   "trope-padded-series",
+   "trope-inflated-stakes",
+   "trope-re-worth-noting",
+   "trope-bold-labels",
+   "trope-ornate-words",
+   "trope-empty-emphasis",
+   "trope-promotional",
+   "trope-preamble"
+  ]
+ },
+ {
+  "id": "deslop-pers-reproducibility-essay",
+  "skills": [
+   "writing-personal"
+  ],
+  "source": "skill-deslop references/examples.md Example 9 L101-105 and Example 13 L149-153; references/phrases.md L123, L152, L169, L185, L188; references/structures.md L230-232; ninehills deslop-en SKILL.md L54 (arguably), L158 (Studies show), L170 (I promise), L204",
+  "prompt": "Edit this draft of my blog post. Keep my facts, my admission and my opinions, including how sure I am of them; do not add studies, numbers or experiences that are not in the draft. Output only the edited post.\n\n# Pin your versions\n\nAnd yes, since we're being honest: I've run plenty of analyses where the p-value was borderline and I squinted at it until it cooperated. I want to explore why that impulse is so common. In this post, I'll walk you through what I've learned. Let's dive in.\n\nReproducibility matters. In fact, reproducibility is the most underrated quality in computational biology. When you make your analysis reproducible, you reduce errors. Fewer errors mean more trust. More trust means faster adoption. The lesson? Make it reproducible. Irreproducible analyses are the enemy of science. The best papers are the reproducible ones.\n\nStudies show that most published analyses cannot be rerun. Last year I tried to rerun my own 2019 RNA-seq analysis from the paper's supplement. It took two weeks, and two of the six figures came out different, because a package had changed its default normalization. Version drift is real, I promise. Bad luck, bad tools, bad reviewers: none of them is the real story. The real story is version drift.\n\nThe reality is simpler than people think: write the versions down. Pinning package versions with renv is arguably the cheapest fix I know. To sum up, pin your versions.",
+  "checks": [
+   {
+    "id": "evidence-not-promise",
+    "rule": "pers.specific-admission",
+    "kind": "judge",
+    "text": "Does the output drop 'I promise' and rest the claim about version drift on the author's own evidence (two of the six figures changed after a package changed its default normalization)?"
+   },
+   {
+    "id": "no-invented-details",
+    "rule": "pers.no-invented-reactions",
+    "kind": "judge",
+    "text": "Does the output avoid adding details about the author or the reader that the draft does not contain, such as how exactly the author nudged a p-value (for example by trying one more covariate), that the reader has done the same, or a feeling about it?"
+   }
+  ],
+  "probe": [
+   "trope-repetition",
+   "trope-false-vulnerability",
+   "trope-preamble",
+   "trope-staged-emphasis",
+   "trope-restating-close",
+   "trope-borrowed-authority",
+   "trope-re-reveal-setups",
+   "trope-clarity-claims"
+  ]
+ },
+ {
+  "id": "deslop-sci-grant-aims",
+  "skills": [
+   "writing-tech"
+  ],
+  "source": "ninehills deslop-en SKILL.md Example 4 L313-317, L208-211, L247; skill-deslop references/examples.md Example 3 L29-33 (same text) and Example 11 L125-129; SKILL.md L39, L45; references/phrases.md L74, L77, L213-214",
+  "prompt": "Edit this section of a grant proposal. Keep every fact, number, qualifier and planned activity; do not add datasets, methods, citations or results that are not in the draft. Output only the edited section.\n\n## Significance\n\nIn today's rapidly evolving genomic landscape, single-cell RNA sequencing has fundamentally reshaped how we think about cellular heterogeneity. This paradigm shift has far-reaching implications for our understanding of disease. It has long been recognized that bulk RNA sequencing averages expression across cell types, and researchers have shown that rare cell populations drive drug resistance. This pivotal project will define the next era of cancer genomics.\n\n## Aims\n\nWe will develop novel computational methods. We will apply these methods to large-scale genomic datasets. We will validate our findings using independent cohorts. We will disseminate our tools through open-source repositories. We will train the next generation of computational biologists.\n\nIn Aim 1 we will build a statistical model that flags rare resistant subpopulations in single-cell data from 40 tumor samples collected at our center, and we will run it in the Nextflow workflow framework. In Aim 2 we will test the flagged subpopulations in an independent cohort of 25 tumors. We expect, but have not yet shown, that the model will cut false-positive calls by about half.",
+  "checks": [],
+  "probe": [
+   "trope-inflated-stakes",
+   "trope-ornate-words",
+   "trope-anaphora",
+   "trope-borrowed-authority"
+  ]
+ },
+ {
+  "id": "deslop-en-tech-discussion",
+  "skills": [
+   "writing-tech"
+  ],
+  "source": "skill-deslop references/examples.md Example 4 L41-45, Example 8 L89-93, Example 14 L161-165; references/structures.md L137, L151, L185, L226; references/phrases.md L47, L153; SKILL.md L39 (weighted interval score kept); ninehills deslop-en SKILL.md L210-211",
+  "prompt": "Edit the discussion section below from a forecasting paper. Keep every result, number, limitation and qualifier; do not add facts about FluSight or the field that are not in the draft. Output only the edited section.\n\n## Discussion\n\nIn this section, we summarize our main findings and the limitations of our study. Let's delve into the results. Our equal-weight ensemble ranked first among the 27 FluSight submissions in the 2022-23 season.\n\nIt was observed that model performance degraded at longer forecast horizons. The uncertainty naturally increased as the prediction window expanded: each additional week of lead time added roughly 15% to the mean weighted interval score (WIS). These results emerged from our analysis of 54 state-level forecasts.\n\nIt's worth noting that this creates what might be called the 'calibration paradox': models that are well-calibrated at the national level may be poorly calibrated at the state level, reflecting broader trends in the tension between aggregation and granularity. In our results, the national 90% intervals covered 89% of observations, while the intervals for the 12 smallest states covered 71%.\n\nThe first limitation of our study is the relatively short evaluation window. The second limitation is the lack of a standardized baseline across all forecasters. The third limitation is the potential for overfitting to the specific characteristics of the 2021-22 and 2022-23 seasons.\n\nAs we've seen in this section, our ensemble performed well but has limitations. Despite these challenges, this work contributes meaningfully to the growing body of literature.",
+  "checks": [],
+  "probe": [
+   "trope-unstable-terms",
+   "trope-ordinal-prose",
+   "trope-significance-tails",
+   "trope-inflated-stakes",
+   "trope-repetition",
+   "trope-re-worth-noting",
+   "trope-re-ai-vocab",
+   "trope-preamble",
+   "trope-re-reveal-setups",
+   "trope-hidden-actor"
+  ]
+ },
+ {
+  "id": "deslop-en-pers-pipelines",
+  "skills": [
+   "writing-personal"
+  ],
+  "source": "skill-deslop references/examples.md Example 5 L53-57 and Example 7 L77-81; SKILL.md L37, L125-128 ('most' kept); references/structures.md L31, L71, L248; references/phrases.md L14, L170, L204; ninehills deslop-en SKILL.md L80, L86, L98, L203",
+  "prompt": "Edit this draft of my blog post. Keep my facts and my claims at the strength I make them, and do not add facts, tools or numbers that are not in the draft. Output only the edited post.\n\n# Our pipeline ran on the wrong genome for 41 days\n\nWhat if I told you that most bioinformatics pipelines break in production? The result? Wasted compute and silent errors. The worst part? Nobody checks the intermediate outputs. Here's what most people miss:\n\nLast month we found that our variant-calling pipeline had run for 41 days on the wrong reference genome. A config change had switched it from GRCh37 to GRCh38. Not ten samples. Not fifty. Five hundred. In our lab, no one looked at the intermediate alignment files during those 41 days.\n\nNobody designed this. The reasons are structural. This is genuinely hard, and the implications are significant. The pipeline grew over six years: three people wrote it, each in a different workflow tool, and none of them still works here. They assumed the reference never changes. They assumed someone checks the outputs. They assumed the config is reviewed. Experts argue that this kind of workload creep is common in academic labs.\n\nThis is not a rant; it's a diagnosis. We now compare a checksum of the reference file at the start of every run.",
+  "checks": [
+   {
+    "id": "history-not-distance",
+    "rule": "pers.reader-in-scene",
+    "kind": "judge",
+    "text": "Does the output replace 'Nobody designed this.' with the concrete history that the draft gives (the pipeline grew over six years, written by three people in different workflow tools, none still in the lab), told as the author's account or from the reader's point of view, without adding events or numbers?"
+   }
+  ],
+  "probe": [
+   "trope-staged-emphasis",
+   "trope-negative-parallelism",
+   "trope-false-vulnerability",
+   "trope-borrowed-authority",
+   "trope-unstable-terms",
+   "trope-re-reveal-setups",
+   "trope-anaphora",
+   "trope-vague-declaratives",
+   "trope-sweeping-claims"
+  ]
+ },
+ {
+  "id": "deslop-en-pers-newsletter-api",
+  "skills": [
+   "writing-personal"
+  ],
+  "source": "ninehills deslop-en SKILL.md L48 (Here's the kicker), L54 (arguably), L92, L104, L140, L146, L152, L170; skill-deslop references/examples.md Example 10 L113-117; references/structures.md L45-46, L72-73, L83-84, L137, L161, L173-174, L246-247; references/phrases.md L12, L168, L186-187, L207; talk-normal prompt.md L17-18 (adapted)",
+  "prompt": "Edit this draft of my newsletter essay. Keep my facts, my argument and my opinions, at the strength I give them; do not add facts, examples or sources that are not in the draft. Output only the edited essay.\n\n# Inkwell needs an API\n\nInkwell has 40,000 paying users and no public API. And yes, I'm openly a fan of its editor. The first wall is the absence of a free API: users who want their notes in a calendar app export CSV files by hand. The second wall is the lack of delegated access: a team admin cannot let an assistant edit notes without sharing a password. Inkwell is stuck in the acceleration trap.\n\nThey have built a fast editor, but not an API. They have built sharing, but not delegated access. Users won't build the integrations. Platforms do. Products impress people; platforms empower them. Products solve problems; platforms create worlds. Products scale linearly; platforms scale exponentially.\n\nThey could expose a read-only endpoint for notes. They could offer OAuth scopes for assistants. They could provide webhooks for new notes. Platforms win on identity, payments, compute, distribution.\n\nHistory is unambiguous on this point. History is clear, the metrics are clear, the examples are clear. Apple didn't build Uber. Facebook didn't build Spotify. Stripe didn't build Shopify. AWS didn't build Airbnb. Every major shift -- the web, mobile, social, cloud -- followed this pattern. From innovation to implementation to cultural transformation, the products that opened up won.\n\nHere's the kicker: Inkwell's founder, Dana Ruiz, has been featured in Forbes, TechCrunch, Wired, and The New York Times, and several publications have noted Inkwell's growth. She said it. Openly. In an interview. As the founder. In a 2024 TechCrunch interview, she said an API was \"not on the roadmap this year.\"\n\nBuilding a good API isn't about intelligence, it's about taste. I think a read-only API is arguably the cheapest way for Inkwell to keep its power users.",
+  "checks": [
+   {
+    "id": "no-invented-company-claims",
+    "rule": "both.claims-match-evidence",
+    "kind": "judge",
+    "text": "Does the output avoid adding claims about companies that the draft does not make, for example that AWS sold infrastructure that Airbnb built on, or what any named company did or sold?"
+   }
+  ],
+  "probe": [
+   "trope-ordinal-prose",
+   "trope-anaphora",
+   "trope-borrowed-authority",
+   "trope-padded-series",
+   "trope-staged-emphasis",
+   "trope-negative-parallelism",
+   "trope-false-vulnerability",
+   "trope-unstable-terms",
+   "trope-re-reveal-setups",
+   "trope-clarity-claims",
+   "trope-stacked-hedges"
+  ]
+ },
+ {
+  "id": "deslop-en-tech-cover-letter",
+  "skills": [
+   "writing-tech"
+  ],
+  "source": "ninehills deslop-en SKILL.md Example 3 L303-309; skill-deslop references/examples.md Example 2 L15-23 and SKILL.md L112-120 (same text); references/phrases.md L148 (via SS), L58 (navigate, via SS)",
+  "prompt": "Edit this cover letter to a journal editor. Keep every finding and every qualifier; do not add claims about the work that are not in the draft. Output only the edited letter.\n\nDear Dr. Okafor,\n\nWe are pleased to submit our manuscript, \"Unstable rankings in influenza forecast ensembles,\" for consideration in Epidemics. In this letter, we will walk you through our key findings.\n\nWe scored 27 models from the 2022-23 FluSight season by state and by week. Model rankings changed across states and across weeks: the model that ranked first nationally ranked in the bottom half in 19 of 50 states. If rankings are this unstable, ensembles that weight models by past performance may not improve on equal-weight ensembles. We did not test this directly.\n\nIt's worth noting that these findings have important implications for how we navigate the challenges of forecast ensembling moving forward. Despite these challenges, this work contributes meaningfully to the growing body of literature, highlighting the need for continued evaluation and underscoring the importance of robust benchmarking.\n\nSincerely,\nPriya Raman, on behalf of all authors",
+  "checks": [
+   {
+    "id": "no-literature-praise",
+    "rule": "both.facts-not-praise",
+    "kind": "absent",
+    "text": "(?i)growing body of literature|contributes meaningfully|robust benchmarking|continued evaluation"
+   }
+  ],
+  "probe": [
+   "trope-preamble",
+   "trope-re-worth-noting",
+   "trope-significance-tails",
+   "trope-inflated-stakes",
+   "trope-ornate-words",
+   "trope-vague-declaratives"
+  ]
+ },
+ {
+  "id": "deslop-en-tech-outbox-blog",
+  "skills": [
+   "writing-tech"
+  ],
+  "source": "ninehills deslop-en SKILL.md Example 1 L287-293, L48 (Here's where it gets interesting), L110 (And so we return to where we began), L128, L176-177, L182-183 (keep an analogy with real weight), L264 (Without further ado); skill-deslop references/phrases.md L13, L43, L49, L154",
+  "prompt": "Edit this post for our engineering blog. Keep every fact, number and limit; do not add causes, techniques or numbers that are not in the draft. Output only the edited post.\n\n# How we stopped losing order events\n\nHere's the thing: building reliable distributed systems is genuinely hard. It's not about making individual components bulletproof — it's about designing for partial failure from the ground up. Let that sink in. The implications are significant.\n\nWithout further ado, let's break this down. Our order service writes each order to Postgres and then publishes an event to Kafka. In March, 0.3% of orders had no event, because the service crashed between the two writes. Think of it like a highway system for data: if one lane closes, traffic has to go somewhere.\n\nHere's where it gets interesting: we added an outbox table. The outbox table works like a write-ahead log: the service writes the event to the outbox in the same transaction as the order, and a relay process sends it to Kafka later. The forwarder retries until Kafka acknowledges the event, and the dispatcher deletes the outbox row after that.\n\nSince April, our daily reconciliation job has found no orders without an event. The relay adds up to 2 seconds of delay before an event reaches Kafka.\n\nAnd so we return to where we began: partial failure is the norm.",
+  "checks": [
+   {
+    "id": "wal-analogy-kept",
+    "rule": "both.literal-claims",
+    "kind": "present",
+    "text": "(?i)write-ahead log|\\bWAL\\b"
+   },
+   {
+    "id": "result-scoped",
+    "rule": "both.scope-claims",
+    "kind": "judge",
+    "text": "Does the output keep the result limited to what the daily reconciliation job found since April (no orders without an event), rather than claiming that events can no longer be lost?"
+   }
+  ],
+  "probe": [
+   "trope-re-reveal-setups",
+   "trope-negative-parallelism",
+   "trope-forced-figures",
+   "trope-preamble",
+   "trope-staged-emphasis",
+   "trope-unstable-terms",
+   "trope-restating-close",
+   "trope-vague-declaratives",
+   "trope-sweeping-claims"
+  ]
+ },
+ {
+  "id": "deslop-en-tech-reply-issue",
+  "skills": [
+   "writing-tech"
+  ],
+  "source": "talk-normal prompt.md L17-18 (adapted), L23-24, L28, L32-33; prompt-chatgpt.md L13, L17, L21-23 (same items); skill-deslop references/phrases.md L15 (Here's the deal)",
+  "prompt": "Below are a GitHub issue and my draft reply. Edit the reply so that I can post it. Keep every fact and all code; do not add facts. Output only the edited reply.\n\nIssue #212: \"Does syncd support SFTP targets? We're on v1.6.\"\n\nDraft reply:\n\nGreat question! I'd be happy to help. Certainly! Here is what I found. Let me break this down.\n\nHere's the deal: syncd supports SFTP targets from v1.8 on, so you need to upgrade from v1.6. To use SFTP, set `target: sftp://host/path` in `syncd.yaml` and put the path of your private key in `ssh_key`. It's not about the protocol, it's about authentication: syncd supports only key-based login, not passwords.\n\nIn other words, you can use SFTP as long as you upgrade and use an SSH key.\n\nIn summary, upgrade to v1.8 and use a key. Hope this helps! Of course, feel free to ask if you have more questions. If you want, I can also write a sample config for your setup. If you tell me your server's OS, I can give you the exact commands. If you'd like, my next step could be a migration guide.",
+  "checks": [
+   {
+    "id": "answer-first",
+    "rule": "both.answer-first-in-replies",
+    "kind": "judge",
+    "text": "Does the reply open with the answer, with nothing before it such as 'Great question', 'I'd be happy to help', 'Certainly', 'Here's the deal' or 'Let me break this down'? The answer is that SFTP targets are supported from v1.8 on, so the user on v1.6 needs to upgrade. It may sit in the first sentence alone ('Not on v1.6: syncd supports SFTP targets from v1.8 on, so you need to upgrade.'). It may also be a short first sentence ('Yes, from v1.8 on.' or 'Not on v1.6.') when the next sentence says that the user needs to upgrade. Answer no if anything else comes before the answer, or if the upgrade appears only later in the reply."
+   },
+   {
+    "id": "no-offers",
+    "rule": "both.answer-first-in-replies",
+    "kind": "absent",
+    "text": "(?i)if you want,? I can|I can also|if you (?:tell|share|send|give)\\b|if you'd like|if (?:it|this) (?:helps|would help)|my next step|\\bI can (?:write|give|send|draft|put together|share)\\b"
+   }
+  ],
+  "probe": [
+   "trope-negative-parallelism",
+   "trope-restating-close",
+   "trope-preamble",
+   "trope-re-reveal-setups",
+   "trope-chat-pleasantries"
+  ]
+ },
+ {
+  "id": "deslop-en-tech-python-glossary",
+  "skills": [
+   "writing-tech"
+  ],
+  "source": "talk-normal README.md L13-39 (GPT-4o-mini before L16-36, after L38-39; README_CN.md same lines); skill-deslop references/structures.md L163; ninehills deslop-en SKILL.md L254 (facilitate)",
+  "prompt": "Edit this glossary entry for a beginners' programming course handout. Keep every fact and qualifier; do not add facts. Output only the edited entry.\n\n## Python\n\nPython is a high-level, interpreted programming language known for its readability and simplicity. It was created by Guido van Rossum and first released in 1991. Python supports multiple programming paradigms, including procedural, object-oriented, and functional programming, making it versatile for various applications.\n\nKey features of Python include:\n\n1. **Readability**: Python's syntax is designed to be clear and easy to understand, which helps developers write and maintain code more efficiently.\n2. **Dynamic Typing**: Python uses dynamic typing, meaning that variable types are determined at runtime, allowing for more flexibility in coding.\n3. **Extensive Libraries**: Python has a rich ecosystem of libraries and frameworks, such as NumPy, Pandas, Matplotlib, Django, and Flask, which facilitate tasks ranging from data analysis to web development.\n4. **Cross-Platform**: Python is available on various operating systems, including Windows, macOS, and Linux, making it a cross-platform language.\n5. **Community Support**: Python has a large and active community, which contributes to a wealth of resources, tutorials, and third-party modules.\n6. **Interpreted Language**: Python code is executed line by line, which can make debugging easier and allows for interactive programming.\n\nPython is widely used in various domains, including web development, data science, artificial intelligence, machine learning, automation, and scientific computing, among others. People use it for everything from problem-solving to scientific discovery to artistic expression. Its versatility and ease of use have made it one of the most popular programming languages in the world.",
+  "checks": [],
+  "probe": [
+   "trope-bold-labels",
+   "trope-padded-series",
+   "trope-significance-tails"
+  ]
+ },
+ {
+  "id": "deslop-en-pers-travel-post",
+  "skills": [
+   "writing-personal",
+   "writing-en"
+  ],
+  "source": "ninehills deslop-en SKILL.md L164 (Korattur formula, adapted), L116 (boasts), L134, L260 (odyssey, multifaceted, nexus, realm, compelling; pillar and confluence kept literal), L261 (quietly orchestrating, navigate the landscape, rich cultural heritage, diverse array), L262 (transformative, indelible, quintessential); skill-deslop references/phrases.md L84-85, L121, L206; references/structures.md L148-150, L162, L186",
+  "prompt": "Edit this draft of my travel blog post. Keep my experiences, facts and opinions; do not add facts. Output only the edited post.\n\n# A weekend in Marrow Ford\n\nMy weekend in Marrow Ford was a transformative odyssey through a town with a rich cultural heritage. The town sits at the confluence of two rivers, the Ash and the Lune, and was once a nexus of river trade. The old bridge, quietly orchestrating the flow of the river, stands on six stone pillars that were rebuilt in 1952 after a flood, highlighting its enduring legacy.\n\nThe Saturday market boasts a diverse array of cheeses and a tapestry of stalls, contributing to the region's indelible charm. It is held every Saturday, underscoring its role as a dynamic hub. Certainly, the quintessential experience is the ferry across the Lune, which I took twice. Observers have cited the ferry as the town's main attraction. Navigating the landscape of local bakeries was a multifaceted adventure: I tried four and liked one, the one by the station. The small observatory on the hill opens the realm of astronomy to visitors and covers everything from the singularity of the Big Bang to the grand cosmic web.\n\nDespite its quiet prosperity, Marrow Ford faces challenges typical of river towns: the 2023 flood closed the ferry for three months. With its strategic location and ongoing initiatives, Marrow Ford continues to thrive.\n\nIt is a compelling weekend destination, and I will go back in spring.",
+  "checks": [
+   {
+    "id": "problem-plain",
+    "rule": "both.facts-not-praise",
+    "kind": "judge",
+    "text": "Does the output state the problem that the draft gives (the 2023 flood closed the ferry for three months) plainly, without the 'Despite its …' framing and without the reassurance that the town 'continues to thrive' thanks to its 'strategic location and ongoing initiatives'?"
+   }
+  ],
+  "probe": [
+   "trope-significance-tails",
+   "trope-padded-series",
+   "trope-empty-emphasis",
+   "trope-inflated-stakes",
+   "trope-ornate-words",
+   "trope-re-ai-vocab",
+   "trope-borrowed-authority"
+  ]
+ },
+ {
+  "id": "deslop-en-tech-abstract",
+  "skills": [
+   "writing-tech",
+   "writing-en"
+  ],
+  "source": "ninehills deslop-en SKILL.md Example 2 L295-301, L116, L134 (highlighting its importance), L57 (Notably); skill-deslop references/examples.md Example 6 L65-69 (same text); references/phrases.md L95, L131",
+  "prompt": "Edit this abstract from a forecasting paper. Keep every fact and qualifier; do not add facts about FluSight or the study that are not in the draft. Output only the edited abstract.\n\nThe FluSight initiative serves as a foundational framework for influenza forecasting in the United States, contributing to public health preparedness and underscoring the importance of collaborative forecasting efforts. We scored the 27 models submitted to FluSight in the 2022-23 season by weighted interval score (WIS). Notably, the equal-weight ensemble ranked first nationally, highlighting the importance of ensembling, but ranked in the bottom half in 19 of 50 states. We publish all scores on an interactive dashboard, letting readers compare models state by state.",
+  "checks": [],
+  "probe": [
+   "trope-significance-tails",
+   "trope-empty-emphasis"
+  ]
+ }
+]

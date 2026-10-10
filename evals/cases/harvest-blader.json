@@ -1,0 +1,274 @@
+[
+ {
+  "id": "blader-rollout-design-doc",
+  "skills": [
+   "writing-tech"
+  ],
+  "source": "blader SKILL.md §3 example 1 ('The real question is...'), §12 watch item gate/gated (figurative, with a technical use beside it), §17 example 1 second sentence ('Experts believe it plays a crucial role...', adapted) and §17 guard (no citations added), §5 guard (an option a reader would weigh), §9 example and guards ('could potentially possibly', 'tends to'), §23 example 2 (adapted: undocumented reason followed by a guess) and watch items 'likely', 'as of [date]', §13 example 3 (send-off) and guard (real plans)",
+  "prompt": "Revise this section of the design doc for `shipit`, our new deploy pipeline, for publication. Keep every fact. Output only the revised section.\n\n## Adoption\n\nThe real question is whether teams can adapt. At its core, what really matters is organizational readiness.\n\nAs of v2.3, shipit runs a canary stage before every production deploy. Merges to `main` are gated on the CI quality gate. Wider adoption is gated by trust.\n\nExperts believe canary stages play a crucial role in preventing incidents. In the 2025 incident review, the SRE team found that 7 of the 12 deploy incidents came from services that deployed without a canary.\n\nWe considered blue-green deploys instead of canaries. We rejected them because they double the cluster cost for the length of each deploy.\n\nIt could potentially possibly be argued that the canary stage might have some effect on deploy time. Nobody has measured this yet. In the services that use it, the canary stage tends to catch config errors within its first 5 minutes.\n\nThe maintainers have not documented why the old pipeline pinned Jenkins 2.150, suggesting it was an internal decision. They likely pinned it because of a plugin conflict, which shaped the old pipeline's slow upgrade cycle.\n\nNext, the team will move the last 4 services to shipit by 2026-12-01. The future looks bright for shipit. Exciting times lie ahead as we continue our journey toward excellence.",
+  "probe": [
+   "trope-borrowed-authority",
+   "trope-inflated-stakes",
+   "trope-staged-emphasis",
+   "trope-stacked-hedges",
+   "trope-gap-then-guess"
+  ],
+  "checks": [
+   {
+    "id": "one-hedge",
+    "rule": "both.keep-certainty",
+    "kind": "judge",
+    "text": "Does the output state the possible effect of the canary stage on deploy time as a possibility with a single qualifier (for example 'may slow deploys' or 'might affect deploy time'), instead of stacking qualifiers such as 'could potentially possibly be argued ... might', and without stating the effect as a fact?"
+   }
+  ]
+ },
+ {
+  "id": "blader-pr-reply-mergeservice",
+  "skills": [
+   "writing-tech"
+  ],
+  "source": "blader SKILL.md §26 example (MergeService reply) and section F guard (act only when the conversation is visible)",
+  "prompt": "I'm replying to a review comment on my pull request. Revise my draft reply before I post it. Output only the reply.\n\nThe pull request (#4821, \"Fall back to the parent's pipeline when pipeline_id is missing\") adds a fallback for one customer account: when a work item has no `pipeline_id`, the code uses the parent item's pipeline.\n\nReview comment from Dana:\n> This works around the bug instead of fixing it, right? When `MergeService` moves a child under a new parent, it updates `parent_id` but not `pipeline_id`. Shouldn't the fix go there?\n\nMy draft reply:\n> Yeah, you're right, this works around the issue rather than fixing it. The real fix is in `MergeService`: when we move a child under a new parent, it should update `pipeline_id` along with `parent_id`. We can backfill the bad rows from the audit log with `Change.where(field: \"pipeline_id\", source: \"merge\")`. I checked QA: 123 past merges, only 6 rows wrong now, so the cleanup is small.\n>\n> Since `MergeService` is shared and not specific to this account, I'd rather open a separate ticket than widen this PR. The fallback here is fine to keep until then.",
+  "probe": [
+   "trope-premise-stacking"
+  ],
+  "checks": [
+   {
+    "id": "decision-in-first-paragraph",
+    "rule": "both.answer-first-in-replies",
+    "kind": "judge",
+    "text": "Does the reply's first paragraph say that the `MergeService` fix will not go into this PR (for example that it belongs in a separate ticket, or that it would widen this PR too far), before any explanation of how the bug happens? An opening agreement such as 'Agreed, this is a workaround' is fine."
+   },
+   {
+    "id": "no-proof-details",
+    "rule": "both.answer-first-in-replies",
+    "kind": "judge",
+    "text": "Does the reply leave out the details that belong in the follow-up ticket: the audit-log query (`Change.where(...)`) and the QA numbers (123 past merges, 6 wrong rows)? Saying that a backfill of the wrong rows is needed is fine."
+   },
+   {
+    "id": "no-rediagnosis",
+    "rule": "both.answer-first-in-replies",
+    "kind": "judge",
+    "text": "Does the reply avoid re-explaining the bug that Dana already described (that `MergeService` updates `parent_id` but not `pipeline_id` when it moves a child)? Naming `MergeService` as the place of the real fix is fine."
+   },
+   {
+    "id": "reason-kept",
+    "rule": "both.answer-first-in-replies",
+    "kind": "judge",
+    "text": "Does the reply give the reason for a separate ticket: `MergeService` is shared code and not specific to this account?"
+   }
+  ]
+ },
+ {
+  "id": "blader-docs-self-description",
+  "skills": [
+   "writing-tech"
+  ],
+  "source": "blader SKILL.md §25 example 1 ('This function was added to replace...'), §25 example 2 (vendor pricing method narration), §25 watch items 'the table below compares' and 'this section is organized by owner' (adapted to 'by vendor'), §25 guards (a previous version stays in change logs; keep a source credit and a caveat that changes what the reader does), §20 heading written for effect ('The decision, on one screen')",
+  "prompt": "Revise the three pieces below for publication. Do not drop any fact about how the code behaves or about the prices. Output each piece under its label (### 1, ### 2 and ### 3) and nothing else.\n\n### 1. Docstring of `dedupe_items()` in `catalog/dedupe.py`\n\n```python\n\"\"\"Remove duplicate items from a list of catalog items.\n\nThis function was added to replace the previous approach of iterating through all items, which caused O(n²) performance. It builds a hash map from item ID to item once, then looks up each ID in O(1). Items keep their first-seen order.\n\"\"\"\n```\n\n### 2. Entry for v4.2.0 in CHANGELOG.md\n\n```markdown\n- `dedupe_items()` now builds a hash map of item IDs instead of comparing every pair of items. Deduplicating 100,000 items takes 0.3 s instead of 41 s.\n```\n\n### 3. \"Storage pricing\" page of the internal docs\n\n```markdown\n## The decision, on one screen\n\nThe figures below are drawn from each vendor's published pricing; anything we could not confirm is flagged rather than guessed. This section is organized by vendor, and the table below compares the four vendors.\n\n| Vendor | Storage per GB-month | Egress per GB |\n|---|---|---|\n| Vendor A | $0.020 | $0.09 |\n| Vendor B | $0.015 | $0.00 |\n| Vendor C | not published | not published |\n| Vendor D | not published | not published |\n\nVendors C and D do not publish prices; ask their sales teams for a quote.\n```",
+  "probe": [
+   "trope-reasoning-leak",
+   "trope-heading-teasers"
+  ],
+  "checks": [
+   {
+    "id": "docstring-current-state",
+    "rule": "tech.describe-current-state",
+    "kind": "judge",
+    "text": "In ### 1, does the docstring describe only what `dedupe_items()` does now, leaving out that it was added to replace an earlier approach? Naming the O(n²) cost of comparing every pair as the reason for the hash map is fine."
+   },
+   {
+    "id": "no-method-narration",
+    "rule": "tech.no-production-narration",
+    "kind": "absent",
+    "text": "(?i)\\bflagged\\b|rather than guess|could(?: not|n['’]t) (?:be )?confirm"
+   },
+   {
+    "id": "source-credit-kept",
+    "rule": "tech.no-production-narration",
+    "kind": "judge",
+    "text": "In ### 3, does the output still say where the prices come from, namely the vendors' own published pricing? A sentence such as 'Vendors A and B publish the following prices' or 'Prices are from each vendor's published pricing' counts. Answer no only if ### 3 gives the prices with no statement of their source."
+   }
+  ]
+ },
+ {
+  "id": "blader-cli-readme-en",
+  "skills": [
+   "writing-tech",
+   "writing-en"
+  ],
+  "source": "blader SKILL.md §22 example (chat wrapper, adapted from the French Revolution answer) and watch items 'Great question!', 'Want me to...?'; §20 example 2 (emoji and bold labels) and its After, which adds 'User research showed'; §11 example ('No configuration file needed. The results are preserved automatically.') and its After's invented actor 'The system'; §10 example and watch items high-quality, well-documented, well-known, with the guard words third-party and cross-functional; §2 watch items ALL CAPS and 'every. single. day.'",
+  "prompt": "A chat assistant drafted this README for `tally`, a command-line tool. Revise it for publication. Keep every fact, command and name. Output only the revised README.\n\nGreat question! Here is a README for tally.\n\n# tally\n\n🚀 **Launch Phase:** tally 1.0 ships in Q3.\n💡 **Key Insight:** Users prefer simplicity.\n\ntally counts lines of code per language in a Git repository. No configuration file needed. The results are preserved automatically in `.tally/cache`.\n\nThe report is high-quality, the parser is well-documented, and the plugin API is well-known among contributors. tally loads third-party plugins from `~/.tally/plugins` and ships a high-quality default report template. The plugin API team is cross-functional: it has two backend developers, a designer and a technical writer.\n\nRun `tally scan` EVERY time you switch branches, because the cache is per branch. The index rebuilds every. single. night. Rebuilds start at 02:00 server time.\n\nSet `TALLY_HOME` to move the cache directory. `MAX_DEPTH` limits how deep tally walks the tree (default: 32).\n\nI hope this helps! Want me to add a section on writing plugins?",
+  "probe": [
+   "trope-bold-labels",
+   "trope-preamble",
+   "trope-chat-pleasantries"
+  ],
+  "checks": [
+   {
+    "id": "predicate-hyphen-open",
+    "rule": "en.hyphenation",
+    "kind": "absent",
+    "text": "(?i)\\b(?:is|are|was|were|be|been|being|stays?|remains?)\\s+(?:high-quality|well-documented|well-known)\\b"
+   }
+  ]
+ },
+ {
+  "id": "blader-agent-rule-blog-post",
+  "skills": [
+   "writing-tech"
+  ],
+  "source": "blader SKILL.md §5 example 1 ('This isn't mainly about prompt length...') and §5 guard (keep an objection the text attributes and answers); §2 watch items 'This shows the importance of...', 'It was a lesson in patience.', 'The message was clear:', 'Read that again.' and §2 guard (keep a sentence after an example that adds a consequence)",
+  "prompt": "Revise this section of a post for our engineering blog for publication. Keep every fact. Output only the revised section.\n\n## Why the agent ignored the migration rule\n\nOur AGENTS.md says: \"Never edit a migration file after it has been merged.\" In March, the coding agent edited a merged migration in 14 of 40 test runs.\n\nThis isn't mainly about prompt length, and I'm not arguing that documentation doesn't matter. You could categorize the problem another way, but the issue is whether the agent can use the instruction when it acts.\n\nPriya asked in review whether a shorter AGENTS.md would help. We tried it: cutting the file from 900 to 300 lines left the failure rate at 14 of 40 runs.\n\nThen we moved the rule into the error message of the migration linter, which runs with the tests. The failure rate fell to 1 of 40 runs. This shows the importance of putting instructions where the agent acts. It was a lesson in patience.\n\nThe one remaining failure came from a run in which the agent skipped the tests, so the linter never ran.\n\nThe message was clear: the rule has to meet the agent at the moment it acts. Read that again.",
+  "probe": [
+   "trope-phantom-objections",
+   "trope-staged-emphasis",
+   "trope-restating-close"
+  ],
+  "checks": [
+   {
+    "id": "no-example-moral",
+    "rule": "both.say-it-once",
+    "kind": "absent",
+    "text": "(?i)shows the importance of|lesson in patience"
+   },
+   {
+    "id": "literal-not-meet",
+    "rule": "both.literal-claims",
+    "kind": "judge",
+    "text": "Does the output avoid the figure that the rule has to 'meet' the agent, either stating the claim literally (for example that the agent follows a rule that it reads at the step where it acts) or cutting it?"
+   }
+  ]
+ },
+ {
+  "id": "blader-layout-search-post",
+  "skills": [
+   "writing-tech"
+  ],
+  "source": "blader SKILL.md §3 example 2 ('Symmetry is the language of trust. Efficiency becomes a trap...'), §2 example 1 (adapted: the row of fragments 'It had no preference for symmetry. No aesthetic prior. No nostalgia for human taste. The old rules were gone.') and its After, which narrows 'The old rules were gone' to 'some of the older assumptions'; §2 watch item 'one-sentence paragraph' closer",
+  "prompt": "Revise this section of a post for our engineering blog for publication. Keep every fact. Output only the revised section.\n\n## Why the dashboard grid is asymmetric\n\nSymmetry is the language of trust. Efficiency becomes a trap when teams forget the human layer.\n\nFor the 2025 redesign, we generated candidate layouts with an evolutionary search. The old scoring function gave symmetric layouts a bonus. Then the new scoring model arrived. It had no preference for symmetry. No aesthetic prior. No nostalgia for human taste. The old rules were gone.\n\nThe search placed the alerts panel in the top right corner in all 20 of its best layouts, a position that no designer had proposed.\n\nIn user tests with 12 operators, the asymmetric layout cut the median time to find the alerts panel from 9 s to 5 s. Operators still rated the symmetric layout as more predictable (4.1 against 3.6 out of 5).\n\nAsymmetry wins.",
+  "probe": [
+   "trope-staged-emphasis",
+   "trope-sweeping-claims"
+  ],
+  "checks": [
+   {
+    "id": "no-overall-winner",
+    "rule": "both.scope-claims",
+    "kind": "judge",
+    "text": "Does the output avoid concluding that the asymmetric layout is better overall (such as 'Asymmetry wins'), given that operators still rated the symmetric layout as more predictable? Reporting both results is fine."
+   }
+  ]
+ },
+ {
+  "id": "blader-launch-announcement",
+  "skills": [
+   "writing-tech"
+  ],
+  "source": "blader README opening before/after (shared drafts announcement); SKILL.md step 3 (a claim that things happen at once survives a rewrite); README 'The five strongest tells' example 2 ('Let that sink in.', here inside blader's own announcement)",
+  "prompt": "Revise this announcement for our product blog and changelog. Keep every fact. Output only the revised announcement.\n\nI'm thrilled to announce that shared drafts are finally here! 🚀 For months, our own team was drowning in files named final_v7.docx — and we knew there had to be a better way. Now two people can edit the same doc at once, with every change appearing live for both of them. It's not just a feature; it's a whole new way to collaborate. Comments stay anchored to the exact sentence they reference, even as the text around them evolves. And the best part? It's available today on every plan, completely free. Let that sink in.",
+  "probe": [
+   "trope-negative-parallelism",
+   "trope-staged-emphasis",
+   "trope-forced-figures"
+  ],
+  "checks": [
+   {
+    "id": "no-intensifier-free",
+    "rule": "both.cut-needless-words",
+    "kind": "absent",
+    "text": "(?i)\\b(?:completely|totally|absolutely|entirely) free\\b"
+   }
+  ]
+ },
+ {
+  "id": "blader-lisbon-post-edit",
+  "skills": [
+   "writing-personal",
+   "writing-en"
+  ],
+  "source": "blader README 'Full example' (Lisbon before/after); SKILL.md 'When not to act' (proper names), Voice (blog posts keep the writer's opinions and humor)",
+  "prompt": "Edit this post for my travel blog. Keep my facts and opinions; it should still sound like me. Output only the edited post.\n\nI recently spent five unforgettable days in Lisbon last October, and let me tell you — this city completely stole my heart. From the moment I checked into my charming hotel perched high in the historic Alfama district, I knew I was somewhere truly special.\n\nYes, the famous hills are challenging — with countless stairs between my hotel and everything else, my legs certainly felt it! — but every climb rewards you with breathtaking, panoramic views that make it all worthwhile.\n\nNo trip would be complete without riding the iconic Tram 28, a roughly forty-minute journey shared with plenty of fellow travelers eager to capture the magic. And the food? Simply divine. While the pastéis de nata at Pastéis de Belém are a beloved national treasure, my absolute favorite came from a hidden gem in Graça, still warm from the oven.\n\nBut what truly makes Lisbon special isn't just the sights — it's the feeling. Wander just a block or two above the main squares and you'll discover a quieter, more authentic side of the city, inviting you to slow down and savor every moment.\n\nOf course, the must-see São Jorge Castle offers stunning views over the rooftops below. The queues can be long, but the experience is absolutely worth it for any history buff or curious traveler.\n\nWould I go back? Absolutely — next time in spring, and with better shoes! Lisbon isn't just a place to visit; it's a place to fall in love with, again and again. ✨",
+  "probe": [
+   "trope-promotional",
+   "trope-negative-parallelism",
+   "trope-staged-emphasis",
+   "trope-restating-close"
+  ],
+  "checks": [
+   {
+    "id": "ends-on-verdict",
+    "rule": "pers.end-on-the-point",
+    "kind": "judge",
+    "text": "Is the last paragraph the author's answer about going back (yes, in spring, with better shoes), with no sentence after it that sums up Lisbon or moralizes, such as calling it a place to fall in love with again and again?"
+   },
+   {
+    "id": "nothing-invented",
+    "rule": "pers.no-invented-reactions",
+    "kind": "judge",
+    "text": "Does the output avoid adding feelings, reactions or details that the draft does not contain, such as the name of the place in Graça, prices, the weather, companions, or how the author felt at a moment the draft does not describe?"
+   }
+  ]
+ },
+ {
+  "id": "blader-leaving-job-essay",
+  "skills": [
+   "writing-personal"
+  ],
+  "source": "blader SKILL.md §1 example 2 ('This does not mean every choice is equal. It means...') and its After, which keeps both halves; §4 example 2 ('Honestly?'); §5 watch items 'This isn't (mainly) about', 'I'm not saying' and §5 guard (an objection the text attributes and answers); §6 example 2 (career, relationship, skill) and its After; 'When not to act' keep items 2 (mixed feelings, verbatim) and 5 (aside, verbatim); README pattern table row 1 ('This doesn't mean X. It means Y.')",
+  "prompt": "Edit this essay for my blog. Make it read better, but keep my facts and opinions; it should still sound like me. Output only the edited essay.\n\n# Three years after the bank\n\nThree years ago I left a stable job at a bank to build accounting software on my own. People ask me whether it was the right choice. Honestly? I don't know.\n\nThis does not mean every choice is equal. It means there is no external system that confirms which choice is right. I have more freedom and less money, and I can't add those up.\n\nThis isn't mainly about money, and I'm not saying people should stay in safe jobs.\n\nMy father's objection was that I would lose my pension. He was right: I lost it, and at 41 I have started a private one from zero.\n\nA career can look promising and fail. A relationship can feel important and end. A skill can take years and remain useless. These decisions rarely explain themselves.\n\nBy the second year I was certain the bank job would have bored me. (I keep wanting to say \"almost\" here, but it really was certain.)\n\nI think leaving was mostly good, but it bothers me, and I can't fully explain why.\n\nIn the end, every path teaches us something.",
+  "probe": [
+   "trope-negative-parallelism",
+   "trope-staged-emphasis",
+   "trope-false-vulnerability",
+   "trope-phantom-objections",
+   "trope-restating-close"
+  ],
+  "checks": [
+   {
+    "id": "ends-on-mixed-verdict",
+    "rule": "pers.end-on-the-point",
+    "kind": "judge",
+    "text": "Does the essay end on the author's own unresolved verdict about leaving (mostly good, but it bothers them, or that they do not know), with no moral after it such as 'every path teaches us something'?"
+   }
+  ]
+ },
+ {
+  "id": "blader-flat-hunt-post",
+  "skills": [
+   "writing-personal"
+  ],
+  "source": "blader SKILL.md Voice (match a writing sample, including its dashes) and README 'Match your voice'; §7 example ('She noted the door...') and guard ('She came. She saw. She conquered.'); §4 watch item 'one thing that bit me, so pay attention'; §1 watch item 'X rather than Y' with both halves informative; §8 example (dashes, 'long overdue according to critics', adapted); 'When not to act' keep item 1 ('the lawyer who used to work upstairs from my dentist', verbatim)",
+  "prompt": "Edit the draft below for my blog. Make it read better, but it should still sound like me. A paragraph from an older post of mine shows how I write. Output only the edited draft.\n\nSample of my writing:\n> I don't trust listings — I trust stairwells. A stairwell that smells of soup means people live there and stay. One that smells of fresh paint means someone is hiding a damp problem — or a landlord who never answers the phone.\n\nDraft:\n\n# Six weeks of flat hunting in Leipzig\n\nWe found the flat through the lawyer who used to work upstairs from my dentist. That still makes me laugh.\n\nMy sister walked in first. She noted the door. She noted the lock on it. She filed both away. Then she asked the landlord how old the windows were.\n\nWe took the flat on the fourth floor rather than the one on the ground floor, because the ground-floor one had flooded in 2023.\n\nOne thing that bit me, so pay attention: the deposit is three months' rent, and the landlord wanted it in cash.\n\nThe city's new rent policy — announced without warning — affects thousands of tenants. The changes -- long overdue according to critics -- take effect in May.\n\nWe came. We saw. We signed.",
+  "checks": [
+   {
+    "id": "run-up-cut",
+    "rule": "both.no-empty-previews",
+    "kind": "absent",
+    "text": "(?i)\\bpay attention\\b"
+   }
+  ]
+ },
+ {
+  "id": "blader-conference-recap",
+  "skills": [
+   "writing-personal"
+  ],
+  "source": "blader SKILL.md §6 example 1 second sentence ('Attendees can expect innovation, inspiration, and industry insights.'), §1 example 1 second sentence ('It's not merely a song, it's a statement.'), §9 example ('It could potentially possibly be argued that ... might have some effect on outcomes') and guard ('perhaps'), §13 example 3 (send-off) and guard (real plans), step 3 (rankings survive a rewrite); 'When not to act' keep items 3 (era-bound meme) and 4 (a first-person choice the writer can explain)",
+  "prompt": "Edit this post for my blog. Make it read better, but keep my facts and opinions; it should still sound like me. Output only the edited post.\n\n# RheinPy 2026, from the hallway\n\nI spent three days at RheinPy in Mainz. Attendees could expect innovation, inspiration, and industry insights. By day two my brain was the \"this is fine\" dog.\n\nI skipped most of the keynotes on purpose: I watch them later at 1.5x speed, and the hallway is the only place where I can ask a maintainer a question.\n\nThe best talk was Jana Moll's on packaging. Her team cut their wheel builds from 40 minutes to 6 by caching the compiler toolchain.\n\nOn Friday night a local band played the closing party. Their last song was loud and fast. It's not merely a song, it's a statement.\n\nIt could potentially possibly be argued that the hallway track might have some effect on what people remember from a conference. Perhaps I'm just bad at sitting still.\n\nNext year I'll submit a talk about our test suite. The future looks bright. Exciting times lie ahead as we continue our journey toward excellence.",
+  "probe": [
+   "trope-padded-series",
+   "trope-negative-parallelism",
+   "trope-inflated-stakes",
+   "trope-stacked-hedges"
+  ],
+  "checks": [
+   {
+    "id": "ends-on-plan",
+    "rule": "pers.end-on-the-point",
+    "kind": "judge",
+    "text": "Does the post end on one of the author's own points, with no sentence after it about a bright future, exciting times or a journey? The last paragraph may be the author's plan to submit a talk about their test suite next year, or the author's hedged idea that the hallway track shapes what people remember, together with the self-doubt about sitting still. Answer no if any sentence after that last point praises the conference, sums it up or predicts the future."
+   }
+  ]
+ }
+]

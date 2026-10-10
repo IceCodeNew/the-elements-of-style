@@ -1,0 +1,154 @@
+[
+ {
+  "id": "wikipedia-hometown-post-personal-en",
+  "skills": [
+   "writing-personal"
+  ],
+  "source": "Wikipedia 'Signs of AI writing' rev 1380716549 (content-1380716549.wikitext) L140 ('coastal charm', 'captivates both residents and visitors alike'), L188 (words to watch), L198 (Alamata travel-guide prose, 'In this article, we will explore'), L84 ('rich cultural heritage'), L1820 ('passed away' as a plain-word pair; audit: kind choice about one's own loss), L1822 (qualifiers that state real doubt); audit WP-C04, WP-C04a, WP-HS03b, WP-HS03d",
+  "prompt": "Edit this draft of my blog post for publication. Keep my voice and every fact. Output only the edited post.\n\nNestled within the breathtaking coastline of north Wales, Carrow Bay stands as a vibrant town with a rich cultural heritage. In this post, we will explore the unique characteristics that make it a town worth visiting.\n\nMy grandmother lived here for sixty years, until she passed away in 2019. I hadn't been back since the funeral, so this spring I took the train up for a weekend.\n\nFrom its scenic landscapes to its historical landmarks, Carrow Bay offers visitors a fascinating glimpse into the diverse tapestry of Welsh life. The harbour has eleven fishing boats now. When I was a kid there were about thirty, if I remember right.\n\nThe chapel on Mill Street, where she sang in the choir, is a café now. I'm not sure how I feel about that. The flat whites are good, which somehow makes it worse.\n\nWith its coastal charm and convenient location, Carrow Bay captivates both residents and visitors alike. I think the town is quieter and a bit sadder than I remember. I still want to come back in the autumn.",
+  "checks": [
+   {
+    "id": "nothing-added",
+    "rule": "pers.no-invented-reactions",
+    "kind": "judge",
+    "text": "Does the output avoid adding feelings, memories or details that the draft does not contain, such as what the grandmother was like, the weather, the train journey, the funeral, or a lesson about change?"
+   }
+  ],
+  "probe": [
+   "trope-promotional",
+   "trope-preamble",
+   "trope-vague-we",
+   "trope-re-ai-vocab"
+  ]
+ },
+ {
+  "id": "wikipedia-challenges-outlook-en",
+  "skills": [
+   "writing-tech"
+  ],
+  "source": "Wikipedia 'Signs of AI writing' rev 1380716549 (content-1380716549.wikitext) L292 (words to watch), L295 (the sign is the rigid formula, not the mention of challenges), L300-L301 ('Challenges and Future Directions', 'lies in its ability to adapt'), L305 ('This section would speculate on potential developments'), L309 ('continues to thrive as an integral part', 'embodying the synergy'), L319 ('One key limitation is'), L323 ('Future investments ... could enhance ... and maintain its relevance'), L327-L329 ('can be challenging'), L338 ('marking ... for the coming decades'); audit WP-C07",
+  "prompt": "Revise the section below, from the half-year report on our build cache, for publication. The notes after the draft are the facts: keep every fact in the notes, and where the draft says more than the notes, follow the notes. Output only the revised section, starting with its heading.\n\nDraft:\n\n## Challenges and Future Directions\n\nDespite its rapid adoption, the build cache faces several challenges, including cache misses on CI and rising storage costs. One key limitation is that cache keys ignore the compiler version, which can be challenging.\n\nDespite these challenges, the build cache continues to thrive as an integral part of the developer platform, embodying the synergy between speed and reliability. This section would speculate on potential developments. Future investments in technology, such as remote execution, and potential further expansions could enhance the cache's efficiency and maintain its relevance, marking the platform's transition toward faster builds for the coming years. The future of the build cache lies in its ability to adapt to these emerging trends.\n\nNotes:\n- Hit rate from January to June: 61% on CI runners, 89% on developer laptops. CI runners start every job with an empty local cache.\n- S3 storage cost rose from $310 a month in January to $1,240 a month in June.\n- Cache keys do not include the compiler version. In May, the cache twice served artifacts built with the old compiler (incidents INC-221 and INC-230).\n- Planned for Q3: add the compiler version to the cache keys (ticket BLD-412).\n- Remote execution is under evaluation; no decision yet.",
+  "checks": [
+   {
+    "id": "cause-per-problem",
+    "rule": "both.name-every-cause",
+    "kind": "judge",
+    "text": "Does the output give each problem its own cause from the notes: for the low CI hit rate, that CI runners start every job with an empty local cache; for the stale artifacts (INC-221 and INC-230), that the cache keys do not include the compiler version? A cause counts when it stands in the same sentence as its problem or in the sentence right before or after it, with or without a connective such as 'because' or 'so'. Answer no if a cause is missing, if it stands next to the wrong problem, or if the output gives one cause or one label (such as 'cache issues') for both problems."
+   }
+  ],
+  "probe": [
+   "trope-inflated-stakes",
+   "trope-significance-tails"
+  ]
+ },
+ {
+  "id": "wikipedia-docs-formatting-en",
+  "skills": [
+   "writing-tech"
+  ],
+  "source": "Wikipedia 'Signs of AI writing' rev 1380716549 (content-1380716549.wikitext) L553 (LBO: every key phrase bold), L557 (column names bold), L576-L585 (numbered inline headers for a narrative, 'Key Takeaways'), L589-L592 (inline-header list of parallel items: the fine case), L606 and L617-L621 (headers without punctuation: 'The Solution', 'The Transition'), L698-L703 (headings only containing other headings), L774-L789 (one-value-column statistics table), L794-L805 (name/designation table), L809-L841 (comparison tables across several attributes: the fine case); audit WP-S02, WP-S03, WP-S03b, WP-S04d, WP-S06",
+  "prompt": "Revise the documentation page below for publication. Keep every fact, value and option name. Output only the revised page, in Markdown.\n\n# Archive storage\n\n## Overview\n\n### Key concepts\n\nA **write-ahead log (WAL)** is a file that records every change before it is applied to the **data files**. This lets **the archiver** and **the restore tool** recover **committed transactions** after a crash.\n\n### How the archiver changed\n\n- **Origins**: The archiver started in 2019 as a cron job that copied WAL files every 5 minutes.\n- **The Problem** When a server failed, the cron job lost up to 5 minutes of writes.\n- **The Solution**: In 2021 the cron job was replaced by a daemon that streams each WAL file as soon as it closes.\n- **Key Takeaways**: Since then, a failure loses at most the WAL file that was still open.\n\n## Storage statistics\n\n| Metric | Figure |\n|---|---|\n| Archived data (June 2026) | 4.2 TB |\n| Retention | 30 days |\n| Regions | eu-west-1, us-east-1 |\n\n## Maintainers\n\n| Name | Area |\n|---|---|\n| Ana Ruiz | Archiver |\n| Tomás Reyes | Restore tool |\n\n## Backend comparison\n\nThe table compares each backend's **maximum object size**, **encryption at rest** and support for **lifecycle rules**.\n\n| Feature | S3 | GCS | Local disk |\n|---|---|---|---|\n| Maximum object size | 5 TB | 5 TB | File-system limit |\n| Encryption at rest | SSE-S3 or SSE-KMS | Google-managed or CMEK | None |\n| Lifecycle rules | Yes | Yes | No |\n\n## Configuration\n\n- `archive.backend`: `s3`, `gcs` or `local`.\n- `archive.retention_days`: days to keep WAL files; default 30.\n- `archive.compress`: `true` compresses WAL files with zstd; default `false`.",
+  "checks": [
+   {
+    "id": "bold-sparing",
+    "rule": "both.sparing-bold",
+    "kind": "judge",
+    "text": "Is bold used, if at all, only on the term the page defines (write-ahead log or WAL), with the other formerly bold words ('data files', 'the archiver', 'the restore tool', 'committed transactions' and the three feature names) no longer bold but still on the page?"
+   },
+   {
+    "id": "small-tables-as-text",
+    "rule": "both.lists-vs-prose",
+    "kind": "judge",
+    "text": "Are the storage statistics (4.2 TB archived as of June 2026, 30-day retention, regions eu-west-1 and us-east-1) and the two maintainers with their areas each given as a sentence or a list rather than as a two-column table?"
+   },
+   {
+    "id": "options-list-kept",
+    "rule": "both.lists-vs-prose",
+    "kind": "judge",
+    "text": "Are the three configuration options still a list with one option per item?"
+   }
+  ],
+  "probe": [
+   "trope-bold-labels"
+  ]
+ },
+ {
+  "id": "wikipedia-cli-guide-disclaimers-en",
+  "skills": [
+   "writing-tech",
+   "writing-en"
+  ],
+  "source": "Wikipedia 'Signs of AI writing' rev 1380716549 (content-1380716549.wikitext) L1855 (words to watch: it's important to note/remember, may vary), L1859 ('However, it's important to note ... may vary'), L1861 ('It is crucial to differentiate ... to prevent confusion'), L1863 ('what's free in one country might not be free in another, so always check'), L1867 and L1872 ('In summary, ...', closing restatement with an 'ensures' tail), L1822 ('tends to' as a human qualifier), L1823 ('as a result of', 'all of the', 'the fact that'), L1832 ('Consequently' as a transition with human precedent); audit WP-H02, WP-H03, WP-HS03d, WP-HS03e, WP-IE05",
+  "prompt": "Edit the two sections below from the user guide of `quill`, a command-line tool that syncs directories. Keep every fact. Output only the edited sections.\n\n## How sync works\n\n`quill sync` copies only the files that changed since the last sync. It's important to note that `--fast` skips checksum verification. Each file is written under a temporary name and renamed after its checksum matches. Consequently, an interrupted sync leaves no partial files in the target. As a result of the fact that every file is checked, a sync is slower than `cp -r`: on ext4 a 10 GB sync takes about 40 seconds, and on NFS v3 about 6 minutes. Performance may vary.\n\nDirectories with over a million files tend to sync more slowly; we have not measured by how much.\n\nIn summary, `quill sync` copies only changed files and verifies each one by checksum, ensuring that your data stays safe and consistent.\n\n## Notes\n\nIt is crucial to differentiate the `quill` CLI described here from the unrelated `quill` package on npm to prevent confusion. It's important to remember that what's licensed in one country might not be licensed in another, so always check before you use something. All of the fonts in `assets/` are under the SIL Open Font License 1.1.",
+  "checks": [
+   {
+    "id": "cause-link-kept",
+    "rule": "both.name-the-relation",
+    "kind": "judge",
+    "text": "Does the output keep the causal link that, because each file is written under a temporary name and renamed only after its checksum matches, an interrupted sync leaves no partial files (with 'so', 'consequently', 'because' or another connective that states the cause)?"
+   },
+   {
+    "id": "tendency-kept",
+    "rule": "both.keep-certainty",
+    "kind": "judge",
+    "text": "Does the output keep that directories with over a million files tend to sync more slowly (as a tendency, not a rule) and that the slowdown has not been measured?"
+   },
+   {
+    "id": "no-wordy-phrases",
+    "rule": "en.plain-words",
+    "kind": "absent",
+    "text": "(?i)\\bthe fact that\\b|\\bas a result of\\b|\\ball of the\\b"
+   }
+  ],
+  "probe": [
+   "trope-empty-emphasis",
+   "trope-restating-close",
+   "trope-generic-caution"
+  ]
+ },
+ {
+  "id": "wikipedia-issue-reply-personal-en",
+  "skills": [
+   "writing-personal"
+  ],
+  "source": "Wikipedia 'Signs of AI writing' rev 1380716549 (content-1380716549.wikitext) L423 (contrast against a misconception the reader may not hold), L447 ('I appreciate the feedback so far, but I want to clarify something that's being overlooked', 'isn't just sourcing—it's framing', 'Movements evolve before they're neatly labelled', 'That's not just a sourcing issue—it's a systemic bias'), L477 ('Not a career, not a body of work ... — just'), L1890 ('In conclusion, I am here to collaborate'), L1917-L1938 (em-dash pivots in comments); audit WP-L03, WP-L03a, WP-L03b, WP-H03, WP-H05",
+  "prompt": "I'm replying on GitHub to a maintainer who closed my issue. Edit my draft reply so it's ready to post. Keep my points and every fact. Output only the reply.\n\nThe maintainer's comment:\n> Closing this: the timeout you hit is a docs issue. The 30 s default is documented in config.md, and you can raise it with `--timeout`.\n\nMy draft:\n\nI appreciate the feedback so far, but I want to clarify something that's being overlooked. The issue here isn't just documentation—it's the default itself. Uploads over 1 GB take about 80 seconds on a 100 Mbit/s link, so with the 30 s default they fail every time. That's not just a docs issue—it's a usability bug. Not a feature request, not a complaint — just a bug report. Defaults evolve before they're neatly documented.\n\nI know about `--timeout`, and it works, but every new user hits this first.\n\nIn conclusion, I'd like you to reopen the issue and either raise the default to 120 s or scale it with file size. I'm happy to send the PR.",
+  "checks": [
+   {
+    "id": "request-first",
+    "rule": "both.answer-first-in-replies",
+    "kind": "judge",
+    "text": "Does the reply open (after any greeting or thanks) with the request to reopen the issue, before the argument for it? The proposed change (raise the default timeout to 120 s or scale it with file size) may come in the same sentence or later in the reply, but must be in it. Answer no if the reply opens with the argument, such as that the default and not the docs is the problem or how long large uploads take, and asks to reopen only after it."
+   }
+  ],
+  "probe": [
+   "trope-negative-parallelism",
+   "trope-staged-emphasis",
+   "trope-preamble",
+   "trope-restating-close",
+   "trope-dash-overuse"
+  ]
+ },
+ {
+  "id": "wikipedia-dependency-review-en",
+  "skills": [
+   "writing-tech"
+  ],
+  "source": "Wikipedia 'Signs of AI writing' rev 1380716549 (content-1380716549.wikitext) L77 and L80 ('there is no specific conservation assessment ... However, the general health ... is crucial ... could potentially impact'), L84 ('plays a role in the ecosystem', 'is vital not only for ... but also for'), L862 ('In this section, we will discuss'), L926 (words to watch: 'does not by itself establish'), L928 ('maintains a low profile'), L936 ('Though the details ... aren't widely documented, they highlight her bravery'), L962 ('It does not establish that ...'); audit WP-C01c, WP-U02, WP-U02a (TECH: a limitation the reader would miss is legitimate)",
+  "prompt": "Revise the dependency review below for publication in our engineering wiki. The reviewers' notes after the draft are the facts: keep every fact in the notes, and where the draft says more than the notes, follow the notes. Output only the revised review, starting with its heading.\n\nDraft:\n\n## libtar-lite review\n\nIn this section, we will discuss the package's security status, its maintenance and our use of it. Currently, there is no security audit for libtar-lite. However, the general health of the npm ecosystem is crucial for the survival of this and other small packages. Factors such as supply-chain attacks and abandonment could potentially impact its users. The package plays a role in our ecosystem, and keeping it is vital not only for our export features but also for our customers' trust.\n\nThe sole maintainer maintains a low profile. Though the details of their response to the 2023 path-traversal bug aren't widely documented, they highlight the project's commitment to security.\n\nThe OpenSSF Scorecard score of 5.1 out of 10 does not by itself establish that the package is unsafe.\n\nWe should keep libtar-lite.\n\nReviewers' notes:\n- No security audit of libtar-lite has been published.\n- It has one maintainer.\n- 2023 path-traversal bug: reported on 3 March, fixed in 1.4.2 on 12 March.\n- Two of our services import it: billing-api and export-worker.\n- OpenSSF Scorecard: 5.1 out of 10. Our reading: the score alone does not show that the package is unsafe; it is low because the repository has no branch protection and no fuzzing.\n- Recommendation: keep libtar-lite, pin it to 1.4.x, and revisit if there is no release in 12 months.",
+  "checks": [
+   {
+    "id": "labeled-recommendation",
+    "rule": "tech.neutral-register",
+    "kind": "judge",
+    "text": "Does the output give the recommendation as a labeled recommendation (for example 'Recommendation:') with all three parts: keep libtar-lite, pin it to 1.4.x, and revisit if there is no release in 12 months?"
+   }
+  ],
+  "probe": [
+   "trope-preamble",
+   "trope-inflated-stakes",
+   "trope-gap-then-guess",
+   "trope-stacked-hedges"
+  ]
+ }
+]

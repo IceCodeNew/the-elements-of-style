@@ -1,0 +1,290 @@
+[
+  {
+    "id": "gapfill-ja-tech-runbook-edit",
+    "skills": [
+      "writing-tech",
+      "writing-ja"
+    ],
+    "source": "new (gapfill): written from the rule texts of ja.plain-predicates, ja.weak-ga, tech.condition-before-action, tech.one-action-per-step and ja.judgment-form; no source example",
+    "probe": [
+      "trope-nominalized-verbs"
+    ],
+    "prompt": "次の運用手順書の節を推敲してください。読み手はオンコール担当のエンジニアです。コマンド、パス、数値、日付は変えず、だ・である体のままにしてください。推敲後の節だけを出力してください。\n\n---\n## キャッシュクラスタの切り替え\n\n運用チームは、キャッシュクラスタ `cache-a` に対して年 2 回の定期点検を実施している。現在、`cache-a` から新クラスタ `cache-b` への移行を行っている最中であり、`cache-a` の停止は 11 月に実施する予定である。\n\n10 月 3 日の障害でログを調べたが、原因は `cache-a` のディスクの枯渇だった。バックアップは毎晩取得しているが、リストアの検証はまだ一度もしていない。\n\n切り替えは次の順に進める。\n\n1. `cachectl drain cache-a` を実行し、続けて `cachectl snapshot cache-a` を実行する。\n2. `cachectl promote cache-b` を実行する。ただし、これは `cachectl status cache-b` が `ready` を返した場合に限る。\n3. `/etc/app/cache.yaml` の `host` の値の変更を行う。新しい値は `cache-b.internal:6379` である。\n4. `systemctl restart app` でアプリケーションの再起動を実施する。\n5. ダッシュボード「Cache Overview」で、ヒット率が 90% 以上に戻ったことを確認することができる。\n\n切り替えの完了を確認するまで、`cache-a` のデータを削除してはならない。\n---\n",
+    "checks": [
+      {
+        "id": "count-modifier-kept",
+        "rule": "ja.plain-predicates",
+        "kind": "present",
+        "text": "年\\s*(?:2|２|二)\\s*回の定期点検"
+      },
+      {
+        "id": "condition-first",
+        "rule": "tech.condition-before-action",
+        "kind": "judge",
+        "text": "Does a reader who follows the text in order meet the condition (`cachectl status cache-b` returns `ready`) before the command `cachectl promote cache-b`? The condition may come earlier in the same step. It may also come from an earlier step that runs `cachectl status cache-b`, together with a phrase before the command such as '手順 3 で `ready` が返った場合に限り'. Answer no only if the command comes before its condition or the condition is missing."
+      },
+      {
+        "id": "one-action-steps",
+        "rule": "tech.one-action-per-step",
+        "kind": "judge",
+        "text": "Are `cachectl drain cache-a` and `cachectl snapshot cache-a` in two different numbered steps, and does every numbered step ask the reader to do one thing? A step that runs one command only under a stated condition counts as one action."
+      }
+    ]
+  },
+  {
+    "id": "gapfill-ja-tech-design-note",
+    "skills": [
+      "writing-tech",
+      "writing-ja"
+    ],
+    "source": "new (gapfill): written from the rule texts of ja.type-before-modifiers, ja.judgment-form and ja.inanimate-subject; no source example",
+    "probe": [
+      "trope-hidden-actor"
+    ],
+    "prompt": "API ゲートウェイ `edgegw` の設計文書に入れる 2 つの節を、次の英語のメモをもとに日本語で書いてください。どちらも だ・である体 にしてください。メモにある事実だけを使い、### 1 と ### 2 の見出しの下にそれぞれの本文を出力し、それ以外は出力しないでください。\n\n### 1. 設計の説明（段落で書く）\n読み手は、このゲートウェイを初めて担当する他チームのエンジニア。\n- \"We added to every route a circuit breaker, a common resilience pattern, that stops calls to a downstream service when more than 50% of the calls in a 30-second window fail, waits 20 seconds, and then lets 5 trial calls through to check whether the service has recovered.\"\n- \"Each route also has a token bucket, a rate-limiting algorithm that refills 100 tokens per second into a bucket of capacity 200, takes one token per request, and rejects the request with 429 when the bucket is empty.\"\n- \"The gateway must not hold requests while a downstream service is down: held requests pile up, and the gateway runs out of its 4,096 connection slots within about a minute.\"\n- \"Last quarter's incident logs told us that four of the six outages spread through client retries.\"\n- \"The metrics demand a hard limit per route: one route alone sent 70% of all requests during the March outage.\"\n- \"While a breaker is open, the gateway returns 503 with the header `Retry-After: 20`.\"\n\n### 2. 呼び出し側との API 契約（箇条書きで書く）\n- \"Callers must honor the `Retry-After` header.\"\n- \"Callers must not retry a request that got 429 sooner than one second later.\"\n",
+    "checks": [
+      {
+        "id": "design-judgment",
+        "rule": "ja.judgment-form",
+        "kind": "judge",
+        "text": "In ### 1, is the decision that the gateway does not hold requests while a downstream service is down written as the designers' judgment (for example 保持するわけにはいかない, 保持しないことにした, 保持しない設計にした), not as a command such as 保持してはならない, 保持してはいけない or 保持しないこと?"
+      }
+    ]
+  },
+  {
+    "id": "gapfill-ja-tech-experiment-report",
+    "skills": [
+      "writing-tech",
+      "writing-ja"
+    ],
+    "source": "new (gapfill): written from the rule texts of ja.spoken-jargon, ja.one-hedge, ja.name-the-thinker, tech.tool-limits and both.separate-non-causes; no source example",
+    "probe": [
+      "trope-borrowed-authority",
+      "trope-stacked-hedges"
+    ],
+    "prompt": "次の社内検証報告の節を推敲してください。読み手は検索チームと SRE チームのエンジニアです。数値、日付、ツール名は変えず、だ・である体のままにしてください。原稿の後の「補足」は原稿に書かれていない事実です。必要なら使ってください。推敲後の節だけを出力してください。\n\n---\n## 検索 API の結果キャッシュの TTL 変更\n\n10 月 6 日に、検索 API の結果キャッシュの TTL を 60 秒から 300 秒に延ばした。この変更はよく効いた。変更後の 1 週間で、p95 レイテンシは 420 ms から 180 ms に下がった。この週は祝日を含み、リクエスト数は前週より 35% 少なかった。TTL の延長によって、p95 レイテンシは半分以下になった。\n\nキャッシュのヒット率は 61% から 88% に上がった。10 月 13 日に TTL を 1 時間だけ 60 秒に戻すと、ヒット率は 62% に下がり、300 秒に戻すと 88% に回復した。ヒット率の上昇は TTL を延ばしたためと言えるのではないかと思われる。\n\nTTL を 600 秒にすれば、ヒット率はさらに上がるかもしれないと考えられるのではないだろうか。600 秒はまだ試していない。\n\nTTL を長くすると、古い検索結果が返るおそれがあると言われている。また、一般に、ヒット率が 80% を超えるとデータベースの負荷は半分以下になるとされる。整合性チェッカー `freshcheck` は、古い結果を必ず検出する。`freshcheck` は 1 時間ごとに 1,000 件のクエリを抜き出して検索インデックスと照合し、今週は 1,000 件中 3 件の不一致を報告した。抜き出されなかったクエリの古い結果は検出できない。\n\nこの設定を全ルートに広げるのは筋がいい。全ルートの 7 割は検索 API と同じく読み取りが中心で、インデックスの更新は 1 日 1 回のバッチだけだからだ。\n---\n\n補足:\n- 古い結果が返るおそれを指摘したのは SRE チームの小林で、10 月 7 日の設計レビューでのことだ。\n- 「ヒット率が 80% を超えるとデータベースの負荷は半分以下になる」という一文の出典は見つかっていない。この 1 週間のデータベースの負荷は測っていない。\n",
+    "checks": [
+      {
+        "id": "hit-rate-firm",
+        "rule": "ja.one-hedge",
+        "kind": "judge",
+        "text": "Does the output state firmly that the hit-rate rise came from the longer TTL (for example ヒット率の上昇は TTL の延長による), with no hedge such as 言えるのではないか, と思われる, かもしれない or と考えられる? The 10 月 13 日 test, in which the hit rate fell and recovered with the TTL, settles it."
+      }
+    ]
+  },
+  {
+    "id": "gapfill-ja-pers-essay-edit",
+    "skills": [
+      "writing-personal",
+      "writing-ja"
+    ],
+    "source": "new (gapfill): written from the rule texts of ja.weak-ga, ja.plain-predicates, ja.no-anata and ja.one-hedge; no source example",
+    "probe": [
+      "trope-nominalized-verbs",
+      "trope-stacked-hedges"
+    ],
+    "prompt": "次の個人ブログの記事を推敲してください。だ・である体のまま、書き手の体験と数値は変えないでください。推敲後の記事だけを、タイトルから出力してください。\n\n---\n# 紙の手帳に戻して 3 か月\n\n7 月に、スマホの予定表をやめて紙の手帳に戻した。きっかけは、6 月の誕生日に妹から手帳をもらったことだ。\n\n先週、駅前の文房具店に替えのリフィルを買いに行ったが、店主は高校の同級生だった。二人で 20 分ほど話し込んでしまった。\n\n毎朝、コーヒーを淹れて、手帳を開く。昼は会社でスマホのチャットを見るが、予定はすべて手帳に書く。夜は翌日の予定の書き込みを行って、寝る前にもう一度見る。\n\n紙の手帳は検索できないが、開けば一週間が一目で見える。月 1 回の棚卸しを行っていて、終わった予定に線を引き、残ったものを翌月のページに書き写す。この書き写しによって、やり残したことを確認することができる。\n\nこの 3 か月で予定をすっぽかしたのは 1 回だけで、去年の同じ 3 か月は 4 回だった。予定を忘れることは減ったと言えるのではないかと思う。\n\nあなたは朝、スマホを開いて、通知を一つずつ消して、予定表を見ないまま閉じる。少なくとも、去年の私はそうだった。\n\n仮に、あなたが明日から紙の手帳に戻すとしよう。最初に困るのは、手帳を家に忘れた日に予定が分からないことだ。私は最初の一週間で三回忘れた。\n---\n",
+    "checks": [
+      {
+        "id": "count-modifier-kept",
+        "rule": "ja.plain-predicates",
+        "kind": "present",
+        "text": "月\\s*(?:1|１|一)\\s*回の棚卸し"
+      },
+      {
+        "id": "scene-anata-kept",
+        "rule": "ja.no-anata",
+        "kind": "judge",
+        "text": "Does the output keep the scene-setting sentence 仮に、あなたが明日から紙の手帳に戻すとしよう (small wording changes are fine) with its あなた, which a 〜としよう sentence may keep?"
+      },
+      {
+        "id": "firm-count-claim",
+        "rule": "ja.one-hedge",
+        "kind": "judge",
+        "text": "Does the output state firmly that the author forgets appointments less often now (for example 予定を忘れることは減った), without hedges such as と言える, のではないか, と思う or かもしれない? The counts (1 missed appointment in these 3 months, 4 in the same 3 months last year) establish it."
+      }
+    ]
+  },
+  {
+    "id": "gapfill-ja-pers-newsletter",
+    "skills": [
+      "writing-personal",
+      "writing-ja"
+    ],
+    "source": "new (gapfill): written from the rule texts of ja.type-before-modifiers, both.write-for-the-reader, both.state-the-mechanism and both.parallel-form; no source example",
+    "prompt": "次の個人ニュースレターの原稿を推敲してください。読者は、パン作りを 2 年以上続けている購読者です。強力粉、グルテン、一次発酵が何かは知っていて、普段から計量、こね、一次発酵、分割、ベンチタイム、成形、二次発酵、焼成の順でパンを焼いています。です・ます体のまま、書き手の体験と数値は変えないでください。原稿の後の「作者のメモ」は原稿にない事実です。必要なら使ってください。推敲後の原稿だけを、タイトルから出力してください。\n\n---\n# パン便り 第 12 号：オートリーズを試しました\n\n今月は、粉と水だけを先に混ぜて 30 分置き、塩とイーストを入れる前にグルテンのつながりを進めておくオートリーズを試しました。\n\n強力粉はタンパク質の多い小麦粉で、水を加えてこねるとグルテンという網目ができます。このグルテンが発酵で出たガスを閉じ込めるので、パンがふくらみます。\n\nいつもの手順は、計量、こね、一次発酵、分割、ベンチタイム、成形、二次発酵、焼成です。オートリーズは、このうち計量のあと、こねの前に入れます。\n\nこね時間を 15 分から 8 分に縮めても、生地を薄くのばすと向こうが透ける膜ができました。オートリーズをすると、こね時間が短くて済むのです。\n\n変えたこと：\n- こね時間を 8 分にした\n- 水の量は 5 g 増やすことに\n- 塩を入れるタイミング：オートリーズのあと\n\n変えなかったこと：\n- 粉（春よ恋）\n- 一次発酵は 27℃ で 60 分のままにしました\n- オーブンの温度\n\n来月は、粉の一部を熱湯でこねて一晩冷蔵庫で寝かせ、でんぷんを糊化させて生地に水分を多く抱えさせる湯種を試します。\n---\n\n作者のメモ:\n- オートリーズでこね時間が短くて済むのは、粉が水を吸って置かれている 30 分の間に、こねなくてもグルテンのつながりができていくから。そのぶん、こねてつくる量が少なくて済む。\n- 湯種は、本ごねの生地に混ぜ込む下ごしらえの生地。\n",
+    "checks": [
+      {
+        "id": "autolyse-name-first",
+        "rule": "ja.type-before-modifiers",
+        "kind": "judge",
+        "text": "Where オートリーズ first appears, does the output avoid placing its description (mixing only flour and water first, resting 30 minutes, advancing the gluten network before salt and yeast go in) as a long modifier in front of the word オートリーズ, and instead name オートリーズ first, say what kind of thing it is (for example 工程, 下準備, 手順), and give the description after it?"
+      },
+      {
+        "id": "yudane-name-first",
+        "rule": "ja.type-before-modifiers",
+        "kind": "judge",
+        "text": "Where 湯種 appears, does the output avoid placing its description (part of the flour kneaded with boiling water, rested overnight in the refrigerator, starch gelatinized, the dough holding more water) as a long modifier in front of the word 湯種, and instead name 湯種 first, say what kind of thing it is (for example 下ごしらえの生地, 生地), and give the description after it?"
+      }
+    ]
+  },
+  {
+    "id": "gapfill-zh-tech-ops-doc-edit",
+    "skills": [
+      "writing-tech",
+      "writing-zh"
+    ],
+    "source": "new (gapfill): written from the rule texts of zh.de-chain, zh.bei-passive, tech.short-sentences and tech.tool-limits; no source example",
+    "probe": [
+      "trope-sweeping-claims"
+    ],
+    "prompt": "请修改下面这段内部运维文档，准备发布到团队 wiki。读者是平台组的工程师。保留所有事实、数字、命令和路径，不要补充原文没有的信息。只输出修改后的这一节。\n\n---\n## netwatch 使用说明\n\n`netwatch` 是运维组上个月发布的基于 eBPF 的面向容器集群的网络流量监控工具。使用前请先阅读平台组维护的关于告警规则的配置格式的说明文档。新的配置文件放在默认的目录下。\n\n部署时先在每个节点上安装 agent，agent 启动后会读取 `/etc/netwatch/agent.yaml`，如果这个文件不存在就使用默认配置，默认配置只采集 TCP 流量，需要采集 UDP 的话要在配置里把 `udp: true` 打开，改完配置以后要重启 agent 才能生效。\n\n采集到的数据被 agent 压缩后，被发送到 Kafka，再被下游的 `flowstore` 写入 ClickHouse。\n\n`netwatch` 能发现所有的丢包。它只统计经过 eBPF 钩子的流量；在开启了 SR-IOV 直通的网卡上，它看不到丢包。在上个月的压测中，它报告了注入的 1,000 次丢包中的 968 次。\n\n上周的丢包问题被三个业务方反馈过，被怀疑与网卡驱动的版本有关，已被内核组列入下周的排查计划。\n---\n",
+    "checks": [
+      {
+        "id": "short-de-kept",
+        "rule": "zh.de-chain",
+        "kind": "judge",
+        "text": "Does the output keep 新的配置文件放在默认的目录下 as one plain sentence, without splitting it into two sentences or moving one of its modifiers into a separate clause? Small wording changes are fine, including dropping a 的 (新配置文件放在默认目录下) or writing 位于 for 放在."
+      },
+      {
+        "id": "suspicion-unattributed",
+        "rule": "zh.bei-passive",
+        "kind": "judge",
+        "text": "Does the output keep the suspicion that the packet loss is related to the NIC driver version as an unattributed suspicion (for example 被怀疑, 疑似, 怀疑, 可能与……有关), without attributing it to the three business teams or to 内核组, and without stating it as the cause (导致, 由……引起)?"
+      }
+    ]
+  },
+  {
+    "id": "gapfill-zh-pers-blog-sleep",
+    "skills": [
+      "writing-personal",
+      "writing-zh"
+    ],
+    "source": "new (gapfill): written from the rule texts of both.separate-non-causes, both.one-reading, pers.rhythm-follows-content, zh.de-chain and zh.bei-passive; no source example",
+    "prompt": "帮我改一下这篇个人博客，准备发出去。保留我的经历、数字和说话的语气，不要加我没写的内容。只输出改好的文章，从标题开始。\n\n---\n# 睡前放下手机的一个月\n\n我被室友小林说服，决定试一个月，计划被我写在冰箱门的白板上，结果第一周就被我自己打破了两次。\n\n九月我做了两个改变：晚上十点把手机放到客厅充电，下午不再喝咖啡。这比我想的难多了：头一个星期，我每晚都想起身去客厅拿手机。\n\n卧室里只剩一盏台灯。闹钟换成了一个旧机械钟。窗帘换成了遮光的。书桌上放了一本纸质书。\n\n数据来自我用了三年的小米手环自带的睡眠记录功能的每日报告。八月，我平均要 40 分钟才能睡着；九月，平均只要 15 分钟。九月中旬开始降温，卧室从 29 度降到了 24 度。放下手机让我入睡快了一倍多。\n\n有两晚我过了一个小时还没睡着，因为楼上装修，电钻一直响到晚上十一点。\n\n第三周的一个早上，我第一次在闹钟响之前醒了。\n---\n",
+    "checks": [
+      {
+        "id": "bei-known-actor",
+        "rule": "zh.bei-passive",
+        "kind": "absent",
+        "text": "被我(?:自己)?(?:写|打破)"
+      }
+    ]
+  },
+  {
+    "id": "gapfill-en-tech-runbook-edit",
+    "skills": [
+      "writing-tech",
+      "writing-en"
+    ],
+    "source": "new (gapfill): written from the rule texts of tech.condition-before-action, tech.one-action-per-step, en.caps-emphasis, en.heading-case and en.sentence-length; no source example",
+    "prompt": "Revise this runbook section for the team wiki. The readers are on-call engineers who will follow it during a change window. Keep every command, path, threshold and channel name. Output only the revised section.\n\n---\n## Rotating the Message Queue TLS Certificate\n\nThis runbook rotates the TLS certificate on the three `mq` brokers. Do NOT start before the change window opens.\n\n1. Copy `new.pem` to `/etc/mq/tls/` on each broker and run `mqctl tls verify /etc/mq/tls/new.pem`.\n2. Run `mqctl drain mq-1`. Only do this if `mqctl status` shows all three brokers as `healthy`.\n3. Run `mqctl tls reload mq-1`.\n4. Run `mqctl undrain mq-1`, then repeat steps 2 to 4 for `mq-2` and `mq-3`.\n5. Page the on-call DBA in #db-oncall if the client error rate on the \"MQ Clients\" dashboard goes above 2% at any point during the rotation, because the billing service retries every failed publish and a retry storm can fill the WAL disk on the billing database in about ten minutes.\n\nNEVER reload more than one broker at a time. The clients use DNS round robin and reconnect to any broker that is up, so this is REALLY important.\n---\n",
+    "checks": [
+      {
+        "id": "one-action-steps",
+        "rule": "tech.one-action-per-step",
+        "kind": "judge",
+        "text": "Is copying `new.pem` to `/etc/mq/tls/` in a different numbered step from running `mqctl tls verify`, and is `mqctl undrain mq-1` in a different numbered step from the instruction to repeat the steps for `mq-2` and `mq-3`?"
+      },
+      {
+        "id": "commands-in-blocks",
+        "rule": "tech.one-action-per-step",
+        "kind": "judge",
+        "text": "Is each command that a step runs (`mqctl tls verify ...`, `mqctl drain mq-1`, `mqctl tls reload mq-1`, `mqctl undrain mq-1`) shown in a code block under its step, not only inline in the step's sentence? A command named only inside a condition, such as `mqctl status`, may stay inline."
+      },
+      {
+        "id": "heading-sentence-case",
+        "rule": "en.heading-case",
+        "kind": "judge",
+        "text": "Is the section heading in sentence case, with only its first word and the acronym TLS capitalized (for example 'Rotating the message queue TLS certificate' or 'Rotate the message queue TLS certificate')? The task sets no house style for headings. Answer no if other words keep their capitals or if TLS is lowercased."
+      },
+      {
+        "id": "procedural-sentence-length",
+        "rule": "en.sentence-length",
+        "kind": "absent",
+        "text": "(?<!\\S)(?=[^.!?\\n]*(?:retry storm|round robin))(?:(?=[^\\s.!?]*\\w)[^\\s.!?]++[ \\t]+){20,}(?=[^\\s.!?]*\\w)[^\\s.!?]++"
+      },
+      {
+        "id": "retry-reason-linked",
+        "rule": "en.sentence-length",
+        "kind": "judge",
+        "text": "Does the output keep the reason for the 2% threshold and link it to the threshold with 'because', 'so' or a sentence that presents it as the reason (the billing service retries every failed publish, and a retry storm can fill the WAL disk on the billing database in about ten minutes), instead of dropping the reason or leaving it unconnected?"
+      }
+    ]
+  },
+  {
+    "id": "gapfill-en-tech-design-doc-edit",
+    "skills": [
+      "writing-tech",
+      "writing-en"
+    ],
+    "source": "new (gapfill): written from the rule texts of en.heading-case, en.paragraph-length, en.sentence-length, tech.short-sentences, both.separate-non-causes and both.state-the-mechanism; no source example",
+    "prompt": "Below are the headings of our design doc \"Tenant Sharding for ledgerdb\" and a draft of its new last section. Revise the draft section so it can be added to the doc. The section's readers are the product managers and the support lead, who know the product but not the storage internals. Keep every fact, number and identifier. The note after the draft is a fact from the author that is not in the draft; use it if it helps. Output only the revised section, starting with its heading.\n\nExisting headings of the doc:\n```\n## Why We Shard by Tenant\n## Storage Layout and Compaction\n## Handling Node Failures\n```\n\nDraft section:\n---\n## Rollout plan and risks\n\nWe will roll out tenant sharding in three stages over six weeks, moving internal tenants in week 1, the 40 smallest customer tenants in week 3 and the remaining 1,200 tenants in week 5, unless the canary shows a p99 write latency above 250 ms for more than ten minutes during an earlier stage, in which case we stop and review before the next stage.\n\nThe migration tool copies a tenant's rows to its new shard. It checks the row count and a checksum of each table. When both match, it switches the tenant's reads to the new shard. It then switches writes. A tenant with 10 million rows takes about 40 minutes. Rollback means switching reads and writes back to the old rows. The old rows stay in place for seven days after the switch. After seven days a cleanup job deletes them, and rollback is no longer possible.\n\nIn the September staging run every tenant migrated without errors. Staging write latency fell by 30% that week, and the new compaction schedule shipped the same week. Sharding by tenant made staging faster.\n\nThe main risk is the shared `tenant_settings` table. A schema change to `tenant_settings` needs a restart of every shard.\n\n### what the canary measures\n\nThe canary writes 100 synthetic rows per minute to one tenant on each shard and the latency dashboard shows the p99 of those writes and the on-call engineer gets paged when the threshold is crossed.\n---\n\nNote from the author: each shard loads `tenant_settings` into memory once at startup and never reloads it.\n",
+    "checks": [
+      {
+        "id": "title-case-headings",
+        "rule": "en.heading-case",
+        "kind": "judge",
+        "text": "Are the section heading and its subheading in Title Case like the doc's existing headings (for example 'Rollout Plan and Risks' and 'What the Canary Measures'), with the major words capitalized and short articles, conjunctions and prepositions in lower case?"
+      },
+      {
+        "id": "descriptive-sentence-length",
+        "rule": "en.sentence-length",
+        "kind": "judge",
+        "text": "Not counting identifiers and numbers, is every sentence of the output 25 words or fewer?"
+      },
+      {
+        "id": "stop-condition-kept",
+        "rule": "en.sentence-length",
+        "kind": "judge",
+        "text": "Does the output keep the condition that ties the schedule to the canary, as a condition ('unless', 'if' or an equivalent) on going ahead with the rollout: the rollout stops for a review before the next stage if the canary shows a p99 write latency above 250 ms for more than ten minutes? The condition may stand in the schedule's sentence, right after the schedule, or in a section on the canary, as long as it says that it stops the rollout before the next stage. Answer no if the condition is dropped, if it no longer says that it stops the next stage, or if it appears only as the alert that pages the on-call engineer."
+      },
+      {
+        "id": "canary-one-statement",
+        "rule": "tech.short-sentences",
+        "kind": "judge",
+        "text": "Is the canary description written as separate sentences or list items, each with one statement (the canary writes 100 synthetic rows per minute to one tenant on each shard; the latency dashboard shows the p99 of those writes; the on-call engineer is paged when the threshold is crossed)? Answer no if they stay in one sentence joined by 'and'."
+      }
+    ]
+  },
+  {
+    "id": "gapfill-en-pers-essay-edit",
+    "skills": [
+      "writing-personal",
+      "writing-en"
+    ],
+    "source": "new (gapfill): written from the rule texts of both.one-reading, both.separate-non-causes, both.parallel-form, pers.rhythm-follows-content and en.paragraph-length; no source example",
+    "prompt": "Edit this personal essay for my blog. Keep my experiences, numbers and voice, and add nothing I did not write. A note from me: it was my manager, Dana, who said I could use the basement shower. Output only the edited essay, starting with its title.\n\n---\n# Six months of cycling to work\n\nIn April I sold my car and started cycling the 9 km to the office. That month my team also moved to a four-day week, and I started going to bed an hour earlier. By September my resting heart rate had dropped from 68 to 59. Cycling cut my resting heart rate by nine beats a minute.\n\nSelling the car also means I no longer pay €45 a month for the parking permit.\n\nThe first week was hard. The hill hurt my legs. My bag weighed too much. I arrived with a wet shirt. I kept going anyway.\n\nA normal ride now goes like this. I leave at 7:40, when the bike lane on Harbour Road is still empty. I cross the river on the old swing bridge, which opens for boats twice a morning, so I sometimes wait four minutes there. After the bridge the path climbs past the hospital for about a kilometre. At the top I stop at the bakery on Kerr Street for a roll. The last stretch runs downhill along the tram line. I lock the bike in the basement at about 8:15.\n\nMy colleague Priya told my manager about the shower in the basement, and she said I could use it. On wet days I take the tram.\n\nWhat I gave up: the car, the parking permit, and being able to drive to my mother's on a whim. What I got: a lower monthly bill, twenty minutes outside every morning, and I now know the bakers on Kerr Street by name.\n\nThen in July someone stole the bike. I bought a second-hand one the next week for €180.\n\nMy neighbour asked whether I miss the car and whether I would buy another one. I don't miss the car itself. This is the question I still can't answer.\n---\n",
+    "checks": [
+      {
+        "id": "open-question-named",
+        "rule": "both.one-reading",
+        "kind": "judge",
+        "text": "Does the output name the question the author still can't answer (whether they would buy another car), instead of 'This' or 'That' that could point to either of the neighbour's two questions?"
+      }
+    ]
+  },
+  {
+    "id": "gapfill-en-pers-newsletter-heat-pump",
+    "skills": [
+      "writing-personal",
+      "writing-en"
+    ],
+    "source": "new (gapfill): written from the rule texts of both.state-the-mechanism, both.write-for-the-reader, both.parallel-form and en.heading-case; no source example",
+    "prompt": "Edit this issue of my street newsletter before I send it. The readers are neighbours on our street's mailing list. Most of them got a heat pump this autumn under the council scheme, have never read about how heat pumps work, and set up their heating schedules with the installer at the council's workshop, all in the same app. The newsletter's style sheet says section titles use title case. Keep my experiences, numbers and voice, and add nothing that is not in the draft or my notes. My notes after the draft are background I know; use them if they help. Output only the edited issue, starting with its title.\n\n---\n# The Heat Pump Diaries, Issue 4\n\n## Turning it down at night\n\nLast winter I turned the heat pump down from 20°C to 15°C every night, the way I used to with the old gas boiler. My electricity use went up. Night setbacks make a heat pump use more electricity.\n\nTomasz, our installer, told me the backup heater only switches on when the house is more than 3 degrees below the set temperature. My setback was 5 degrees. Next winter I'm going to try a setback of 2 degrees.\n\nTo change your setback, open the app, tap the three dots at the top right, tap Settings, tap Schedule, tap the moon icon, and drag the slider to the temperature you want.\n\n## The defrost thing\n\nOn frosty mornings the outdoor unit stops heating for a few minutes and puffs out steam. That is how it defrosts itself.\n\nThe pump moves heat from the outside air into the house; the backup heater is for making heat from electricity directly.\n---\n\nMy notes:\n- When the house has cooled to 15°C, the heat pump has to raise it by 5 degrees in the morning. To do that fast, it switches on its built-in electric backup heater, which uses about three times as much electricity for the same heat as the pump itself. Last winter the app showed the backup heater running from 6:00 to 7:30 every morning.\n- Defrosting: in frost, ice builds up on the outdoor coil and blocks the air. The unit runs in reverse for a few minutes and sends heat to the outdoor coil to melt the ice. The steam is the melting ice.\n",
+    "checks": [
+      {
+        "id": "setback-mechanism",
+        "rule": "both.state-the-mechanism",
+        "kind": "judge",
+        "text": "Where the output says that the night setback made the heat pump use more electricity, does it state both links of the mechanism: (1) that reheating the house by 5 degrees in the morning made the heat pump switch on its electric backup heater, and (2) that this heater uses about three times as much electricity for the same heat as the pump? The two links may be in different sentences or paragraphs of the section; (2) may be stated where the output first introduces the backup heater. Answer no if the output leaves link (1) to the reader, for example by saying only that the house had to warm up and that the app showed the heater running."
+      },
+      {
+        "id": "defrost-mechanism",
+        "rule": "both.state-the-mechanism",
+        "kind": "judge",
+        "text": "Where the output says that the outdoor unit stops heating and puffs out steam on frosty mornings to defrost itself, does it give the mechanism in a sentence: ice on the outdoor coil blocks the air, the unit runs in reverse to send heat to the coil, and the steam is the melting ice?"
+      }
+    ]
+  }
+]
