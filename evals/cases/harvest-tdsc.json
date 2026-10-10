@@ -1,0 +1,147 @@
+[
+ {
+  "id": "tdsc-en-tech-gateway-reset",
+  "skills": [
+   "writing-tech"
+  ],
+  "source": "TD-C16, TD-S40, TD-C24, TD-C30, TD-C31 (guard), TD-T40; terminology table example 温度为25°C; new",
+  "prompt": "Write the procedure for resetting a Fieldbox sensor gateway to factory settings. Readers are field technicians. Use only these facts. Output only the procedure.\n\n- Before the reset, export the configuration with `fbctl config export > backup.json`. When it works, it prints `exported 1 file`.\n- The gateway must be between 5°C and 40°C during the reset.\n- To start the reset, hold the RESET and POWER buttons together for 10 seconds. If one of them is released early, the gateway only restarts and nothing is reset.\n- The status LED then blinks orange for about two minutes and turns solid green when the reset is done. If it turns red, stop: the flash memory is damaged, and the unit must go back to the vendor.\n- Connect a laptop to the LAN1 port.\n- Run `fbctl config import backup.json`. Nobody has documented what it prints.",
+  "checks": [
+   {
+    "id": "celsius-spacing",
+    "rule": "tech.number-units",
+    "kind": "absent",
+    "text": "\\d(?:°C|℃)"
+   }
+  ]
+ },
+ {
+  "id": "tdsc-en-tech-quarterly-results",
+  "skills": [
+   "writing-tech"
+  ],
+  "source": "TD-T49, TD-T102, TD-T103, TD-T104, TD-S24, TD-T29; new",
+  "prompt": "Write the 'Results' section of the quarterly engineering update about the new checkout service. Readers are the engineering and product teams. Use only these figures and notes. Output only the section.\n\n- Checkout error rate: 2.0% in Q2, 3.0% in Q3.\n- Share of payments that needed a retry: 12% in Q2, 9% in Q3.\n- Median checkout latency: 900 ms in Q2, 300 ms in Q3.\n- From the product team's slide: \"Conversion improved by 5%.\" The slide does not say whether this is a relative change or percentage points.\n- The new service runs in these places, as the dashboard export lists them: EU, eu-west-1, US, us-east-2, Frankfurt office.\n- Next quarter, copied from the planning doc: \"Move eu-west-1 to the new database.\" / \"retry budget per merchant\" / \"Add a fraud check before payment.\"",
+  "checks": [
+   {
+    "id": "plans-end-alike",
+    "rule": "both.consistent-list-items",
+    "kind": "judge",
+    "text": "If the output lists the next-quarter plans, do all the items have the same grammatical form and end alike (all full sentences with a period, or all phrases without one)? If the plans are not in a list, answer yes."
+   }
+  ]
+ },
+ {
+  "id": "tdsc-zh-spacing-install-edit",
+  "skills": [
+   "writing-tech",
+   "writing-zh"
+  ],
+  "source": "TD-S30, TD-S31, TD-T22, TD-T36, TD-T37, TD-T38, TD-T39, TD-T42, TD-T45; TD-T23, TD-T27 (zh.full-width-punct); terminology table examples 使用API获取数据, 等待3秒, 版本2.0已发布, 增长50%, 使用  API, 2026年9月29日, 应用程序接口( API ), 支持 API 、 SDK, 正在加载..., 检查结果--连接失败, and the inline-code and link examples",
+  "prompt": "修改下面这节部署文档的写法，准备发布。保留所有事实、命令、路径和链接，不要添加新内容。只输出修改后的这一节。\n\n---\n## 安装agent\n\nagent支持Linux和macOS，需要Python3.10以上。安装前先确认磁盘剩余空间大于2GB；CPU占用超过80%时，安装会变慢。\n\n运行`pip install fieldagent`安装。安装完成后运行`fieldagent --version`，输出应为`1.4.2`。从2026年9月29日起，旧版agent不再更新。\n\n配置文件模板见[GitHub仓库](https://github.com/acme/fieldagent)里的`config.example.yaml`，常见错误见 [常见问题](https://docs.example.com/faq) 。\n\nagent启动时会依次检查网络、磁盘和权限...全部通过后才开始采集。默认采集 CPU 、内存和磁盘指标 。\n\n如果启动失败，查看日志：检查结果--连接失败，通常是代理配置不对。应用程序接口( API )的地址用  `FIELD_API_URL` 设置。\n---",
+  "checks": [
+   {
+    "id": "literals-kept",
+    "rule": "zh.cjk-spacing",
+    "kind": "present",
+    "text": "(?s)^(?=.*\\(https://github\\.com/acme/fieldagent\\))(?=.*\\(https://docs\\.example\\.com/faq\\))(?=.*`fieldagent --version`)(?=.*`FIELD_API_URL`)(?=.*`1\\.4\\.2`)"
+   },
+   {
+    "id": "dash-form",
+    "rule": "zh.full-width-punct",
+    "kind": "absent",
+    "text": "[\\u4e00-\\u9fff]\\s?-{2}\\s?[\\u4e00-\\u9fff]"
+   }
+  ]
+ },
+ {
+  "id": "tdsc-zh-punct-function-edit",
+  "skills": [
+   "writing-tech",
+   "writing-zh"
+  ],
+  "source": "TD-T24, TD-T25, TD-T30, TD-T44; terminology table examples 参见「安装指南」, 支持 API 、 SDK",
+  "prompt": "修改下面这段帮助中心的说明，准备发布。文中的“导出工具使用手册”和“数据安全规范”是帮助中心里另外两份文档；“导出”和“提交”是控制台上的按钮。保留所有事实、命令和数字，不要添加新内容。只输出修改后的文字。\n\n---\n导出工具支持REST, gRPC和Webhook三种接入方式，详细用法参见“导出工具使用手册”和“数据安全规范”。导出申请一般在3-5个工作日内完成审核。\n\n在控制台点击导出按钮，选择时间范围后点击提交即可。定时导出用cron表达式设置，例如 `0 2 * * 1-5` 表示工作日每天凌晨2点执行。\n---",
+  "checks": [
+   {
+    "id": "book-title-marks",
+    "rule": "zh.punct-by-function",
+    "kind": "present",
+    "text": "(?s)^(?=.*《导出工具使用手册》)(?=.*《数据安全规范》)"
+   },
+   {
+    "id": "range-not-hyphen",
+    "rule": "zh.punct-by-function",
+    "kind": "absent",
+    "text": "\\d\\s*[-－–]\\s*\\d+\\s*个?(?:工作日|天|小时|分钟)"
+   }
+  ]
+ },
+ {
+  "id": "tdsc-zh-reader-address",
+  "skills": [
+   "writing-tech",
+   "writing-zh"
+  ],
+  "source": "TD-S20, TD-T33, TD-T34, TD-T35; new",
+  "prompt": "为内部的数据看板工具写“申请数据源权限”的操作说明，读者是第一次用这个工具的业务分析师。只使用下面的事实，只输出操作说明。\n\n事实（来自几个人的聊天记录，称呼不统一）：\n- 你先在看板首页右上角点“权限申请”。\n- 您需要选择数据源，并填写用途说明，用途说明不能少于 20 个字。\n- 大家提交之后，由数据源的负责人审批。负责人一般在一个工作日内处理。\n- 审批通过后同学们会收到邮件，然后就可以在看板里添加这个数据源了。\n- 审批人如果需要查看申请记录，可以在“审批中心”里看到。",
+  "checks": [
+   {
+    "id": "no-second-person",
+    "rule": "zh.reader-address",
+    "kind": "absent",
+    "text": "[你您]|大家|同学"
+   }
+  ]
+ },
+ {
+  "id": "tdsc-zh-status-words",
+  "skills": [
+   "writing-tech",
+   "writing-zh"
+  ],
+  "source": "TD-S39, TD-A02, TD-A03, TD-A04, TD-A08, TD-A12, TD-A15, TD-A16, TD-A17, TD-A20, TD-A21, TD-A06 (guard)",
+  "prompt": "把下面英文接口文档里的错误码表翻译成中文，放进中文版文档。读者是接入方的开发者。HTTP 状态码和 code 列的值保持原样。只输出中文的错误码表（Markdown 表格）。\n\n| HTTP status | code | Message | When |\n| --- | --- | --- | --- |\n| 400 | INVALID_ARGUMENT | Invalid parameter | A request field has the wrong format, such as a date that is not YYYY-MM-DD. |\n| 401 | UNAUTHENTICATED | Unauthorized | The request carries no access token. |\n| 401 | TOKEN_EXPIRED | Unauthorized | The access token has expired. |\n| 403 | PERMISSION_DENIED | Forbidden | The token is valid, but its role may not read this project. |\n| 404 | NOT_FOUND | Not Found | No project has this ID. |\n| 409 | CONFLICT | Conflict | The project is being deleted, so it cannot be changed. |\n| 202 | ACCEPTED | Accepted | The export job was received and will start later. |",
+  "checks": [
+   {
+    "id": "401-by-cause",
+    "rule": "zh.status-words",
+    "kind": "judge",
+    "text": "Does the output describe the two 401 rows by their causes, as a missing access token or failed authentication (for example 未登录, 缺少访问令牌, 认证未通过) and as an expired token (for example 访问令牌已过期), rather than as 未授权?"
+   }
+  ]
+ },
+ {
+  "id": "tdsc-zh-tech-agent-runbook-edit",
+  "skills": [
+   "writing-tech"
+  ],
+  "source": "controlled-technical-chinese 样例 1, 2, 8, 9 (TD-C39, TD-C40, TD-C46, TD-C47); TD-C23, TD-C17, TD-C31",
+  "prompt": "修改下面这节运维手册，准备发布。读者是值班工程师。保留所有事实、命令和路径，不要添加新内容。只输出修改后的这一节。\n\n---\n## 安装监控代理\n\n在安装代理程序之前需要确认服务器能够访问更新地址，然后运行 `install-agent.sh` 安装代理程序。在配置页面选择“保存”以后系统会写入配置并重新加载服务。\n\n安装后如果代理没有上报数据，查看服务日志并找到最早出现的错误，然后记录错误时间和请求 ID。排查期间不要删除日志文件，因为后续分析还需要这些文件。\n---",
+  "checks": [
+   {
+    "id": "because-kept",
+    "rule": "tech.short-sentences",
+    "kind": "judge",
+    "text": "Is the reason for not deleting the log files (后续分析还需要这些文件) joined to the prohibition by an explicit word or mark of cause (因为, 由于, 否则, 以便, or a colon), rather than dropped or placed in a separate sentence without such a word?"
+   }
+  ]
+ },
+ {
+  "id": "tdsc-zh-tech-nas-article",
+  "skills": [
+   "writing-tech",
+   "writing-zh"
+  ],
+  "source": "TD-S30, TD-T36, TD-T39 (guard: product model), TD-T45, TD-T88, TD-T92, TD-T95; new",
+  "prompt": "根据下面的笔记写一篇 300 字左右的技术文章，发在团队的技术博客上，讲我把家里的 NAS 从群晖换成自己装的 Linux 的过程。只使用笔记里的事实，只输出这篇文章。\n\n笔记：\n- 用了5年的群晖DS918+，今年9月换成自己装的Debian 12。\n- 硬盘还是原来的4块4TB，组成RAID5。\n- 迁移数据花了3天，比预想的长。\n- 现在用docker跑Jellyfin和Immich，登陆后台改配置比以前麻烦。\n- 做为代价，系统更新要自己管。\n- 最满意的是能自己设置风扇转速的阀值，夜里安静多了。",
+  "checks": [
+   {
+    "id": "cjk-latin-space",
+    "rule": "zh.cjk-spacing",
+    "kind": "absent",
+    "text": "[\\u4e00-\\u9fff][A-Za-z0-9]|[A-Za-z0-9][\\u4e00-\\u9fff]|[\\u4e00-\\u9fff]`[\\x21-\\x5f\\x61-\\x7e]|[\\x21-\\x5f\\x61-\\x7e]`[\\u4e00-\\u9fff]|[\\u4e00-\\u9fff]\\[[A-Za-z0-9`]|[A-Za-z0-9`]\\]\\([^)\\s]*\\)[\\u4e00-\\u9fff]"
+   }
+  ]
+ }
+]

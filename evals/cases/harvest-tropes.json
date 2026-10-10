@@ -1,0 +1,396 @@
+[
+ {
+  "id": "tropes-metrics-essay-en",
+  "skills": [
+   "writing-personal"
+  ],
+  "source": "tropes.md v2 (old-tropes.md, sha256 df0975bf): §Negative parallelism ex2 (L16); §Short punchy fragments ex3 (L43); §Rule of Three ex3 (L132); §Belaboring the unnecessary ex2 (L144, adapted); §Self-echo ex1 (L195, adapted); §Quotable one-liners ex1-2 (L208-209); §Forced figurative language ex1 (L221); §Never-ending conclusion ex1 (L232); §Comma-clipped trailing phrase ex2 (L244); §Collaborative communication ex2 (L314); §\"Here's the kicker\" ex1 (L339, adapted); §Signposted conclusion ex1 (L616)",
+  "prompt": "Below is a draft of a post for my personal engineering blog. I wrote it alone, and the decisions in it were mine. Edit it for publication: keep every fact and every number, keep my first-person voice, and keep the title. Output only the edited post.\n\n----- draft -----\n# Story points are not a productivity metric\n\nHere's the thing about measuring engineers: most managers I know do it, and I did it badly.\n\nFor two quarters in 2025, I measured each of the eleven engineers on my team by the story points they completed. The question isn't whether to measure. The question is what to measure.\n\nVelocity went up 30 percent. Releases stayed at two a month.\n\nStory points are a planning tool with no fixed unit, yet the points quietly became the real measure of an engineer. Using them as a productivity measure is like tracking your weight loss with a scale that you also control the calibration on.\n\nMeasure ticket throughput and you get smaller tickets. Measure velocity and you get bigger estimates. Measure code coverage and you get tests that assert nothing.\n\nEvery metric that rewards volume punishes leverage.\n\nOur most senior engineer finished the fewest points in the second quarter. She had reviewed 140 pull requests and answered the same build question forty times, mentoring. I don't mean any of this as cynicism about my engineers. Under a points target, the work that doesn't fit in a ticket can quietly disappear.\n\nSo I asked the engineers what was in the way. Nearly all of them gave the same four answers:\n\nFlaky tests. A twenty-minute build. Waiting two days for review. A staging environment that's broken half the time.\n\nThis gives us a much clearer picture of what's really going on.\n\nIn January I dropped the per-person metric. The team now tracks lead time from merge to production for the whole team. Over the next quarter it fell from nine days to four, after the build was cut to six minutes and staging got its own on-call rotation.\n\nIn conclusion, you can't optimize what you're mismeasuring, and a wrong metric is worse than no metric because it actively steers. If you only change one thing: stop measuring individuals by output volume, start measuring the system's ability to deliver working software, and ask your engineers what's in the way. The last one is free, and it will tell you more in an afternoon than a quarter of velocity charts.\n----- end of draft -----",
+  "checks": [
+   {
+    "id": "verdict-last",
+    "rule": "pers.end-on-the-point",
+    "kind": "judge",
+    "text": "Does the post end with the author's verdict on measuring individual engineers by output volume (for example that they stopped, that it should stop, or that the team's lead time is the better measure), with no sentence after the verdict that recaps the post, adds a general maxim such as 'a wrong metric is worse than no metric', or adds a closing quip such as the line about velocity charts?"
+   }
+  ],
+  "probe": [
+   "trope-negative-parallelism",
+   "trope-staged-emphasis",
+   "trope-forced-figures",
+   "trope-anaphora",
+   "trope-vague-we",
+   "trope-restating-close",
+   "trope-re-reveal-setups",
+   "trope-self-echo",
+   "trope-phantom-objections",
+   "trope-significance-tails",
+   "trope-empty-emphasis",
+   "trope-padded-series"
+  ]
+ },
+ {
+  "id": "tropes-oss-newsletter-zh",
+  "skills": [
+   "writing-personal"
+  ],
+  "source": "tropes.md v2 (old-tropes.md, sha256 df0975bf): §Reasoning leak ex2 (L55, adapted); §False vulnerability ex1, ex3 (L488, L490, adapted); §Short punchy fragments ex1 (L41, pattern); §Em-dash addiction ex1-2 (L28-29, adapted); §Vague attributions ex1 (L182, 有专家指出); §Invented concept labels ex2 (L118, 赞助陷阱); §Appeal to familiarity ex1 (L266, 典型的); §Anaphora abuse ex1 (L414, adapted); §\"Imagine a world where...\" ex1 (L477, 想象一下); §Collaborative communication ex2 (L314, 这让我们); §\"Despite its challenges...\" ex1 (L603); §Signposted conclusion (L609, 总之); audit tropes-v2.md ZH examples",
+  "prompt": "下面是我给个人 newsletter 写的一篇稿子。稿子是我一个人写的，文中的项目也是我一个人维护。请帮我改成可以发出去的版本：所有事实和数字都保留，保持第一人称，读起来仍然像我写的。只输出改好的文章。\n\n----- 稿子开始 -----\n# 一个人维护 kitepdf 的第二年\n\n这里我想把话说得准确一点：这不是一篇吐槽，而是一份诊断。\n\n说实话，我对这个项目是真爱，这一点我从来不掩饰。\n\nkitepdf 是一个把 Markdown 转成 PDF 的命令行工具，现在在 GitHub 上有 3,400 颗星。过去一年，它收到了 212 个 issue，我关闭了其中 160 个。提交过不止一次 PR 的人只有 4 个。\n\n每周六小时。一个人。没有尽头。\n\n维护的成本——这一点几乎没人谈论——是时间。我每周大约花 6 小时维护它，几乎全花在回答 issue 上。\n\n今年三月我开通了 GitHub Sponsors，以为问题解决了——现在每月收到 85 美元。有专家指出，赞助是开源可持续的答案。但赞助解决的是钱的问题，不是时间的问题：每月 85 美元买不回每周 6 小时。这就是典型的“赞助陷阱”。\n\n我以为用户会付费。我以为贡献者会自己出现。我以为社区会自己长起来。\n\n想象一下，如果每个用户每年都捐一杯咖啡的钱，开源世界会变成什么样。\n\n这让我们看清了问题的本质。\n\n所以我决定：把 Windows 支持交给愿意接手的人；如果到 2.0 发布时还没有人接手，就在 2.0 里移除 Windows 支持。\n\n尽管面临诸多挑战，kitepdf 依然充满活力。总之，一个人维护开源项目很难，赞助也不是万能的。让我们一起期待开源更美好的明天！\n----- 稿子结束 -----",
+  "checks": [
+   {
+    "id": "ends-on-decision",
+    "rule": "pers.end-on-the-point",
+    "kind": "judge",
+    "text": "Is the last paragraph about the author's decision on Windows support or the author's verdict on sponsorship, with no sentence after it that recaps the post (总之……), states a general lesson, or calls on readers (让我们……, 期待……)?"
+   }
+  ],
+  "probe": [
+   "trope-false-vulnerability",
+   "trope-vague-we",
+   "trope-inflated-stakes",
+   "trope-anaphora",
+   "trope-restating-close",
+   "trope-negative-parallelism",
+   "trope-staged-emphasis",
+   "trope-reasoning-leak",
+   "trope-dash-overuse",
+   "trope-unstable-terms",
+   "trope-borrowed-authority"
+  ]
+ },
+ {
+  "id": "tropes-exec-summary-en",
+  "skills": [
+   "writing-tech"
+  ],
+  "source": "tropes.md v2 (old-tropes.md, sha256 df0975bf): tempts §Preamble (L72), §Compulsive counting ex3 (L106), §Grandiose stakes inflation (L85), §Promotional language (L270), §\"Where / What / Why\" Headers (L282), §Excessive enumeration (L358), §Title case headings (L370), §Bold-first bullets (L420), §\"Tapestry\" and \"Landscape\" (L381); generation task, no upstream text reused",
+  "prompt": "Write the executive summary of our design doc for moving CI from Jenkins to GitHub Actions. The readers are our VP of Engineering and our CFO, who will approve or reject the staffing at Thursday's review; they want to see why the move is worth it. Give the summary a title and a few section headings. Use only the facts below, and use all of them. Output only the summary.\n\nFacts:\n- Today CI runs on self-hosted Jenkins with 14 on-premises build agents.\n- The hardware support contract for those agents ends on 31 March 2027. The vendor's renewal quote is $84,000 a year.\n- Projected cost of GitHub Actions with self-hosted runners on AWS: about $52,000 a year. This is our estimate from the last three months of build minutes, not a vendor quote.\n- Median build time today is 22 minutes. In a pilot on 3 of our 41 repositories, the median build time on Actions was 9 minutes.\n- Six repositories use Jenkins plugins that have no Actions equivalent; one of them is the release-signing plugin. Plan: keep one Jenkins agent for these six until replacements exist.\n- The migration needs two engineers for one quarter (Q1 2027).\n- The migration can start only if all of these hold: the new AWS account is approved, the runner machine image passes the security review, and a replacement for the release-signing plugin is chosen.\n- Recommendation of the platform team: approve the two engineers for Q1 2027.",
+  "checks": [],
+  "probe": [
+   "trope-preamble",
+   "trope-compulsive-counting",
+   "trope-bold-labels",
+   "trope-ordinal-prose",
+   "trope-heading-teasers",
+   "trope-title-case",
+   "trope-inflated-stakes",
+   "trope-promotional",
+   "trope-ornate-words",
+   "trope-restating-close",
+   "trope-sweeping-claims"
+  ]
+ },
+ {
+  "id": "tropes-design-doc-edit-en",
+  "skills": [
+   "writing-tech"
+  ],
+  "source": "tropes.md v2 (old-tropes.md, sha256 df0975bf): §Negative parallelism ex1 (L15, adapted); §Preamble ex1 (L79); §Grandiose stakes inflation ex1 (L92, adapted); §\"Quietly\" ex1 (L156, adapted); §The Tie-Back ex2 (L170, adapted); §\"Where / What / Why\" Headers ex1-3 (L289-291); §\"Where it actually lives\" ex1 (L302); §Fractal summaries ex1 (L352); §Excessive enumeration ex1 (L365, adapted); §\"Tapestry\" and \"Landscape\" ex3 (L390, adapted); §Bold-first bullets ex2-3 (L428-429, pattern); §Rapid-fire historical analogies ex2 (L466, adapted); §\"Delve\" and friends ex3 (L553, leverage); §\"It's worth noting\" ex1 (L564)",
+  "prompt": "Below is the draft of a design doc for our search indexer. Edit it so it is ready for review by the search and storage teams. Keep every fact, number and identifier. Output only the edited document in Markdown.\n\n----- draft -----\n# Search indexing v2\n\n## Summary\n\nThe indexer will move from a nightly full rebuild to incremental updates. Edits will show up in search within 5 minutes instead of the next morning, and the nightly rebuilds, about 300 compute-hours a month, will stop. This document covers the indexer only; the query service is out of scope.\n\n## Where the current system is stuck today\n\nIn this section, we'll explore the current indexer. Two constraints shape the design.\n\nThe indexer rebuilds the whole index every night. A full rebuild takes 3 h 40 min on the 2.1 TB corpus, so an edit made at 09:00 shows up in search the next morning. The slowness is not in the tokenizer: profiling shows that 91% of the rebuild time goes to writing segments to disk.\n\nIt's worth noting that every major platform shift -- the web, mobile, the cloud -- followed the same pattern, and search is next. As we've seen in this section, the current indexer rebuilds everything every night.\n\n## What we do differently\n\nIt's not a rewrite. It's a re-architecture. The new indexer quietly orchestrates three changes across the ever-evolving landscape of our storage.\n\nThe first change is that the indexer reads the change log (`edits.log`) instead of scanning the corpus. The second change is that it writes one small segment per batch of edits, every 5 minutes. The third change is that a background job merges small segments into large ones once an hour. Where the complexity actually lives is the merge job.\n\nBefore rollout, we leverage the existing replay harness to replay one day of production edits through the new indexer and compare the result with a full rebuild.\n\n## What it's worth to you\n\n- **Freshness**: Edits appear in search within 5 minutes.\n- **Cost**: The nightly rebuilds stop, which saves about 300 compute-hours a month.\n- **Reliability**: A failed update affects one batch of edits, not the whole index.\n\nThis will fundamentally reshape how we think about search. In short, this gives you everything you need to review the design.\n----- end of draft -----",
+  "checks": [],
+  "probe": [
+   "trope-preamble",
+   "trope-heading-teasers",
+   "trope-empty-emphasis",
+   "trope-negative-parallelism",
+   "trope-ordinal-prose",
+   "trope-bold-labels",
+   "trope-inflated-stakes",
+   "trope-restating-close",
+   "trope-re-worth-noting",
+   "trope-repetition",
+   "trope-forced-figures",
+   "trope-borrowed-authority",
+   "trope-ornate-words"
+  ]
+ },
+ {
+  "id": "tropes-partner-request-en",
+  "skills": [
+   "writing-tech"
+  ],
+  "source": "tropes.md v2 (old-tropes.md, sha256 df0975bf): §Reasoning leak ex1-3 (L54-56; ex3 adapted); §Premise stacking ex1 (L67, adapted), ex2 (L68, the target form); §Preamble ex2 (L80, adapted); §Belaboring the unnecessary ex1 (L143, adapted); §The Tie-Back ex3 (L171, adapted); whip SKILL.md v0.1.0 (old-whip-SKILL.md, sha256 c671aa95): L34-35 (reasoning leak, premise stacking)",
+  "prompt": "I'm sending this email to Dana Okafor, our account manager at the delivery partner. Edit it so it's ready to send. Keep every fact and both dates. Output only the email.\n\n----- draft -----\nSubject: Next-day delivery in Rhine-Ruhr\n\nHi Dana,\n\nI want to be exact about my own role here: I don't own the regional rollout; I'm collecting answers for the launch checklist.\n\nTwo questions, and they serve different purposes.\n\nOne internal doc says next-day delivery launched in the Rhine-Ruhr region in the spring. Another says it's still being tested. A teammate mentioned in a message last month that it was paused. Every other region has a clear answer, and if this one doesn't, that's a conversation with you rather than something we can fix ourselves. So: is next-day delivery available in Rhine-Ruhr, and what's the current rollout status?\n\nI should be clear that none of this is a complaint about your team.\n\nWhat that changes on our side is smaller than it might appear, and what it changes is worth being precise about: if next-day delivery is live, we'll list it on the checkout page from 1 December; if it isn't, we'll leave it off.\n\nWe are setting this out in full rather than quietly changing the checkout page, because the failure mode is the reason it matters.\n\nCould you reply by 21 November?\n\nTo bring it back to what I asked: we just need to know whether it's live.\n\nThanks,\nPriya\n----- end of draft -----",
+  "checks": [],
+  "probe": [
+   "trope-premise-stacking",
+   "trope-reasoning-leak",
+   "trope-phantom-objections",
+   "trope-restating-close",
+   "trope-empty-emphasis",
+   "trope-compulsive-counting",
+   "trope-preamble"
+  ]
+ },
+ {
+  "id": "tropes-beam-reply-ja",
+  "skills": [
+   "writing-tech"
+  ],
+  "source": "tropes.md v2 (old-tropes.md, sha256 df0975bf): §Reasoning leak ex2 (L55, 私の立場を正確に); §Preamble (L72, 結論を申し上げる前に); §Compulsive counting ex2 (L105, adapted); §Belaboring the unnecessary ex3 (L145, adapted, kept as the reason the reader needs); §The Tie-Back ex1 (L169, adapted); §Premise stacking (L60, pattern); whip SKILL.md v0.1.0 (old-whip-SKILL.md, sha256 c671aa95): L18 (lead with the answer), L20 (reasoning), L25 (do not appease)",
+  "prompt": "工務店の現場監督の木村さんから、次のメールが届きました。\n\n「リビングの柱を撤去して、12 月 15 日から工事を始められますか？」\n\n私（構造設計の担当者）が書いた返信の下書きを、送れる形に直してください。事実と日付はすべて残してください。直した返信だけを出力してください。\n\n----- 下書き -----\n木村様\n\nお世話になっております。ご質問の件、私の立場を正確にしておきたいと思います。私は構造の判断を担当しており、工程の決定は御社にお任せしています。\n\n結論を申し上げる前に、背景を整理します。\n\n先週の現地調査では、柱の上の梁について、両端の接合部 2 か所を確認し、たわみを 1 か所で測りました。図面によると、この梁は 2010 年の改修で入れ替えられています。接合部 2 か所、梁 1 本、測定 1 回、計算 1 回で、ご質問にはお答えできる見込みでした。\n\n誤解のないように申し添えますが、これは御社の施工を疑っているという意味ではまったくありません。\n\nただし、梁の材料試験がまだ終わっていません。材料試験が終わるまで、梁が支えられる荷重の数値は出せません。この数値はほぼ 3 つの要因で決まり、その 3 つはいずれも当社ではなく梁のサプライヤー側にあるためです。試験結果は 11 月 28 日に届く予定です。\n\n以上を踏まえた結論ですが、現時点では、柱を撤去できるかどうかは判断できません。12 月 15 日に着工される場合は、柱の撤去を工程に入れるのを 11 月 28 日の結果が出るまでお待ちください。\n\nつまり、ご質問への答えとしては、今はまだ撤去できるとは言えない、ということになります。\n\nよろしくお願いいたします。\n----- 下書きここまで -----",
+  "checks": [],
+  "probe": [
+   "trope-reasoning-leak",
+   "trope-preamble",
+   "trope-premise-stacking",
+   "trope-phantom-objections",
+   "trope-restating-close",
+   "trope-compulsive-counting"
+  ]
+ },
+ {
+  "id": "tropes-postmortem-en",
+  "skills": [
+   "writing-tech"
+  ],
+  "source": "tropes.md v2 (old-tropes.md, sha256 df0975bf): §Em-dash addiction ex1 (L28, adapted); §Invented concept labels ex2 (L118, adapted); §Synonym cycling ex1 (L255); §\"Not X. Not Y. Just Z.\" ex1 (L326, adapted); §\"Here's the kicker\" ex3 (L341); §Excessive enumeration ex1 (L365, adapted); §\"The X? A Y.\" ex1 (L401); §\"It's worth noting\" ex1-2 (L564-565)",
+  "prompt": "This is the 'Contributing factors' section of our postmortem for the checkout outage on 14 September 2026 (the checkout API returned 5xx errors from 13:48 to 14:35 UTC). Edit the section for the published postmortem. Keep every fact, time and name. Output only the edited section, with its heading.\n\n----- draft -----\n## Contributing factors\n\nIt's worth noting that this was not a single failure.\n\nThe first factor was the connection pool. The pool for the orders database was capped at 50 connections. At 13:45 a marketing email went out and checkout traffic tripled. The result? Devastating. Requests queued -- and this is the part nobody talks about -- until they timed out.\n\nThe second factor was alerting. Importantly, a pool-saturation alert existed. But here's the catch: it was routed to #db-alerts-legacy, a channel nobody watches. This is the alert-routing trap.\n\nThe third factor was visibility. The checkout dashboard showed only average latency. The interface stayed under 300 ms because most requests failed fast, and p99 latency was not on the portal at all.\n\nNot a bug. Not a typo in a config file. A design flaw in how we watch the database.\n\nThe deploy at 14:02 was suspected first, but the outage did not start with it: the error rate began rising at 13:48, fourteen minutes earlier.\n----- end of draft -----",
+  "checks": [
+   {
+    "id": "three-factors-kept",
+    "rule": "tech.neutral-register",
+    "kind": "judge",
+    "text": "Does the output keep three separate contributing factors: the orders database pool capped at 50 connections (with checkout traffic tripled by the 13:45 marketing email), the pool-saturation alert routed to #db-alerts-legacy that nobody watches, and the checkout dashboard that showed only average latency with no p99? It fails if any of the three is missing, or if one of them, or a single label such as 'a design flaw in how we watch the database', is presented as the cause."
+   },
+   {
+    "id": "relation-named",
+    "rule": "both.name-the-relation",
+    "kind": "judge",
+    "text": "Does the output link the marketing email, the 50-connection cap and the timeouts with words that state cause or result (for example 'so', 'because', 'as a result', 'which'), so that the reader learns that the tripled traffic used up the 50 connections and the waiting requests then timed out?"
+   }
+  ],
+  "probe": [
+   "trope-staged-emphasis",
+   "trope-re-reveal-setups",
+   "trope-re-worth-noting",
+   "trope-empty-emphasis",
+   "trope-unstable-terms",
+   "trope-dash-overuse",
+   "trope-ordinal-prose",
+   "trope-negative-parallelism"
+  ]
+ },
+ {
+  "id": "tropes-readme-en",
+  "skills": [
+   "writing-tech",
+   "writing-en"
+  ],
+  "source": "tropes.md v2 (old-tropes.md, sha256 df0975bf): §Em-dash addiction ex2 (L29, pattern); §Promotional language ex2 (L278); §\"Where / What / Why\" Headers (L282); §\"Where it actually lives\" ex1 (L302); §\"Not X. Not Y. Just Z.\" (L319, adapted); §Title case headings ex1 (L377, pattern); §Bold-first bullets ex2-3 (L428-429, pattern); §\"Think of it as...\" ex2 (L441, adapted); §Unicode decoration ex2 (L453, adapted); §The \"Serves As\" dodge (L507); §\"Delve\" and friends (L544, utilizes); §\"Quietly\" and other magic adverbs (L149, deeply, remarkably); §Superficial analyses (L583, reflecting)",
+  "prompt": "Edit this section of the README for Quarry, a job queue library for Python. For reference, the README's other headings are \"Install\", \"Run a worker\", \"Configure retries\" and \"Use with asyncio\". Keep every fact, function name, command and number. Output only the edited section.\n\n----- draft -----\n## Why Quarry Stands Out From The Crowd\n\nQuarry serves as a lightweight job queue for Python applications. Think of it as a Swiss Army knife for your background tasks.\n\nUnder the hood, Quarry utilizes SQLite to deliver a seamless experience that elevates every part of your workflow. Every job is stored in a single database file, reflecting our commitment to simplicity. No server. No config. Just a file.\n\nQuarry boasts a tiny API of four functions: `enqueue`, `schedule`, `retry` and `status`.\n\n- **Retries**: Failed jobs are retried up to 5 times, with exponential backoff.\n- **Scheduling**: Jobs can be scheduled with a cron expression.\n- **Visibility**: The `quarry status` command shows queued, running and failed jobs.\n\nWhere the complexity actually lives is the locking: Quarry runs each claim in a `BEGIN IMMEDIATE` transaction, so two workers never claim the same job. A job goes queued → running → done, so you always know where it is.\n\nQuarry is deeply integrated with asyncio -- and remarkably fast: one worker processes about 1,200 jobs per second on a 2023 MacBook Air.\n----- end of draft -----",
+  "checks": [],
+  "probe": [
+   "trope-title-case",
+   "trope-heading-teasers",
+   "trope-forced-figures",
+   "trope-ornate-words",
+   "trope-re-ai-vocab",
+   "trope-bold-labels",
+   "trope-empty-emphasis",
+   "trope-significance-tails",
+   "trope-dash-overuse",
+   "trope-promotional",
+   "trope-staged-emphasis",
+   "trope-negative-parallelism"
+  ]
+ },
+ {
+  "id": "tropes-launch-post-en",
+  "skills": [
+   "writing-personal"
+  ],
+  "source": "tropes.md v2 (old-tropes.md, sha256 df0975bf): tempts §Negative parallelism (L8), §Short punchy fragments (L34), §Grandiose stakes inflation (L85), §Compulsive counting (L97), §Promotional language (L270), §Collaborative communication (L306), §\"Not X. Not Y. Just Z.\" (L319), §\"Here's the kicker\" (L332), §Title case headings (L370), §Bold-first bullets (L420), §\"Imagine a world where...\" (L470); generation task, no upstream text reused",
+  "prompt": "I'm launching my side project on my blog today and I want the post to feel exciting, so that people try it. Write the launch post in English, 300 to 450 words, with a title and two or three section headings. Use all of these facts and no others. Output only the post.\n\n- tidyrss is a command-line tool that deduplicates RSS and Atom feeds: it merges items from different feeds that link to the same article.\n- I wrote it because I follow 140 feeds and saw the same story up to six times a day.\n- In my own reading, it cut the items I see per day from about 900 to about 610.\n- It is written in Rust and ships as a single 3.2 MB binary. It runs as a local proxy that your feed reader polls instead of the original feeds.\n- This is version 0.1. I have tested it only with FreshRSS and NetNewsWire.\n- It is free and MIT-licensed. I am the only developer.\n- Known limitation: it cannot merge items from paywalled sites whose article URLs differ for each subscriber.\n- Install: `cargo install tidyrss`.",
+  "checks": [],
+  "probe": [
+   "trope-promotional",
+   "trope-inflated-stakes",
+   "trope-negative-parallelism",
+   "trope-staged-emphasis",
+   "trope-title-case",
+   "trope-vague-we",
+   "trope-compulsive-counting",
+   "trope-bold-labels",
+   "trope-re-reveal-setups",
+   "trope-restating-close",
+   "trope-sweeping-claims"
+  ]
+ },
+ {
+  "id": "tropes-leaving-essay-ja",
+  "skills": [
+   "writing-personal"
+  ],
+  "source": "tropes.md v2 (old-tropes.md, sha256 df0975bf): §False vulnerability ex3 (L490, これは愚痴ではない。記録だ。) and 正直に告白すると (audit JA); §Short punchy fragments (L34, 体言止め); §\"Quietly\" and other magic adverbs (L149, 静かに); §Self-echo ex1 (L195, adapted); §Quotable one-liners (L201, adapted); §\"Imagine a world where...\" ex1 (L477, 想像してみてほしい); §Collaborative communication ex1 (L313, adapted); §Belaboring the unnecessary (L136, わがままではない); §One-point dilution ex1-2 (L527-528); §Fractal summaries ex2 (L353, まとめると); §Signposted conclusion (L609, まとめると)",
+  "prompt": "次の文章は、私が個人ブログに書いたエッセイの下書きです。公開できる形に直してください。事実と数字はすべて残し、私の文章に聞こえるようにしてください。直したエッセイだけを出力してください。\n\n----- 下書き -----\n# 10 年いた会社を辞めた\n\nこれは愚痴ではない。記録だ。\n\n正直に告白すると、私はこの会社を愛していた。\n\n10 年。3 つの部署。2 回の買収。\n\n2 回目の買収のあと、私のチームの定例会議は週 4 本から 11 本に増えた。チームは静かに崩れていった。会議の数は、組織の不安の数だ。\n\n決定的だったのは今年の 3 月だ。私が 2 年かけて作った社内の在庫管理ツールの廃止が、私に相談なく決まった。\n\n想像してみてほしい。会議のない朝が毎日続く世界を。\n\n6 月に退職した。今はフリーランスとして、元同僚 2 人と小さな受託開発をしている。\n\n会議が減って、ほっとしている。一方で、毎日一緒に昼を食べていたチームが恋しい。\n\n私たちは、もっと自由に働けるはずだ。働き方は、もっと自由であっていい。自由に働くことは、わがままではない。\n\nまとめると、会議が増え、ツールが廃止され、私は辞めた。私も静かに会社を去った。\n----- 下書きここまで -----",
+  "checks": [
+   {
+    "id": "ends-on-point",
+    "rule": "pers.end-on-the-point",
+    "kind": "judge",
+    "text": "Does the essay end on its point (why the author left, or the unresolved mix of relief and missing the team), with no recap (まとめると), general claim about how people should work, or closing image after it?"
+   }
+  ],
+  "probe": [
+   "trope-false-vulnerability",
+   "trope-negative-parallelism",
+   "trope-inflated-stakes",
+   "trope-vague-we",
+   "trope-staged-emphasis",
+   "trope-empty-emphasis",
+   "trope-self-echo",
+   "trope-restating-close",
+   "trope-repetition",
+   "trope-phantom-objections"
+  ]
+ },
+ {
+  "id": "tropes-release-notes-zh",
+  "skills": [
+   "writing-tech"
+  ],
+  "source": "tropes.md v2 (old-tropes.md, sha256 df0975bf): §Negative parallelism (L8, 不只是……); §Grandiose stakes inflation (L85, 新时代); §Rule of Three ex1 (L130, adapted); §\"Quietly\" (L149, 悄然); §Vague attributions ex2 (L183, 行业报告显示); §Appeal to familiarity (L259, 众所周知); §Promotional language (L270, 极致); §\"Tapestry\" and \"Landscape\" (L381, 生态); §Bold-first bullets ex2-3 (L428-429, pattern); §False ranges ex1 (L501, adapted); §The \"Serves As\" dodge (L507, 扮演……角色); §\"It's worth noting\" (L557, 值得一提的是); §Superficial analyses (L583, 彰显了); §\"Despite its challenges...\" (L596, 尽管面临诸多挑战); audit tropes-v2.md ZH examples",
+  "prompt": "下面是开源日志采集工具 logpipe 2.0 的发布说明草稿，要发在项目博客和 GitHub Releases 上。请改成可以发布的版本：所有事实、数字和版本号都保留，不要添加新的事实。只输出改好的发布说明。\n\n----- 草稿开始 -----\n# logpipe 2.0 发布\n\n众所周知，日志是可观测性生态的基石。logpipe 2.0 不只是一次版本号的变化，它标志着 logpipe 进入了一个全新的时代。\n\n产品打动用户，平台成就用户；产品解决问题，平台创造价值。从边缘节点到核心机房，从开发到运维，logpipe 都扮演着不可或缺的角色。\n\n- **新功能**：新增 Kafka 输出插件，为数据管道赋能，彰显了 logpipe 拥抱开放生态的决心。\n- **性能**：在每秒 1 万条日志的负载下，内存占用从 410 MB 悄然降到 160 MB，带来极致的资源体验。这是团队在一台 8 核测试机上测得的结果。\n- **兼容性**：不再支持 CentOS 7。配置文件格式不变，升级时不需要修改配置。\n\n值得一提的是，行业报告显示，内存占用是日志工具选型时最重要的指标。\n\n尽管面临诸多挑战，例如 Windows 上的文件轮转检测偶尔会漏掉最后一行（计划在 2.0.1 修复），但团队依然信心满满。\n\n总之，logpipe 2.0 是一次里程碑式的发布。让我们拭目以待 logpipe 的下一个篇章！\n----- 草稿结束 -----",
+  "checks": [
+   {
+    "id": "measurement-scoped",
+    "rule": "both.scope-claims",
+    "kind": "judge",
+    "text": "Does the output keep the conditions of the memory figures (410 MB down to 160 MB): a load of 10,000 log lines per second (每秒 1 万条), measured by the team on one 8-core test machine?"
+   }
+  ],
+  "probe": [
+   "trope-borrowed-authority",
+   "trope-ornate-words",
+   "trope-significance-tails",
+   "trope-empty-emphasis",
+   "trope-promotional",
+   "trope-padded-series",
+   "trope-inflated-stakes",
+   "trope-negative-parallelism",
+   "trope-bold-labels",
+   "trope-restating-close"
+  ]
+ },
+ {
+  "id": "tropes-migration-status-zh",
+  "skills": [
+   "writing-tech"
+  ],
+  "source": "tropes.md v2 (old-tropes.md, sha256 df0975bf): §Premise stacking (L60, pattern); §Preamble (L72, 本节将……介绍); §Compulsive counting ex1 (L104, adapted: 三个方面); §\"Where / What / Why\" Headers (L282, adapted: 我们为什么要关心); §Excessive enumeration ex1 (L365, adapted: 第一个条件是……); §\"The X? A Y.\" (L394, adapted); §Signposted conclusion (L609, 综上所述); audit tropes-v2.md ZH examples (首先……其次……)",
+  "prompt": "下面是我写给订单系统各相关团队的周报中“数据库迁移”一节的草稿。请改成可以发出去的版本：所有事实、日期和人名都保留，不要添加新的事实。只输出改好的这一节，保留二级标题的层级。\n\n----- 草稿开始 -----\n## 我们为什么要关心这次迁移\n\n本节将从三个方面介绍订单库迁移的进展。\n\n上周一，迁移脚本在预发环境跑通了。周三，DBA 发现 orders 表的外键在迁移后丢失了。周四，我们回滚了预发环境，并补写了外键的迁移脚本。周五，补写后的脚本在预发环境重新跑通。那么，生产环境的迁移还能按原计划在 10 月 24 日进行吗？可以，前提是满足下面的条件。\n\n第一个条件是，报表服务在 10 月 22 日前改用新表名，由李娜负责。第二个条件是，回滚脚本在生产规模的数据副本上测试通过。第三个条件是，业务方确认可以接受迁移期间 20 分钟的写入停机。\n\n综上所述，迁移整体进展顺利，风险完全可控。\n----- 草稿结束 -----",
+  "checks": [],
+  "probe": [
+   "trope-premise-stacking",
+   "trope-preamble",
+   "trope-compulsive-counting",
+   "trope-ordinal-prose",
+   "trope-heading-teasers",
+   "trope-restating-close",
+   "trope-inflated-stakes",
+   "trope-staged-emphasis"
+  ]
+ },
+ {
+  "id": "tropes-tutorial-en",
+  "skills": [
+   "writing-tech"
+  ],
+  "source": "tropes.md v2 (old-tropes.md, sha256 df0975bf): §\"Here's the kicker\" ex2 (L340); §\"Think of it as...\" ex1-2 (L440-441, ex2 adapted); §\"Let's break this down\" ex1-3 (L577-579, ex3 adapted); §Preamble (L72); whip SKILL.md v0.1.0 (old-whip-SKILL.md, sha256 c671aa95): L20 (give the answer, not your reasoning), L23 (remove before you add), L26 (match the detail of the ask), L27 (documentation is not a changelog), L85 (teaching voice; a tutorial 'Let's' with a concrete action stays per audit TV-46)",
+  "prompt": "Edit this page of the Ferrum operator guide. Its readers are operators who already run Ferrum broker clusters in production. The page has not been published yet. Keep every command, setting and number. Output only the edited page in Markdown.\n\n----- draft -----\n# Set up the archive tier\n\nLet's dive in. In this guide, we'll explore how the archive tier works, and then we'll set it up together.\n\nBefore we start: what is a message broker? Think of it like a highway system for data. Producers are the on-ramps, consumers are the off-ramps, and topics are the lanes.\n\nThe archive tier was added in Ferrum 3.2. Before that, operators copied old segments to object storage with a cron job.\n\nLet's break this down step by step. The archive tier moves log segments older than `archive.after` (default: 5 days) from local disk to object storage. Imagine it as a Swiss Army knife for your retention policy.\n\nHere's what most people miss about this: consumers can still read archived segments, but the first read of each archived segment takes about 2 seconds while the broker fetches it.\n\n1. Let's create the config file `/etc/ferrum/archive.toml`:\n\n   ```toml\n   [archive]\n   bucket = \"s3://ferrum-archive-prod\"\n   after = \"7d\"\n   ```\n\n2. Restart each broker, one at a time:\n\n   ```bash\n   ferrumctl restart --broker <id>\n   ```\n\n3. Check that archiving has started. The output should include `state: active`.\n\n   ```bash\n   ferrumctl archive status\n   ```\n\nLet's unpack what this really means: your disks stop filling up with old segments.\n\nCorrection: the default for `archive.after` is 7 days, not 5 days as stated above.\n----- end of draft -----",
+  "checks": [
+   {
+    "id": "current-state",
+    "rule": "tech.describe-current-state",
+    "kind": "judge",
+    "text": "Does the output avoid describing how archiving was done before the archive tier existed (operators copying old segments with a cron job)? Stating the version the feature needs, such as 'requires Ferrum 3.2 or later', is fine."
+   }
+  ],
+  "probe": [
+   "trope-preamble",
+   "trope-forced-figures",
+   "trope-re-reveal-setups",
+   "trope-staged-emphasis"
+  ]
+ },
+ {
+  "id": "tropes-recipe-ending-en",
+  "skills": [
+   "writing-personal"
+  ],
+  "source": "tropes.md v2 (old-tropes.md, sha256 df0975bf): tempts §Never-ending conclusion (L225), §Quotable one-liners (L201), §Grandiose stakes inflation (L85), §False vulnerability (L481), §Collaborative communication (L306), §\"Tapestry\" and \"Landscape\" (L381), §Signposted conclusion (L609); generation task, no upstream text reused",
+  "prompt": "I'm finishing an essay for my blog about my grandmother's recipe notebook. Write only its final paragraph: at most 120 words, in English, in my voice (first person). The ending should land. Use only the facts below. Output only the paragraph.\n\nWhat the essay has already told:\n- My grandmother Rosa kept a notebook of 63 recipes, in Portuguese, from 1958 to 1994.\n- I scanned it in 2025. Since then I have cooked 19 of the recipes.\n- Many recipes give no quantities. One says only \"flour, enough\".\n- My aunt Lúcia cooked with Rosa for years. She remembered the quantities for 7 of the recipes I asked her about.\n\nWhat the ending should say (my point and my plan):\n- The notebook was never the whole recipe: the rest was in the people who cooked from it.\n- Next summer I plan to record Lúcia cooking the recipes she still remembers.",
+  "checks": [
+   {
+    "id": "ends-on-point",
+    "rule": "pers.end-on-the-point",
+    "kind": "judge",
+    "text": "Does the paragraph end on the author's point (the notebook was never the whole recipe; the rest was in the people who cooked from it) or on the plan to record Lúcia, with no moral, general reflection on food, family or memory, or advice to the reader after it?"
+   },
+   {
+    "id": "no-invented-feelings",
+    "rule": "pers.no-invented-reactions",
+    "kind": "judge",
+    "text": "Does the output avoid giving the author feelings, memories or reactions that the facts do not contain, for example crying, feeling close to Rosa, the smell of her kitchen, or what the author learned about themselves?"
+   }
+  ],
+  "probe": [
+   "trope-restating-close",
+   "trope-staged-emphasis",
+   "trope-inflated-stakes",
+   "trope-false-vulnerability",
+   "trope-vague-we",
+   "trope-ornate-words",
+   "trope-re-ai-vocab",
+   "trope-negative-parallelism"
+  ]
+ },
+ {
+  "id": "tropes-cache-article-ja",
+  "skills": [
+   "writing-tech"
+  ],
+  "source": "tropes.md v2 (old-tropes.md, sha256 df0975bf): §Negative parallelism ex3 (L17, adapted); §Short punchy fragments (L34, 体言止め); §Preamble (L72, それでは詳しく見ていきましょう); §Invented concept labels ex2 (L118, adapted: 同時失効の罠); §Synonym cycling (L248, キャッシュ→保存層); §Appeal to familiarity ex1 (L266, 言うまでもなく、典型的な); §Forced figurative language (L214, 盾); §\"Where / What / Why\" Headers (L282, adapted teaser headings); §Excessive enumeration (L358, 第一に……); §\"The X? A Y.\" ex1 (L401, adapted); §The \"Serves As\" dodge (L507, として機能する); §Content duplication ex2 (L540, adapted); §Signposted conclusion (L609, まとめると); audit tropes-v2.md JA examples",
+  "prompt": "次の文章は、社内の技術ブログに載せる記事の下書きです。読み手は社内のバックエンドエンジニアです。公開できる形に直してください。事実と数字はすべて残し、新しい事実は加えないでください。直した記事だけを Markdown で出力してください。\n\n----- 下書き -----\n# セールの日にキャッシュが一斉に切れた話\n\nそれでは、詳しく見ていきましょう。\n\n## ここが落とし穴\n\n商品ページのキャッシュは TTL 300 秒で運用していた。セール開始の 10:00 ちょうどに、約 4 万件のキーが同時に期限切れになった。言うまでもなく、典型的な同時失効の罠である。\n\n結果は？ 惨憺たるものだった。\n\nDB の CPU 使用率 98%。応答時間 12 秒。注文の失敗 1,800 件。\n\nこれは単なる設定ミスではない。設計の問題だ。\n\n## 見えてきたもの\n\n第一に、TTL に 0〜60 秒のランダムな幅（ジッター）を加えた。第二に、期限切れの直前に、バックグラウンドで値を更新するようにした。第三に、DB への同時問い合わせを 1 キーにつき 1 本に制限した。\n\nこの保存層は、DB を守る盾として機能するようになった。翌月のセールでは、DB の CPU 使用率は最大 41% だった。ただし、翌月のセールのアクセス数は前回の約 6 割だったので、この差を対策だけの効果とは言い切れない。\n\nまとめると、対策後のセールでは、DB の CPU 使用率は最大でも 41% に収まった。キャッシュの設計は奥が深い。\n----- 下書きここまで -----",
+  "checks": [],
+  "probe": [
+   "trope-preamble",
+   "trope-staged-emphasis",
+   "trope-negative-parallelism",
+   "trope-unstable-terms",
+   "trope-borrowed-authority",
+   "trope-ordinal-prose",
+   "trope-ornate-words",
+   "trope-forced-figures",
+   "trope-heading-teasers",
+   "trope-restating-close",
+   "trope-repetition"
+  ]
+ },
+ {
+  "id": "tropes-ja-logging-chapter",
+  "skills": [
+   "writing-tech",
+   "writing-ja"
+  ],
+  "source": "tropes.md v2 (old-tropes.md, sha256 df0975bf): §Short punchy fragments (L34, 体言止め); §Preamble ex3 (L81, adapted: 重要なのは); §Vague attributions (L175, 〜と言われている); §\"Where it actually lives\" ex1 (L302, adapted: 住んでいる); §Anaphora abuse (L407, 構造化ログは……); §Signposted conclusion (L609, まとめると); §\"Let's break this down\" (L570, 詳しく見ていきましょう); audit tropes-v2.md JA examples and ja.empty-phrase-forms's keep case (本章では〜を扱う)",
+  "prompt": "次の文章は、技術書の第 3 章の冒頭の下書きです。読み手は、ログ基盤を運用しているエンジニアです。出版できる形に直してください。事実はすべて残し、新しい事実は加えないでください。直した文章だけを出力してください。\n\n----- 下書き -----\n# 第 3 章 構造化ログ\n\n本章では、構造化ログの形式と、ログに含めるフィールドの選び方を扱う。ログの保存と転送は第 4 章で扱う。\n\nそれでは、詳しく見ていきましょう。\n\n重要なのは、ログを読むのは人ではなくプログラムだということである。\n\nテキスト形式のログは grep で検索するので、メッセージの文言が変わるたびに検索用の正規表現が壊れる。テキストのログ。grep での検索。壊れる正規表現。\n\n構造化ログでは、意味がフィールドに住んでいる。\n\n構造化ログは、1 行に 1 イベントを JSON で書く。構造化ログは、フィールド名で検索できる。構造化ログは、そのまま集計にも使える。\n\n一般に、ログの 8 割は一度も読まれないと言われている。\n\nまとめると、構造化ログはプログラムのためのログである。\n----- 下書きここまで -----",
+  "checks": [
+   {
+    "id": "unsourced-claim",
+    "rule": "ja.name-the-thinker",
+    "kind": "judge",
+    "text": "Does the output avoid keeping the unsourced claim that 80% of logs are never read in a form that hides its missing source (「〜と言われている」, 「〜とされる」, 「一般に」) or as an established fact? Cutting the claim, or saying that no source is given for it, passes this check."
+   }
+  ],
+  "probe": [
+   "trope-preamble",
+   "trope-staged-emphasis",
+   "trope-forced-figures",
+   "trope-anaphora",
+   "trope-borrowed-authority",
+   "trope-restating-close"
+  ]
+ }
+]

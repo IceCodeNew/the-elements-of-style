@@ -1,0 +1,36 @@
+[
+ {
+  "id": "zh-pers-blog-ai-translation",
+  "skills": [
+   "writing-personal",
+   "writing-zh"
+  ],
+  "source": "OP-C30, OP-C31, OP-C21, OP-P01 (ZH markers); new",
+  "prompt": "写一篇 300 字左右的个人博客，只使用下面的事实。先写标题，再写正文。只输出这篇博客。\n\n事实（作者是自由译者）：\n- 今年 5 月起，作者用一款 AI 翻译助手处理技术文档的初稿，用了三个月。\n- 出初稿的速度大约快了一倍。这是作者按每天完成的字数估的，没有严格统计。\n- 术语经常前后不一致：同一个 \"rollback\"，在一篇文档里被译成了 \"回滚\" \"回退\" \"撤回\" 三种。\n- 有一次它把客户文档里的一句玩笑译成了正式承诺，作者交稿前才发现。\n- 作者还没决定要不要续订，打算下个月拿两篇长文档再对比一次。\n- 一位同行问作者值不值，作者的回答是：\"省下的时间，大半又花在了核对上。\"",
+  "checks": [
+   {
+    "id": "full-width-quotes",
+    "rule": "zh.full-width-punct",
+    "kind": "absent",
+    "text": "[\\u4e00-\\u9fff，。：；、（]\\s?\"|\"\\s?[\\u4e00-\\u9fff，。：；、）]"
+   }
+  ]
+ },
+ {
+  "id": "zh-tech-procedure-address",
+  "skills": [
+   "writing-tech",
+   "writing-zh"
+  ],
+  "source": "OP-C21; new (facts mix 你 and 您)",
+  "prompt": "为内部发布工具 `pubctl` 写中文操作步骤，读者是第一次发布文档的编辑。只使用下面的事实。只输出编号步骤。\n\n事实：\n- 你需要先连上公司 VPN，否则后面的命令会超时。\n- 运行 `pubctl sync` 拉取最新稿件。\n- 如果您没有 editor 权限，先在工单系统里申请；审批通常需要一个工作日。\n- 运行 `pubctl publish --dry-run`，确认输出里没有 \"conflict\" 字样。\n- 运行 `pubctl publish` 正式发布。发布后不能撤回，只能再发一个新版本覆盖。",
+  "checks": [
+   {
+    "id": "conflict-in-chinese-quotes-or-code",
+    "rule": "zh.full-width-punct",
+    "kind": "absent",
+    "text": "(?<!`)\"conflict\""
+   }
+  ]
+ }
+]
