@@ -1,6 +1,6 @@
 {
   "name": "elements-of-style",
-  "description": "Writing guidance based on William Strunk Jr.'s The Elements of Style (1918)",
-  "version": "1.0.0",
+  "description": "Writing skills for technical and personal text, with English, Japanese and Chinese extensions",
+  "version": "2.0.0",
   "contextFileName": "GEMINI.md"
 }
