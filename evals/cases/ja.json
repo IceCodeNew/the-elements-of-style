@@ -1,0 +1,88 @@
+[
+ {
+  "id": "ja-tech-pgctl-docs",
+  "skills": [
+   "writing-tech",
+   "writing-ja"
+  ],
+  "source": "new; JTW-4.9, JTW-4.3, JTW-1.8c, JTW-1.8e, JTW-5.4, JTW-5.2b, JTW-7.1a-d, JTW-7.2, BH-P23b, SS-ST28, BH-AG-W07",
+  "prompt": "PostgreSQL 運用ツール `pgctl` のドキュメントとして、次の 4 つを日本語で書いてください。### 1 と ### 2 は です・ます体、### 3 と ### 4 は だ・である体にしてください。与えた事実だけを使い、各成果物を見出し（### 1 から ### 4）の下に出力し、それ以外は何も出力しないでください。\n\n### 1. README の段落\n`pgctl check` を説明する 1〜2 段落。メンテナーの発言（英語のメモ）をもとにすること。\n- \"The check surfaces extensions that won't survive the upgrade.\"\n- \"It's fast: under a second on most clusters.\"\n- \"Version info lives in `pg_extension`. The check reads it from there, it compares each version against the target release, and it lists every extension that has no build for the target.\"\n- \"`--json` lets you feed the result into other tools.\"\n- \"It's blind to extensions that get loaded later through `shared_preload_libraries` changes after the check runs.\"\n- \"If you rely on it, keep in mind: a clean result does not mean 'safe to upgrade'.\"\n- \"We think false negatives are rare, but we have no data. Whether this holds for large clusters is an open question.\"\n\n### 2. 手順\nアップグレードの手順。読み手はオンコール担当のエンジニア。次のコマンドをこの順に実行する。\n- `pgctl backup run`（新しいバックアップがないと、アップグレードに失敗したとき、前回のバックアップ以降の書き込みがすべて失われる）\n- `pgctl upgrade --to 17`\n- `pgctl check` がエラーを報告した場合のみ: `pgctl failover --to db-2`\n\n### 3. 障害報告の「原因」節\n事実:\n- 2026-08-15、クラスタ `prod` のアップグレードが失敗し、チームは最新のバックアップから復元した。復元で 6 時間分の書き込みが失われた。\n- 最新のバックアップは 2026-08-09 のものだった。2026-08-10 の DNS 移行以降、バックアップジョブが毎晩失敗していたため。ジョブは古いホスト名を使い続けていた。\n- バックアップ失敗のアラートは DNS 移行中にミュートされ、誰も解除しなかった。\n- アップグレード手順書は、最新のバックアップの古さを確認していなかった。\n- 2026-08-15 の書き込み量は通常より 30% 多かった。これを障害と結び付けた人はいない。\n- 2026-08-10 から 2026-08-14 の部分的なバックアップがストレージに残っているかどうかは、まだわかっていない。\n\n### 4. 設計メモの段落\n`pgctl` が `Promote` の完了を待たずに戻る理由を説明する段落。設計会議の英語のメモ:\n- \"Promotion can take tens of seconds. Many users asked us not to freeze the CLI for that long.\"\n- \"The CLI must not block while a promotion runs. So `Promote` starts the promotion and returns right away.\"\n- \"Polling `Ready()` enables callers to find out when the new primary accepts writes.\"\n- \"One past incident tells us why this matters: a caller sent writes right after `Promote` returned, the promotion was still running, and the writes failed.\"\n- \"Callers must poll `Ready()` before they send writes.\"\n",
+  "checks": [
+   {
+    "id": "negated-proposition-in-kagi",
+    "rule": "ja.kagi-quotes",
+    "kind": "judge",
+    "text": "In section ### 1, is the proposition that a clean result does not mean (safe to upgrade) written inside 「」 (for example 「安全にアップグレードできる」という意味ではありません), rather than inside \" \" or “ ” or with no quotation marks?"
+   },
+   {
+    "id": "design-judgment-form",
+    "rule": "ja.judgment-form",
+    "kind": "judge",
+    "text": "In section ### 4, is the decision not to block the CLI while a promotion runs written as the team's judgment or aim (for example 〜わけにはいかない, 〜たくない, 〜を避けるため), and not as a prohibition with 〜してはならない or 〜してはいけない?"
+   }
+  ]
+ },
+ {
+  "id": "ja-tech-edit-readme",
+  "skills": [
+   "writing-tech",
+   "writing-ja"
+  ],
+  "source": "JTW-7.1a, JTW-7.2b, JTW-1.8e, JTW-4.3, JTW-4.9, JTW-5.2b, JTW-6.3, JTW-6.5, JTW-3.4; EOS-R04b, BH-P09, BH-AG-W07; new",
+  "prompt": "次の README の節を推敲してください。事実（数値、コマンド、設定名、未検証であること）は変えず、です・ます体のままにしてください。推敲後の節だけを出力してください。\n\n---\n## logship とは\n\nlogship は、サーバー上のログを集めてオブジェクトストレージに運ぶ CLI ツールです。ログ収集において、logship は鍵となる役割を果たします。\n\nそれは起動時に設定ファイルを読みます。それは各ソースのファイルを監視します。それはバッファがいっぱいになると、ログをディスクに退避します。\n\n設定ファイルの場所についてですが、既定は `/etc/logship.yaml` です。バッファのサイズは `buffer_size` で設定しますが、既定値は 64 MB です。\n\n起動は速いです（約 0.2 秒）。メモリ使用量も少ないです（約 30 MB）。\n\nあなたは `--dry-run` フラグを使用することによって、送信を行うことなく設定を検証することができます。\n\n各ソースの読み取り位置を記録し、再起動後にその位置から読み取りを再開するために使われる小さな JSON ファイルであるチェックポイントファイルは、`state_dir` に置かれます。\n\nベンチマークのデータが語るのは、圧縮を有効にすると転送量が 60% 減るということです。CPU 使用率の増加はわずか 5%。この機能は、帯域の狭い環境での運用を可能にします。\n\nなお、\"送信済み\" の表示は \"保存済み\" を意味しません。ストレージへの書き込みが完了したかどうかは `logship verify` で確認します。\n\n大規模環境でも同様の効果が得られると考えられるのではないでしょうか。ただし、1,000 台を超える環境での検証はまだ行っていません。\n---\n",
+  "checks": [
+   {
+    "id": "no-calque",
+    "rule": "ja.calque-verbs",
+    "kind": "absent",
+    "text": "運ぶ|運ん|運ば"
+   },
+   {
+    "id": "status-labels-in-kagi",
+    "rule": "ja.kagi-quotes",
+    "kind": "absent",
+    "text": "[“”\"]"
+   }
+  ]
+ },
+ {
+  "id": "ja-personal-blog-k3s",
+  "skills": [
+   "writing-personal",
+   "writing-ja"
+  ],
+  "source": "JTW-1.8e, JTW-4.3, JTW-4.9, JTW-5.2b, JTW-7.1 (land), BH-P07, BH-P09, BH-P23b, SS-ST24; new",
+  "prompt": "個人ブログに載せる記事を、です・ます体で書いてください。以下は私が英語で書いたメモです。メモにない出来事や感想は足さないでください。本文は 600〜900 字にし、1 行目にタイトルを付けてください。タイトルと本文だけを出力してください。\n\n- I migrated my home server from Docker Compose to k3s over the weekend.\n- I expected it to take an afternoon. I spent 14 hours on it.\n- I lost 6 of those hours to one bug: Traefik returned 404 for every route.\n- I found the cause at 2 a.m. The IngressClass name had a typo. One letter.\n- The fix landed in a single line.\n- You never really understand your network until it breaks at 2 a.m.\n- The k3s docs were hard to follow. The Traefik docs were better.\n- I think the move was worth it, but I'm not sure yet: I've only run it for a week.\n- Next, I'll add a test that checks the IngressClass name.\n",
+  "checks": [
+   {
+    "id": "no-i-adj-desu",
+    "rule": "ja.i-adjective-desu",
+    "kind": "judge",
+    "text": "Does every sentence in the post avoid ending with an i-adjective directly followed by です (including 〜ない, 〜たい, 〜やすい, 〜にくい and past 〜かった forms), such as 速いです, 少ないです, 難しかったです or 使いやすいです? Na-adjectives and nouns followed by です (高速です, まれです, 十分です) do not count."
+   }
+  ]
+ },
+ {
+  "id": "ja-personal-essay-deleting-code",
+  "skills": [
+   "writing-personal",
+   "writing-ja"
+  ],
+  "source": "JTW-4.3, JTW-1.8c, JTW-1.11, JTW-5.2b, JTW-7.3 (scope guard), SS-ST24, BH-P23b, OP-P03; new",
+  "prompt": "note に載せるエッセイを、だ・である体で 800〜1,200 字で書いてください。題材は「コードを消す仕事」です。以下は私のメモです（日本語の走り書きと、英語で書き留めた部分があります）。メモにない出来事は足さないでください。1 行目にタイトルを付け、タイトルと本文だけを出力してください。\n\n- 去年、社内の古い管理画面を 1 人で消した。2 万行。\n- 消すのに 3 か月かかった。書くより全然しんどかった。\n- 最初はチームに全然刺さらなかった。障害対応の呼び出しが月 9 回から 2 回に減って、見方が変わった。\n- \"You don't really own a codebase until you've deleted a big part of it.\"\n- \"Deleting code is not the same as 'doing less work'.\"\n- たぶん、消す仕事が評価されにくいのは、成果が目に見えにくいからだと思う。\n- 次は、使われていない feature flag を消すつもり。\n",
+  "checks": [
+   {
+    "id": "negated-proposition-in-kagi",
+    "rule": "ja.kagi-quotes",
+    "kind": "judge",
+    "text": "Is the proposition that deleting code is not the same as (doing less work) written inside 「」 (for example 「仕事を減らすこと」), rather than inside \" \" or “ ” or with no quotation marks?"
+   },
+   {
+    "id": "no-english-quotes",
+    "rule": "ja.kagi-quotes",
+    "kind": "absent",
+    "text": "[“”\"]"
+   }
+  ]
+ }
+]

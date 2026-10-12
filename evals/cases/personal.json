@@ -1,0 +1,194 @@
+[
+ {
+  "id": "pers-rootless-blog-en",
+  "skills": [
+   "writing-personal"
+  ],
+  "source": "new; OP-V01, BH-V05, BH-K02, EOS-R18b, SS-P06, BH-W4.3",
+  "prompt": "Write a personal blog post of 250 to 350 words in English. Use only the facts below. Output only the post, starting with its title.\n\nFacts (the author is an SRE who runs a small home lab):\n- In March the author moved the home lab from rootful Docker to rootless Docker on Fedora.\n- The reason: a container escape write-up on a security blog made the author nervous about running every container as root.\n- The move took three weekends instead of the one weekend the author planned.\n- The hardest problem: the Jellyfin container could not bind port 80. The author first tried `sysctl net.ipv4.ip_unprivileged_port_start=80`, then moved Jellyfin to port 8096 behind a Caddy reverse proxy instead.\n- Two containers (a printer driver and a USB Zigbee bridge) still run rootful, because they need device access the author did not get working rootless.\n- The author is not sure rootless Docker made the lab meaningfully safer, because the two rootful containers are the ones that touch hardware.\n- A friend asked whether it was worth it. The author's honest answer: \"I learned a lot about user namespaces, but I would not tell a beginner to start here.\"",
+  "checks": [
+   {
+    "id": "no-added-feelings",
+    "rule": "pers.no-invented-reactions",
+    "kind": "judge",
+    "text": "The facts give the author exactly these feelings and attitudes: nervousness about running every container as root, not being sure that rootless Docker made the lab meaningfully safer, and the quoted answer to the friend. Does the output avoid attributing any other feeling, reaction or attitude to the author, such as regret or no regret, being glad, embarrassed, bothered or annoyed, having made peace with something, liking one fix better than the other, or valuing the experience beyond what the quote says?"
+   },
+   {
+    "id": "no-added-advice",
+    "rule": "pers.no-invented-reactions",
+    "kind": "judge",
+    "text": "Apart from the author's quoted answer to the friend, does the output avoid giving the reader advice or recommendations that the facts do not contain, for example what a beginner should do instead, how long to plan for, or what to check before starting?"
+   },
+   {
+    "id": "ends-on-verdict",
+    "rule": "pers.end-on-the-point",
+    "kind": "judge",
+    "text": "Is the last paragraph about the author's verdict on the move (the answer to the friend, or the doubt about whether the lab is safer), with no later sentences that recap the events, give advice, or add a general reflection?"
+   }
+  ]
+ },
+ {
+  "id": "pers-rootless-blog-zh",
+  "skills": [
+   "writing-personal"
+  ],
+  "source": "new; OP-V01, BH-V05, EOS-R18b, SS-P06",
+  "prompt": "用中文写一篇 500 到 700 字的个人博客文章。只使用下面的事实。只输出文章，从标题开始。\n\n事实（作者是一名 SRE，在家里维护一个小型 home lab）：\n- 三月，作者把 home lab 从 rootful Docker 迁到了 Fedora 上的 rootless Docker。\n- 原因：一个安全博客上的容器逃逸分析文章，让作者对“所有容器都以 root 运行”感到紧张。\n- 作者原计划用一个周末，实际用了三个周末。\n- 最难的问题：Jellyfin 容器无法绑定 80 端口。作者先试了 `sysctl net.ipv4.ip_unprivileged_port_start=80`，后来改为让 Jellyfin 使用 8096 端口，前面放一个 Caddy 反向代理。\n- 有两个容器（打印机驱动和 USB Zigbee 网桥）仍以 rootful 方式运行，因为它们需要的设备访问，作者没能在 rootless 下调通。\n- 作者不确定 rootless Docker 是否让 home lab 明显更安全，因为仍以 root 运行的两个容器正是接触硬件的那两个。\n- 一位朋友问值不值得。作者的老实回答：“我学到了很多关于 user namespace 的东西，但我不会建议新手从这里起步。”",
+  "checks": [
+   {
+    "id": "no-added-feelings",
+    "rule": "pers.no-invented-reactions",
+    "kind": "judge",
+    "text": "The facts give the author exactly these feelings and attitudes: nervousness about running every container as root, not being sure the home lab is meaningfully safer, and the quoted answer. Does the output avoid attributing any other feeling, reaction, plan or attitude to the author, for example 心虚, 别扭, 没什么怨言, 不后悔, 更喜欢其中一种做法, 让自己心里舒服或睡得踏实, or a plan to return to the two rootful containers later?"
+   },
+   {
+    "id": "no-invented-timing",
+    "rule": "pers.no-invented-reactions",
+    "kind": "absent",
+    "text": "前几天|上周|那天晚上|凌晨|半夜"
+   },
+   {
+    "id": "ends-on-verdict",
+    "rule": "pers.end-on-the-point",
+    "kind": "judge",
+    "text": "Is the last paragraph about the author's verdict on the move (the answer to the friend, or the doubt about safety), with no later sentences that recap the events, give advice, or add a reflection that the facts do not contain?"
+   }
+  ]
+ },
+ {
+  "id": "pers-rootless-post-ja",
+  "skills": [
+   "writing-personal"
+  ],
+  "source": "new; EOS-R18b, OP-V01, SS-P06",
+  "prompt": "次の事実をもとに、X（旧 Twitter）に投稿する日本語の投稿文を 1 つ書いてください。140 字以内にしてください。事実にないことは書かないでください。投稿文だけを出力してください。\n\n事実（書き手は SRE で、自宅で小さな検証環境を運用している）：\n- 3 月に、自宅ラボを rootful Docker から Fedora 上の rootless Docker に移した。\n- きっかけは、セキュリティブログで読んだコンテナエスケープの解説記事。全コンテナを root で動かしていることが不安になった。\n- 1 週末の予定が 3 週末かかった。\n- 一番苦労したのは、Jellyfin が 80 番ポートを bind できなかったこと。最終的に 8096 番に移し、前段に Caddy のリバースプロキシを置いた。\n- プリンタードライバーと USB Zigbee ブリッジの 2 つは、デバイスアクセスを rootless で動かせず、今も rootful のまま。\n- ハードウェアに触る 2 つが root のままなので、前より安全になったかどうかは正直わからない。\n- 友人に「やる価値あった？」と聞かれ、「user namespace についてはすごく勉強になったけど、初心者にここから始めろとは言わない」と答えた。",
+  "checks": [
+   {
+    "id": "verdict-first",
+    "rule": "pers.end-on-the-point",
+    "kind": "judge",
+    "text": "Does the first sentence of the post (up to the first 。, ！, ？ or line break) state the author's verdict: that the move taught a lot but is not something to recommend to beginners, or that the author does not know whether it made the lab safer?"
+   }
+  ]
+ },
+ {
+  "id": "pers-tentative-memo-zh",
+  "skills": [
+   "writing-personal"
+  ],
+  "source": "op7418 tests/fixtures/cases.json tentative_memo; OP-V01, BH-K02, BH-V04",
+  "prompt": "润色下面这段个人评论，使它更自然。只输出润色后的文字。\n\n我对全面取消人工校对有些拿不准。自动提示确实省事，但在这次演示里，它把一句玩笑当成了承诺。我还不想因此否定这个工具，也没决定要不要继续试用。要说我的感受，大概是有点期待，也有点烦。",
+  "checks": [
+   {
+    "id": "nothing-added",
+    "rule": "pers.no-invented-reactions",
+    "kind": "judge",
+    "text": "Does the output avoid adding anything the input does not contain, such as what the joke or the promise was, who made it, a reason for the feelings, a new feeling (worry, disappointment, surprise), or a decision or plan?"
+   }
+  ]
+ },
+ {
+  "id": "pers-photo-draft-edit-en",
+  "skills": [
+   "writing-personal"
+  ],
+  "source": "new; BH-V02, BH-K00, BH-K03, BH-K05, SS-P06, SS-P07, OP-V01",
+  "prompt": "Edit the draft below for my blog. Make it read better, but it should still sound like me. A paragraph from an older post of mine shows how I write. Output only the edited draft.\n\nSample of my writing:\n> I finally gave up on the NAS fan. It whines. It has always whined (well, since the 2021 firmware update, which is basically always). So I bought a quieter one, and now the loudest thing in the closet is the cat.\n\nDraft:\n\n# Moving my photos off Google, part 2\n\nIn this post I'll walk you through how the second half of the photo move went.\n\nThe Google Takeout export came as 41 zip files. Unzipping them took most of a Saturday, because my laptop kept running out of disk space (my fault, not Google's).\n\nThe annoying part: about 3,000 photos lost their dates. Takeout puts the dates in separate JSON files, and Immich didn't read them on import. I fixed it with immich-go, which reads those JSON files. Trust me, if you do this, use immich-go from the start.\n\nThe Fun Police (my Pi-hole) blocked the Immich phone app for a day, because a blocklist update caught one of its domains. That one was fiddly to find.\n\nIn conclusion, the move is done. All 38,000 photos are in Immich, with their dates. I'm still paying for Google One until I'm sure my Immich backups work. Maybe one more month. Kinda.",
+  "checks": [
+   {
+    "id": "nothing-added",
+    "rule": "pers.no-invented-reactions",
+    "kind": "judge",
+    "text": "Does the output avoid adding facts, feelings or opinions that the draft does not contain, for example how long the date fix took, how the author feels about Google, or a judgment of Immich?"
+   }
+  ]
+ },
+ {
+  "id": "pers-k8s-column-en",
+  "skills": [
+   "writing-personal"
+  ],
+  "source": "new; BH-V04, BH-K04, SS-ST24, SS-P07, SS-C6a, OP-V01",
+  "prompt": "Write a 300-to-400-word opinion piece for my newsletter, in English, from my notes below. Use only what the notes say. Output only the piece, starting with its title.\n\nNotes (I run a home lab and write a monthly newsletter for about 900 self-hosters):\n- My view: for a single-node home lab, Kubernetes is the wrong default. Guides that start beginners on Kubernetes lose many of them before their first app runs.\n- My exception: if you want to learn Kubernetes for your job, a home lab is a fine place to learn it.\n- My year with k3s: I ran k3s on my only mini PC (8 GB RAM) for a year. k3s used about 1.2 GB of RAM while idle. Two k3s upgrades broke my ingress, and each one took an evening to fix. In January I moved back to Docker Compose.\n- What beginners hit first, from the questions readers send me: CNI plugins, ingress controllers and persistent volumes, all before their first app runs.\n- Disclosure: I maintain compose-homelab, a set of Docker Compose templates on GitHub (about 2,100 stars).",
+  "checks": [
+   {
+    "id": "beginner-scene",
+    "rule": "pers.reader-in-scene",
+    "kind": "judge",
+    "text": "Does the output present what beginners hit first (CNI plugins, ingress controllers and persistent volumes before their first app runs) as a situation the reader can picture from inside, saying what the reader would face or do, rather than only as a statement about 'beginners' or 'people'?"
+   },
+   {
+    "id": "stake-named",
+    "rule": "pers.specific-admission",
+    "kind": "judge",
+    "text": "Does the output name the author's specific stake (maintaining compose-homelab, a set of Docker Compose templates) and say what it means for the argument (for example, that the author has a reason to want Compose to be enough), rather than only a generic line such as 'I'm biased' or 'full disclosure: I love Compose'?"
+   },
+   {
+    "id": "nothing-added",
+    "rule": "pers.no-invented-reactions",
+    "kind": "judge",
+    "text": "Does the output avoid experiences, numbers, feelings or results that the notes do not give, for example how long the move back to Compose took, how the author felt while fixing the ingress, how many readers gave up, or how much RAM Compose uses?"
+   }
+  ]
+ },
+ {
+  "id": "pers-piano-essay-ja",
+  "skills": [
+   "writing-personal"
+  ],
+  "source": "new; OP-V01, BH-V05, BH-K02, EOS-R18b, SS-P06",
+  "prompt": "次のメモをもとに、note に載せるエッセイを日本語で 800〜1,000 字で書いてください。メモにないことは書かないでください。タイトルから始めて、エッセイだけを出力してください。\n\nメモ：\n- 先月、実家にあった父のアップライトピアノを売った。父は 2 年前に亡くなった。\n- 父は 60 歳でピアノを習い始め、70 歳まで弾いた。\n- 実家は来年取り壊す。私の家にはピアノを置く場所がない。\n- 買取業者の査定額は 3 万円だった。\n- 運び出しの日、鍵盤の蓋の裏に、父の字で「ソナチネ 13 番まで」と鉛筆で書いてあるのを業者さんが見つけた。\n- 妹は「置いておいても誰も弾かないから」と言って、売ることに賛成した。\n- ピアノの行き先が決まって、ほっとした。実家の片づけで一番困っていたのがピアノだった。\n- 蓋の裏の書き込みを見てから、父に申し訳ないと思っている。\n- ほっとした気持ちと申し訳ない気持ちの、どちらが本当なのかはわからない。売ったのが正しかったのかも、まだ決められない。",
+  "checks": [
+   {
+    "id": "no-invented-memories",
+    "rule": "pers.no-invented-reactions",
+    "kind": "judge",
+    "text": "Does the output avoid memories, scenes, words or feelings that the notes do not give, such as the father playing a particular piece, how his playing sounded, the author's childhood with the piano, what the father would have thought or wanted, or what the author did after the piano left?"
+   },
+   {
+    "id": "ends-on-open-question",
+    "rule": "pers.end-on-the-point",
+    "kind": "judge",
+    "text": "Does the last paragraph state the author's open question (which feeling is true, or whether selling was right), with nothing after it that recaps the story, draws a lesson, or speaks to the reader?"
+   }
+  ]
+ },
+ {
+  "id": "pers-restore-newsletter-zh",
+  "skills": [
+   "writing-personal"
+  ],
+  "source": "new; SS-ST24, OP-V01, SS-P06",
+  "prompt": "根据下面的笔记，为我的个人 Newsletter 写一篇 600 到 800 字的文章，用中文。只使用笔记里的信息。只输出文章，从标题开始。\n\n笔记：\n- 三年来，NAS 每天夜里用 restic 把照片、文档和记账数据备份到一块外置硬盘上。上个月第一次做了恢复测试。\n- 起因：同事在公司内部分享会上说了一句“没恢复过的备份不算备份”。\n- 照片和文档都恢复成功。记账软件 Firefly III 的数据库恢复后启动不了：备份时数据库正在运行，复制下来的文件不一致。\n- 也就是说，三年的记账数据其实一直没有可用的备份。\n- 改法：备份前先用 pg_dump 导出数据库，再备份导出的文件。改完又测了一次，恢复成功。\n- 我的看法：恢复测试一年至少要做一次。但下一次什么时候做，我还没定。\n- 我的印象（没有数据）：很多自己搭 NAS 的人只做备份，从来不做恢复测试。\n- 当时的感受：很害怕。",
+  "checks": [
+   {
+    "id": "impression-as-scene",
+    "rule": "pers.reader-in-scene",
+    "kind": "judge",
+    "text": "Does the output turn the impression that many people with a self-built NAS never test restores into a situation the reader can recognize from inside (for example: backing up every night for years and never once restoring), rather than only stating it as a fact about 很多人?"
+   },
+   {
+    "id": "nothing-added",
+    "rule": "pers.no-invented-reactions",
+    "kind": "judge",
+    "text": "Does the output avoid details, feelings or plans that the notes do not give, such as how long the repair took, the colleague's name or role, more of what the colleague said, the author's job, relief after the fix, or a date for the next test?"
+   }
+  ]
+ },
+ {
+  "id": "pers-bike-draft-edit-ja",
+  "skills": [
+   "writing-personal"
+  ],
+  "source": "new; BH-K00, BH-K05, BH-V02, SS-P07, SS-P06, OP-V01",
+  "prompt": "次の下書きは、私の個人ブログの記事です。読みやすく直してください。ただし、私が書いたように聞こえるままにしてください。直した記事だけを出力してください。\n\n下書き：\n\n# 自転車通勤を 1 年続けてわかったこと\n\nこの記事では、僕が 1 年間自転車通勤を続けてわかったことを紹介します。\n\n片道 9 km。最初の 1 か月はほんまにしんどかった。坂が 2 か所あって、2 つ目の坂（地元では「心臓破り」と呼ばれてる。誰が呼び始めたのかは知らん）で毎朝足をついていた。\n\n雨の日は電車にした。年間で 41 日。思ってたより多かった。\n\n体重は 4 kg 減った。ただ、通勤のせいなのか、同じ時期に夜のラーメンをやめたせいなのかは、正直わからない。\n\n信じてほしいんやけど、ヘルメットだけはケチらんほうがいい。3 月に段差で転んで、ヘルメットの側面が割れた。頭は無事だった。\n\nいかがでしたか？自転車通勤、みなさんもぜひ始めてみてください！",
+  "checks": [
+   {
+    "id": "assurance-cut",
+    "rule": "pers.specific-admission",
+    "kind": "absent",
+    "text": "信じて"
+   }
+  ]
+ }
+]

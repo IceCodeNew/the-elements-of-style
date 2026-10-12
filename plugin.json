@@ -1,20 +1,22 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "elements-of-style",
-  "version": "1.0.0",
-  "description": "Writing guidance based on William Strunk Jr.'s The Elements of Style (1918)",
+  "version": "2.0.0",
+  "description": "Writing skills for technical and personal text, with English, Japanese and Chinese extensions",
   "author": {
-    "name": "Jesse Vincent",
-    "url": "https://github.com/obra"
+    "name": "IceCodeNew",
+    "url": "https://github.com/IceCodeNew"
   },
-  "homepage": "https://github.com/obra/elements-of-style",
-  "repository": "https://github.com/obra/elements-of-style",
-  "license": "Public Domain",
+  "homepage": "https://github.com/IceCodeNew/the-elements-of-style",
+  "repository": "https://github.com/IceCodeNew/the-elements-of-style",
+  "license": "See NOTICE.md in each skill directory",
   "keywords": [
     "writing",
     "style",
-    "grammar",
+    "technical-writing",
     "composition",
-    "clarity"
+    "clarity",
+    "japanese",
+    "chinese"
   ]
 }
