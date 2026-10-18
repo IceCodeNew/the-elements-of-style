@@ -1,0 +1,175 @@
+[
+  {
+    "id": "elements-of-style",
+    "kind": "github",
+    "repo": "obra/the-elements-of-style",
+    "branch": "main",
+    "pinned": "05fc4f0d2b97b7c042dd9949ad658568e4a1324e",
+    "pinned_date": "2026-08-12",
+    "license": "Public domain text (Project Gutenberg #37134, Strunk 1918); the repository has no license file",
+    "used_by": [
+      "writing-tech",
+      "writing-personal",
+      "writing-en"
+    ],
+    "via": null,
+    "audit": "maintenance/audits/eos.md"
+  },
+  {
+    "id": "humanizer-zh",
+    "kind": "github",
+    "repo": "op7418/Humanizer-zh",
+    "branch": "main",
+    "pinned": "f4518a8eab97b8bfebc66a89d34320a89bef6930",
+    "pinned_date": "2026-09-23",
+    "license": "MIT, Copyright (c) 2026 歸藏",
+    "used_by": [
+      "writing-tech",
+      "writing-personal",
+      "writing-en",
+      "writing-ja",
+      "writing-zh"
+    ],
+    "via": null,
+    "audit": "maintenance/audits/op7418.md"
+  },
+  {
+    "id": "humanizer",
+    "kind": "github",
+    "repo": "blader/humanizer",
+    "branch": "main",
+    "pinned": "8c307f367c91bd974002f10f2be2965d642c13df",
+    "pinned_date": "2026-10-16",
+    "license": "MIT, Copyright (c) Siqi Chen",
+    "used_by": [
+      "writing-tech",
+      "writing-personal",
+      "writing-en",
+      "writing-ja"
+    ],
+    "via": "humanizer-zh",
+    "audit": "maintenance/audits/blader.md"
+  },
+  {
+    "id": "stop-slop",
+    "kind": "github",
+    "repo": "hardikpandya/stop-slop",
+    "branch": "main",
+    "pinned": "8da1f030185bdfe8471220585162991eaeb970e9",
+    "pinned_date": "2026-03-18",
+    "license": "MIT, Copyright (c) Hardik Pandya",
+    "used_by": [
+      "writing-tech",
+      "writing-personal"
+    ],
+    "via": "humanizer-zh",
+    "audit": "maintenance/audits/stop-slop.md"
+  },
+  {
+    "id": "tropes-v2",
+    "kind": "manual",
+    "url": "https://tropes.fyi/tropes-md",
+    "pinned": "tropes.md sha256 df0975bf1b6dd02f94cee7b703c911cf6ed99f7695001991e3d102f8d4ab98ed; whip SKILL.md 0.1.0 sha256 c671aa95b295e8ac04ae829b007c90de73f8185ead69996a871c52effdc4005d",
+    "pinned_date": "2026-10-10",
+    "license": "None stated; its anti-patterns are test checks only, no text is copied into the skills",
+    "used_by": [
+      "evals"
+    ],
+    "via": null,
+    "check": "The pages render in a browser. Open https://tropes.fyi/tropes-md and https://tropes.fyi/whip, download both files, and compare their sha256 with the pins.",
+    "audit": "maintenance/audits/tropes-v2.md"
+  },
+  {
+    "id": "ninehills-deslop",
+    "kind": "github",
+    "repo": "ninehills/skills",
+    "branch": "main",
+    "pinned": "f3e82a7e2bfbed54fc2b4a715a1986f5f467e827",
+    "pinned_date": "2026-06-22",
+    "license": "deslop: MIT, Copyright (c) 2026 Stephen D. Turner; deslop-en and deslop-zh: no license file in their directories",
+    "used_by": [
+      "evals"
+    ],
+    "via": null,
+    "paths": [
+      "deslop",
+      "deslop-en",
+      "deslop-zh"
+    ],
+    "note": "Counter-examples only. deslop/references/tropes.md is a copy of a superseded tropes list and is not used.",
+    "audit": "maintenance/audits/deslop.md"
+  },
+  {
+    "id": "skill-deslop",
+    "kind": "github",
+    "repo": "stephenturner/skill-deslop",
+    "branch": "main",
+    "pinned": "a906154bef375d9d49ed2ad7da13b2db16f0d3d2",
+    "pinned_date": "2026-03-18",
+    "license": "MIT, Copyright (c) 2026 Stephen D. Turner",
+    "used_by": [
+      "evals"
+    ],
+    "via": "ninehills-deslop",
+    "note": "ninehills/skills deslop is an identical copy at this commit.",
+    "audit": "maintenance/audits/deslop.md"
+  },
+  {
+    "id": "talk-normal",
+    "kind": "github",
+    "repo": "hexiecs/talk-normal",
+    "branch": "main",
+    "pinned": "d89cf329e775e640181427fae071652198264c7e",
+    "pinned_date": "2026-04-22",
+    "license": "MIT",
+    "used_by": [
+      "evals"
+    ],
+    "via": "ninehills-deslop",
+    "note": "Credited by deslop-zh; its last commit predates the ninehills sync, so deslop-zh covers it.",
+    "audit": "maintenance/audits/deslop.md"
+  },
+  {
+    "id": "wikipedia-signs-of-ai-writing",
+    "kind": "wikipedia",
+    "page": "Wikipedia:Signs of AI writing",
+    "pinned": "1380716549",
+    "pinned_date": "2026-10-17",
+    "license": "CC BY-SA 4.0; the skills paraphrase only principles, and the test cases quote examples with the attribution in evals/NOTICE.md",
+    "used_by": [
+      "writing-tech"
+    ],
+    "via": "humanizer",
+    "audit": "maintenance/audits/wikipedia.md"
+  },
+  {
+    "id": "japanese-tech-writing",
+    "kind": "gist",
+    "gist": "fd287c3133457c4fd8f5601d34aa817d",
+    "owner": "k16shikano",
+    "pinned": "8f2d57610a73efc97d743c9b0b0ecb1002e09fa4",
+    "pinned_date": "2026-09-09",
+    "license": "Unlicense (gist 67625f2a7d96e3bbdfae8d571a936063)",
+    "used_by": [
+      "writing-tech",
+      "writing-ja"
+    ],
+    "via": null,
+    "audit": "maintenance/audits/jtw.md"
+  },
+  {
+    "id": "asd-ste100",
+    "kind": "manual",
+    "url": "https://www.asd-ste100.org/",
+    "pinned": "Issue 9",
+    "pinned_date": "2025-01-15",
+    "license": "ASD-STE100 is a copyrighted specification; the skills paraphrase writing rules and do not include its dictionary",
+    "used_by": [
+      "writing-tech",
+      "writing-en"
+    ],
+    "via": null,
+    "check": "The official site names the current issue. Issue 10 is scheduled for January 2028.",
+    "audit": "maintenance/audits/ste.md"
+  }
+]
