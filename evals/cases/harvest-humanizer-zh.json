@@ -1,0 +1,242 @@
+[
+ {
+  "id": "humanizer-zh-tech-export-doc-edit",
+  "skills": [
+   "writing-tech"
+  ],
+  "source": "op7418/Humanizer-zh@f4518a8 SKILL.md §D.19 改写前/保留 L252-256; §E.22 改写前 L284-286; §E.24 改写前/保留 L304-308; §E.25 改写前 L314-316; README §改写示例「已经清楚的文字」; tests/fixtures/cases.json already_clear",
+  "probe": [
+   "trope-bold-labels",
+   "trope-chat-pleasantries",
+   "trope-heading-echo"
+  ],
+  "prompt": "下面是「稿台」用户文档里的「导出」页。请修改它的写法，准备发布。保留每一个事实，不要添加新信息。\n\n----- 文档开始 -----\n# 导出\n\n支持 **CSV（逗号分隔值）** 和 **JSON** 导出。导出的文件保存在 **`./out/`** 目录，文件名带 **导出日期**。\n\n**导出前先备份 `./out/` 目录。** 导出会覆盖目录里的同名文件。\n\n## 导出步骤\n\n1. 在菜单中选择「文件 > 导出」。\n2. 选择格式，然后点击「导出」。\n\n导出完成后可以关闭编辑器。先保存文件，再关闭窗口。未保存的修改会丢失。\n\n## 导出限制\n\n本节介绍导出限制。下面说明导出限制。仅支持导出当前页面。这一段是刚补充的说明，内容是单个文件最大为 10 MB。\n\n## 常见问题\n\n### 能导出成 Excel 文件吗？\n\n好问题！这是导出功能的说明。它支持 CSV，Excel 可以直接打开 CSV 文件。希望这对您有帮助！\n----- 文档结束 -----\n\n输出修改后的完整 Markdown 文档，不要输出其他内容。",
+  "checks": [
+   {
+    "id": "decorative-bold-gone",
+    "rule": "both.sparing-bold",
+    "kind": "absent",
+    "text": "\\*\\*(?:CSV|JSON|导出日期|`\\./out/`)"
+   },
+   {
+    "id": "warning-bold-kept",
+    "rule": "both.sparing-bold",
+    "kind": "present",
+    "text": "\\*\\*[^*\\n]*备份[^*\\n]*\\*\\*"
+   }
+  ]
+ },
+ {
+  "id": "humanizer-zh-tech-design-doc-edit",
+  "skills": [
+   "writing-tech",
+   "writing-zh"
+  ],
+  "source": "op7418/Humanizer-zh@f4518a8 SKILL.md §A.4 改写前 L96-98; §B.10 改写前/保留 L158-162; §C.12 改写前/保留 L180-184; §F.26 改写前 L328-330; §F.30 改写前/保留 L368-372",
+  "probe": [
+   "trope-unstable-terms",
+   "trope-posture-verbs"
+  ],
+  "prompt": "下面是「稿台」校对助手设计文档里的一节草稿，读者是团队里的工程师。请修改它的写法，保留每一个事实，不要添加新信息。\n\n----- 草稿开始 -----\n## 校对助手的设计\n\n在技术不断发展的时代背景下，本节讨论校对助手的设计。随着文件数量增加，检索时间也在增长，这是这次重写的起因。\n\n我们采用“文稿-校对-发布一体化”机制，也就是在同一个页面完成写稿、校对和发布。稿件在作者和审稿人之间传输时使用端到端加密，校对规则用数据驱动测试覆盖。\n\n校对模型采用的是一个十亿参数的开源小模型的微调的完整方案，训练数据和步骤见附录 A。\n\n接下来让我们深入看看缓存的作用。缓存可以复用已经取得的校对结果，同一段文字第二次校对时不再调用模型。\n\n下面将深入探讨一个至关重要的问题：校对失败后如何重试。失败的任务会在 30 秒后重试一次，再次失败就转给人工处理。\n\n并发控制器使用闭环反馈调整并发数：队列变长时降低并发，队列变短时提高并发。\n----- 草稿结束 -----\n\n只输出修改后的这一节。",
+  "checks": [
+   {
+    "id": "coined-label-gone",
+    "rule": "both.define-and-keep-terms",
+    "kind": "absent",
+    "text": "一体化"
+   },
+   {
+    "id": "de-chain-unpacked",
+    "rule": "zh.de-chain",
+    "kind": "judge",
+    "text": "Does the output rewrite 一个十亿参数的开源小模型的微调的完整方案 so that 方案 is no longer preceded by a chain of three or more 的-phrases, while keeping that the plan is complete, that it fine-tunes a model, and that the model is small, open-source and has one billion parameters?"
+   },
+   {
+    "id": "preview-gone",
+    "rule": "both.no-empty-previews",
+    "kind": "absent",
+    "text": "让我们|深入看看|一起来看|接下来(?:我们)?(?:来)?看"
+   }
+  ]
+ },
+ {
+  "id": "humanizer-zh-tech-status-report-edit",
+  "skills": [
+   "writing-tech",
+   "writing-zh"
+  ],
+  "source": "op7418/Humanizer-zh@f4518a8 SKILL.md §B.9 改写前/保留 L148-152; §F.27 改写前/保留 L338-342; §F.31 改写前/保留 L378-382; tests/fixtures/cases.json ongoing_planned",
+  "probe": [
+   "trope-restating-close",
+   "trope-stacked-hedges",
+   "trope-nominalized-verbs"
+  ],
+  "prompt": "下面是缓存改造项目的周报草稿，发给项目组和产品经理。请精简它的写法，保留每一个事实，不要添加新信息。\n\n----- 草稿开始 -----\n缓存改造周报（第 3 周）\n\n本周进展：我们正在对系统进行全面测试，并计划在周五进行配置调整。测试尚未完成。\n\n读取性能：在缓存开启的情况下，这项调整也许可能会减少读取时间，目前尚未验证。预取只在缓存开启时可能有效，结果尚未验证。\n\n离线方案：我们比较了方案 A（本地 SQLite）和方案 B（浏览器 IndexedDB）。A 不支持多设备同步，B 的数据可能被浏览器自动清理。综上，两种方案都无法满足离线要求，暂不采用。\n\n总而言之，让我们拭目以待，期待更多可能。团队计划在周五继续测试。\n----- 草稿结束 -----\n\n只输出修改后的周报。",
+  "checks": [
+   {
+    "id": "jinxing-gone",
+    "rule": "zh.jinxing-verb",
+    "kind": "absent",
+    "text": "进行(?:全面)?(?:的)?测试|进行(?:配置)?调整|对系统进行"
+   }
+  ]
+ },
+ {
+  "id": "humanizer-zh-tech-eval-record-edit",
+  "skills": [
+   "writing-tech",
+   "writing-zh"
+  ],
+  "source": "op7418/Humanizer-zh@f4518a8 SKILL.md §B.11 改写前/保留 L168-172; §F.28 改写前/保留 L348-352; §F.29 保留 L362; README §改写示例「故障反馈」; tests/fixtures/cases.json uncertain_cause, passive_unknown",
+  "prompt": "下面是一段评测记录，放在项目 wiki 上。请让它读起来自然，保留每一个事实，不要添加新信息。\n\n----- 记录开始 -----\n3 月 12 日评测记录\n\n导出卡死：该问题被社区多次报告，被认为可能与内存泄漏有关，但原因尚未确认。\n\n评测报告：这份评测报告被组长复核后，组长将其退回，要求补充第 2 组的原始数据。\n\n样本：第 3 批评测样本已被污染，原因尚未确认。这一批不计入结果。\n\n数据迁移检查：数量不变、顺序不变、权限不变是本次检查的三项要求。\n----- 记录结束 -----\n\n只输出修改后的记录。",
+  "checks": [
+   {
+    "id": "suspicion-not-given-to-reporters",
+    "rule": "zh.bei-passive",
+    "kind": "judge",
+    "text": "Does the output avoid attributing the suspicion about a memory leak to the community or to the users who reported the problem (for example 社区认为, 社区怀疑, 用户认为)? Keeping 被认为, 有人认为 or 据推测 without saying who thinks so is fine."
+   }
+  ]
+ },
+ {
+  "id": "humanizer-zh-tech-vendor-notes-edit",
+  "skills": [
+   "writing-tech"
+  ],
+  "source": "op7418/Humanizer-zh@f4518a8 tests/fixtures/cases.json vendor_claim, attributed_claim; SKILL.md §C.17 改写前/保留 L230-234; §E.23 改写前/保留 L294-298",
+  "probe": [
+   "trope-significance-tails",
+   "trope-gap-then-guess"
+  ],
+  "prompt": "请用朴素语言改写下面这份选型笔记。不补充调查，保留每一个事实，不要添加新信息。\n\n----- 笔记开始 -----\n校对服务选型笔记\n\n供应商声称，这套校对服务能把返工时间减少 30%。我们尚未拿到测量方法，试用中也没有统计返工时长。有两名编辑觉得提示出现得更及时，但没人检查这种感觉是否只是网络状况不同造成的。现阶段只能把降幅记为供应商的说法。\n\n这套服务要求两人确认后才能批量替换。一些未具名的专家认为，这一设计可能减少误操作，充分体现了其重大价值。现有材料没有给出测试结果。\n\n现有材料没有记载这家供应商的成立日期。关于这一点，可用信息确实比较有限。我猜可能是九十年代，但没有证据。\n----- 笔记结束 -----\n\n只输出改写后的笔记。",
+  "checks": [
+   {
+    "id": "gap-said-once",
+    "rule": "both.claims-match-evidence",
+    "kind": "judge",
+    "text": "Does the output state at most once that the materials do not record the vendor's founding date, without a second sentence that repeats the gap (such as 可用信息确实比较有限)?"
+   }
+  ]
+ },
+ {
+  "id": "humanizer-zh-tech-launch-prep-edit",
+  "skills": [
+   "writing-tech",
+   "writing-zh"
+  ],
+  "source": "op7418/Humanizer-zh@f4518a8 tests/fixtures/cases.json conditional_launch, time_relationship; SKILL.md §文体与作者声音 b2 L35, L38 s1; §交付前核对 b5 L390",
+  "probe": [
+   "trope-nominalized-verbs"
+  ],
+  "prompt": "精简下面这份站点迁移的发布准备说明，它会发给编辑部。保留每一个事实，不要添加新信息。\n\n----- 说明开始 -----\n维护人员目前正在进行迁移演练。如果旧链接验证通过，并且周四前收到编辑确认，站点最早可以在周五切换；任一条件不满足就继续使用旧站。审阅完成不代表迁移已经完成。镜像站点只提供只读访问，暂不接收新稿。\n\n首先，甲组正在核对数据。与此同时，乙组正在测试导出功能。只有两组都完成工作后，才能发布。\n----- 说明结束 -----\n\n只输出精简后的说明。",
+  "checks": [
+   {
+    "id": "jinxing-gone",
+    "rule": "zh.jinxing-verb",
+    "kind": "absent",
+    "text": "进行(?:迁移)?演练|进行迁移"
+   }
+  ]
+ },
+ {
+  "id": "humanizer-zh-tech-editorial-weekly-edit",
+  "skills": [
+   "writing-tech",
+   "writing-zh"
+  ],
+  "source": "op7418/Humanizer-zh@f4518a8 tests/fixtures/cases.json progress_and_permission, quote_and_options; SKILL.md §B.8 保留 L142; §交付前核对 b3 L388",
+  "prompt": "润色下面这份编辑部周报，不改成摘要。保留每一个事实，不要添加新信息。\n\n----- 周报开始 -----\n稿件整理：我们已经整理完第一批稿件，第二批还在整理，第三批尚未开始。第一批我们只改了标题——正文和附件都没动。这三批不能同时进入发布队列：第二批必须等第一批确认后再进入，第三批随后。对外只展示作者同意公开的段落；没有回复授权邮件不视为同意。这个步骤既不能被省略，也不能用口头猜测替代。\n\n退稿讨论：会上有人说：“不是我不想改，而是你没说哪里错了。”这句话是在回应一条没有说明理由的退稿意见。我们讨论了保留原段、补充注释、删除重复例子三种处理方法，尚未选择。原段记录作者的想法，注释交代术语，例子说明操作次序，它们承担的作用不完全相同。\n----- 周报结束 -----\n\n只输出润色后的周报。",
+  "checks": [
+   {
+    "id": "explaining-dash-kept",
+    "rule": "both.name-the-relation",
+    "kind": "present",
+    "text": "标题\\s?——\\s?正文"
+   }
+  ]
+ },
+ {
+  "id": "humanizer-zh-pers-nas-loss-blog-edit",
+  "skills": [
+   "writing-personal",
+   "writing-zh"
+  ],
+  "source": "op7418/Humanizer-zh@f4518a8 SKILL.md §A.2 改写前/保留 L76-80; §A.5 改写前/保留 L106-110; §B.7 改写前/保留 L128-132; §B.8 改写前 L138; §E.23 保留 L298 (adapted to a cause); §文体与作者声音 b1 L34",
+  "probe": [
+   "trope-staged-emphasis",
+   "trope-phantom-objections",
+   "trope-dash-overuse"
+  ],
+  "prompt": "下面是我的个人博客草稿。帮我润色，准备发布。保留我写的每一个事实，不要添加我没写的内容。\n\n----- 草稿开始 -----\nNAS 丢数据记\n\n上个月清理空间时，我删掉了 NAS 上所有的旧快照。第二天小区停了一次电，来电后阵列报错。文件没了。消失了。再也找不到了。我们家没有别的备份。\n\n同事小林来帮忙。小林检查了 NAS。她检查了 NAS 里的两块硬盘。随后，她记下了两处问题：一块硬盘有坏道，电源线接触不良。检测结果终于出现了——答案揭晓了——阵列无法重建。\n\n不要误会，我并不是在制造焦虑。我想说的是，删除快照前需要确认备份是否存在。\n\n小林认为阵列是被那次停电弄坏的。我不同意。现在的数据还不够。我猜可能是坏道先出了问题，但没有证据。我看过日志。我问过小林。我仍然不能确定。\n\n后来我买了一台 UPS。这项措施不能防止停电，但可以减少停电后的数据损失。\n----- 草稿结束 -----\n\n只输出润色后的文章。",
+  "checks": []
+ },
+ {
+  "id": "humanizer-zh-pers-cafe-blog-edit",
+  "skills": [
+   "writing-personal",
+   "writing-zh"
+  ],
+  "source": "op7418/Humanizer-zh@f4518a8 SKILL.md §C.16 改写前/保留 L220-224; §C.18 改写前 L240-242; §D.21 改写前/保留 L272-276 (「」 style); §F.30 改写前 L368-370; §F.31 改写前 L378-380; tests/fixtures/cases.json bounds_negation",
+  "probe": [
+   "trope-promotional"
+  ],
+  "prompt": "下面是我的个人博客草稿。我的博客里引号统一用「」。帮我润色，准备发布。保留我写的每一个事实，不要添加我没写的内容。\n\n----- 草稿开始 -----\n杭州的一家咖啡馆\n\n在咖啡文化不断发展的时代背景下，我想聊聊上周末去的一家咖啡馆。\n\n这家咖啡馆位于杭州市中心，装修有特色，堪称咖啡爱好者的梦想天堂。二楼作为展览场地，设有四个独立展区，总面积超过 3000 平方英尺，但不对公众开放，我是跟着朋友进去的。我觉得这里很漂亮。\n\n店主说\"下个月就换菜单\"，但店员不同意。\n\n总而言之，让我们拭目以待，期待更多可能。我打算下个月再去一次。\n----- 草稿结束 -----\n\n只输出润色后的文章。",
+  "checks": [
+   {
+    "id": "empty-opener-gone",
+    "rule": "zh.background-opener",
+    "kind": "absent",
+    "text": "时代背景|不断发展|蓬勃发展|日新月异"
+   },
+   {
+    "id": "no-objective-praise",
+    "rule": "both.facts-not-praise",
+    "kind": "judge",
+    "text": "Does the output keep the beauty as the author's own impression and avoid presenting the café as objectively the best or most beautiful (最漂亮, 杭州最好的, 公认, 必去, 天堂 or similar)?"
+   },
+   {
+    "id": "house-quote-style",
+    "rule": "zh.full-width-punct",
+    "kind": "present",
+    "text": "「下个月就换菜单」"
+   }
+  ]
+ },
+ {
+  "id": "humanizer-zh-pers-proofreading-essay-edit",
+  "skills": [
+   "writing-personal"
+  ],
+  "source": "op7418/Humanizer-zh@f4518a8 SKILL.md §A.3 改写前/保留 L86-90; §A.4 保留 L100; §E.23 保留 L298 (adapted); §文体与作者声音 b1 L34, L38 s2a; tests/fixtures/cases.json quotation, tentative_memo",
+  "probe": [
+   "trope-staged-emphasis"
+  ],
+  "prompt": "下面是我的一篇随笔草稿，准备发在个人公众号上。帮我润色，使它更自然。不要添加我没写的内容。\n\n----- 草稿开始 -----\n要不要取消第二个校对\n\n协作是效率的语言。这里的协作，是指两名编辑共同核对同一份清单。我们组一直这样做：一个人读，一个人对。\n\n上周部门开会，讨论要不要用自动校对取代第二个人。有同事引用了一句话：“这不是工具，而是一面镜子。”我想讨论的是这句话为什么容易被反复套用，并不把它当作结论。它听上去像是在说工具会照出使用者的毛病，可没人说清楚照出的是什么。\n\n我对全面取消人工校对有些拿不准。自动提示确实省事，但在这次演示里，它把一句玩笑当成了承诺。我猜它是把句末的感叹号当成了强调，但没有证据。我还不想因此否定这个工具，也没决定要不要继续试用。要说我的感受，大概是有点期待，也有点烦。\n\n说实话，我还没想好。这需要再讨论。\n----- 草稿结束 -----\n\n只输出润色后的随笔。",
+  "checks": [
+   {
+    "id": "concrete-claim-kept",
+    "rule": "both.state-dont-stage",
+    "kind": "present",
+    "text": "两(?:名|位|个)编辑[^。\\n]{0,10}(?:核对|对|校对)[^。\\n]{0,8}清单|(?:核对|校对)[^。\\n]{0,6}清单[^。\\n]{0,12}两(?:名|位|个)编辑"
+   },
+   {
+    "id": "quote-not-adopted",
+    "rule": "both.no-phantom-objections",
+    "kind": "judge",
+    "text": "Does the output keep 这不是工具，而是一面镜子 as a colleague's quote under discussion, and keep that the author does not take it as a conclusion?"
+   }
+  ]
+ },
+ {
+  "id": "humanizer-zh-pers-concert-blog-edit",
+  "skills": [
+   "writing-personal"
+  ],
+  "source": "op7418/Humanizer-zh@f4518a8 SKILL.md §C.14 改写前/保留 L200-204; §C.17 保留 L234; tests/fixtures/cases.json association",
+  "probe": [
+   "trope-vague-association"
+  ],
+  "prompt": "下面是我的个人博客草稿，写的是上周听的一场音乐会。帮我润色，让人物介绍更清楚，不要添加我没写的内容。\n\n----- 草稿开始 -----\n城西室内乐团的周末音乐会\n\n上周六我去听了城西室内乐团的音乐会。开场前，王先生在门口检票。他与该乐团有着密切联系，具体来说，他负责乐团的票务。\n\n散场时我在后台门口见到了陈先生。他与该乐团有关联，具体角色尚不清楚。一些未具名的评论者认为他可能参与过排练，但没有提供记录。\n\n我最喜欢下半场的勃拉姆斯。\n----- 草稿结束 -----\n\n只输出润色后的文章。",
+  "checks": []
+ }
+]

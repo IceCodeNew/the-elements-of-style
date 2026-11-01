@@ -1,0 +1,276 @@
+[
+ {
+  "id": "stop-slop-postmortem-actors",
+  "skills": [
+   "writing-tech"
+  ],
+  "source": "stop-slop @ 8da1f03: references/structures.md §Binary Contrasts L9 (strawman, plus the rule-out kept per audit SS-ST01), §False Agency L74, L77, §Passive Voice L101-L104; references/phrases.md §Vague Declaratives L122, L126; SKILL.md L19, L21, L37",
+  "prompt": "Edit the \"What happened\" section of the postmortem below before it goes to the whole engineering org. The postmortem is blameless: name roles and teams, not people. Keep every fact. The timeline notes under the draft are what the draft was written from; use them where the draft is vague, and add nothing that they do not say. Output only the edited section, starting with its heading.\n\nDraft:\n\n## What happened\n\nOn 2026-09-03 at 14:02 UTC, checkout requests started to fail with HTTP 503. Mistakes were made during the config rollout. Not because anyone was careless. Because the rollout script does not check which cluster a config file belongs to.\n\nThe deploy of checkout-api v4.12 at 13:55 was not the cause: the failures started seven minutes after it, and rolling it back at 14:10 changed nothing.\n\nThe decision was reached to roll back the config at 14:31, and the error rate was back to normal at 14:40. A decision to freeze config changes until 2026-09-10 emerged in the incident channel. A hotfix was created the next morning.\n\nIt is believed that the retry storm made the outage longer. The checkout clients retried every failed request at once, with no backoff, and the load balancer rejected new connections once the backend pool was full. The data tells us we need a circuit breaker.\n\nThe reasons are structural. The consequences are real.\n\nTimeline notes:\n- 13:55 Deploy of checkout-api v4.12.\n- 14:02 First HTTP 503 errors. The rollout script `cfgpush` had applied `staging.yaml` to the production cluster.\n- 14:10 The on-call engineer rolled back the 13:55 deploy. The errors continued.\n- 14:31 The incident commander decided to roll back the config.\n- 14:40 Error rate back to normal. 4,100 checkout attempts failed between 14:02 and 14:40.\n- 15:05 In the incident channel, the engineering director froze config changes until 2026-09-10.\n- Next morning: the payments team shipped a hotfix that makes `cfgpush` refuse a config file whose cluster name does not match the target cluster.\n- The database team thinks the retry storm made the outage longer. Nobody has confirmed it.\n- From the retry graphs, the SRE team concluded that checkout needs a circuit breaker.",
+  "checks": [],
+  "probe": [
+   "trope-negative-parallelism",
+   "trope-hidden-actor",
+   "trope-vague-declaratives"
+  ]
+ },
+ {
+  "id": "stop-slop-design-cache-contrasts",
+  "skills": [
+   "writing-tech"
+  ],
+  "source": "stop-slop @ 8da1f03: references/structures.md §Binary Contrasts L11, L12 (kept per audit SS-ST04: corrects a reader's belief), L13, L16 (literal state change, audit SS-ST08), L18 (scope statement), L19 (both halves inform, audit SS-ST11), §Negative Listing L29, §Formulaic Constructions L64",
+  "prompt": "Edit the design doc section below. The readers are the pricing team and the platform team. What they all know already: in August the two teams agreed to put a cache in front of the pricing database, and the platform team's capacity plan for Q4 adds two read replicas to that database. This doc decides only what to cache and how. Keep every fact. Output only the edited section, starting with its heading.\n\n## Proposal: cache for `GET /price`\n\nThe question isn't whether to cache. It's what to cache. We propose to cache the responses of `GET /price`, one entry per product ID.\n\nIt's not a CDN. It's not a second database. It's a read-through cache inside the pricing service. It runs in the existing pricing-service pods and needs no new servers.\n\nThe answer isn't more replicas. It's the cache.\n\nIt feels like a cache would serve stale prices. It's actually bounded: every entry expires after 30 seconds, and a price change deletes the entry for that product at once.\n\nThe cache is not just faster but also cheaper. In the load test, p99 latency of `GET /price` fell from 180 ms to 20 ms. The two extra replicas in the capacity plan would cost EUR 1,400 a month.\n\nRequests that aren't in the cache are read from a database replica, and the cache skips any replica that isn't healthy.\n\nThe cache stops being useful when the hit rate drops below 60%, because most reads then still reach the database.\n\nThis design is about prices but not about discounts: `promo-svc` computes discounts, and this doc does not change it.",
+  "checks": [
+   {
+    "id": "positive-form",
+    "rule": "both.positive-form",
+    "kind": "absent",
+    "text": "(?i)\\b(?:that|which) (?:aren['’]t|are not|isn['’]t|is not) (?:cached|in the cache|healthy)\\b"
+   }
+  ],
+  "probe": [
+   "trope-negative-parallelism"
+  ]
+ },
+ {
+  "id": "stop-slop-essay-teams-reframes",
+  "skills": [
+   "writing-personal"
+  ],
+  "source": "stop-slop @ 8da1f03: references/examples.md Ex. 1 (L6, after L9), Ex. 4 (L42, after L45), Ex. 5 (L54, after L57); references/structures.md §Dramatic Fragmentation L40, L42, §Rhetorical Setups L52, L53, L54, §Rhythm Patterns L122 (three items kept); references/phrases.md §Throat-Clearing L7, §Emphasis Crutches L30",
+  "prompt": "Edit this draft for my personal blog so that it reads well. I'm a product manager. Keep every claim I make. Output only the edited post, starting with its title.\n\n# What eight years of product work taught me about teams\n\nHere's the thing: building products is hard. Not because the technology is complex. Because people are complex. Let that sink in.\n\nAt my last two companies, the backend never slipped a launch. Both launches I ran there slipped because two teams disagreed about scope and nobody settled it for weeks.\n\nWhat if I told you that the best teams don't optimize for productivity? Here's what I mean: they optimize for learning. Think about it. The best team I worked with held a 30-minute review after every release and changed one thing about how they worked each time.\n\nSpeed. Quality. Cost. You can only pick two. That's it. That's the tradeoff. On the checkout redesign we picked speed and quality, and the project cost twice its budget.\n\nThis unlocks something. Clarity. Once a team says out loud which two it picked, the arguments about the third one stop.",
+  "checks": [
+   {
+    "id": "tradeoff-in-a-sentence",
+    "rule": "both.state-dont-stage",
+    "kind": "judge",
+    "text": "Does the output state the trade-off between speed, quality and cost in a sentence, instead of the fragments 'Speed. Quality. Cost.' and the lines 'That's it. That's the tradeoff.'?"
+   }
+  ],
+  "probe": [
+   "trope-re-reveal-setups",
+   "trope-staged-emphasis",
+   "trope-negative-parallelism"
+  ]
+ },
+ {
+  "id": "stop-slop-essay-running-negations",
+  "skills": [
+   "writing-personal"
+  ],
+  "source": "stop-slop @ 8da1f03: references/structures.md §Binary Contrasts L10, L14, L15, L17, L21 (Instead), §Negative Listing L29, L30, L32 (Instead); a contrast that corrects a belief the reader holds (audit SS-ST06 conditional); SKILL.md L40",
+  "prompt": "Edit this draft for my running blog. Keep every fact and opinion. Output only the edited post, starting with its title.\n\n# Six months of running before work\n\nFrom 6:10 to 6:50 nobody needs anything from me. I started running in that slot in April and have kept it up for six months.\n\nThe alarm isn't the problem. The shoes are. On the 19 mornings when I had to look for my shoes, I ran on only 4, though I woke up on time on all 19. Now I put them by the door the night before.\n\nNot a training plan. Not an app. A sticky note on the fridge with the week's three runs kept me going. The sticky note isn't magic, it's a reminder.\n\nIt wasn't the distance. It wasn't the pace. It was the routine.\n\nRunning slowly doesn't mean I'm lazy, but actually that I can keep going. At 7:30 per kilometre I can run 8 km; at 6:00 I stop after 3. It's not a race. It's my morning.\n\nMost new runners I talk to think the first kilometre is the hardest part. For me it is the last ten minutes, when my left knee starts to ache. I still don't know why.",
+  "checks": [
+   {
+    "id": "no-it-wasnt",
+    "rule": "pers.end-on-the-point",
+    "kind": "absent",
+    "text": "(?i)\\b(?:wasn['’]t|was not|not|isn['’]t|neither) the (?:distance|pace)\\b"
+   },
+   {
+    "id": "no-lazy-defense",
+    "rule": "both.no-phantom-objections",
+    "kind": "absent",
+    "text": "(?i)\\blaz(?:y|iness)\\b"
+   }
+  ],
+  "probe": [
+   "trope-negative-parallelism"
+  ]
+ },
+ {
+  "id": "stop-slop-post-leadins",
+  "skills": [
+   "writing-personal"
+  ],
+  "source": "stop-slop @ 8da1f03: references/phrases.md §Throat-Clearing L8, L9, L10, L16, L17, L18, L19, L20, L21, §Emphasis Crutches L29, §Adverbs filler phrases L80, L82, L83; references/structures.md §Sentence Starters L114",
+  "prompt": "Edit this draft for my personal blog. Keep every fact and opinion, and keep it sounding like me. Output only the edited post, starting with its title.\n\n# I unplugged the kitchen speaker\n\nCan we talk about smart speakers? In a world where every gadget wants a microphone, I had three of them in my flat. In March I unplugged the one in the kitchen. Period.\n\nHere's what I find interesting: I used it for exactly two things, timers and the radio. Here's this little device that can order groceries, and I used it as an egg timer.\n\nThe truth is, the timers were the problem. Twice in February it set a timer for 15 hours instead of 15 minutes, and I burned a pan of rice.\n\nHere's the problem though: the radio was the one thing I liked. I'm going to be honest, I still miss it on Sunday mornings.\n\nLook, I now use a 6-euro kitchen timer and a radio from a flea market. The reality is that both of them do one thing each, and they do it every time.\n\nI'll say it again: I don't miss the timers. At the end of the day, it was a gadget I didn't need. Here's that gadget's whole legacy in my kitchen: a burned pan.",
+  "checks": [
+   {
+    "id": "no-period-crutch",
+    "rule": "both.show-not-label",
+    "kind": "absent",
+    "text": "(?m)(?:^|[.!?]\\s+)(?:Period|Full stop)\\.(?=\\s|$)"
+   }
+  ],
+  "probe": [
+   "trope-false-vulnerability"
+  ]
+ },
+ {
+  "id": "stop-slop-docs-adverbs",
+  "skills": [
+   "writing-tech",
+   "writing-en"
+  ],
+  "source": "stop-slop @ 8da1f03: references/phrases.md §Adverbs L59, L60, L64, L65, L67, L68, L69, L70, L72, L73 (manner, scope and hedge adverbs kept per audit SS-P04); references/structures.md §Word Patterns L133 (invariant kept), L134; references/phrases.md §Telling Instead of Showing (label 'tricky', SS-P08)",
+  "prompt": "Edit the \"Getting started\" section of the docs for `syncbox`, a command-line tool that syncs a folder to S3-compatible storage. The readers are developers who install it for the first time. Keep every fact, command and code block. Output only the edited section, starting with its heading.\n\n## Getting started\n\nInstalling `syncbox` is really simple. Just download the binary for your platform and put it on your `PATH`.\n\nTo start syncing a folder, simply run:\n\n```sh\nsyncbox init ~/Documents --bucket s3://my-docs\n```\n\n`syncbox` actually builds the file index locally, so your file list never leaves your machine. Crucially, uploads run asynchronously: you can keep working while they finish.\n\nImportantly, the first sync probably takes about an hour for 50 GB on a 100 Mbit/s connection. Later syncs upload only the files that changed.\n\nConflicts are inherently tricky. If the same file changed on two machines, `syncbox` keeps both copies and adds `.conflict` to the name of the older one.\n\nFundamentally, `syncbox` is a truly reliable tool, and you will inevitably come to depend on it.",
+  "checks": [
+   {
+    "id": "conflict-label",
+    "rule": "both.show-not-label",
+    "kind": "judge",
+    "text": "Does the output avoid calling conflicts tricky, hard or complex without saying why, while keeping what `syncbox` does on a conflict (it keeps both copies and adds `.conflict` to the name of the older one)?"
+   },
+   {
+    "id": "no-closing-praise",
+    "rule": "both.facts-not-praise",
+    "kind": "judge",
+    "text": "Does the output drop the closing praise that `syncbox` is reliable and that the reader will come to depend on it, which no fact in the section supports?"
+   }
+  ],
+  "probe": [
+   "trope-empty-emphasis",
+   "trope-promotional"
+  ]
+ },
+ {
+  "id": "stop-slop-post-adverbs",
+  "skills": [
+   "writing-personal",
+   "writing-en"
+  ],
+  "source": "stop-slop @ 8da1f03: references/phrases.md §Adverbs L59, L61, L62, L63, L66, L67, L71 (scope and hedge adverbs kept per audit SS-P04), §Telling Instead of Showing L113, L116; references/structures.md §Word Patterns L134",
+  "prompt": "Edit this draft for my personal blog. Keep every fact and opinion, and keep it sounding like me. Output only the edited post, starting with its title.\n\n# My first keyboard kit\n\nI genuinely love this keyboard. It took three evenings to build (two, if you don't count the evening I spent looking for the soldering iron).\n\nSoldering 70 switches is genuinely hard. It took most of the second evening, and I had to redo nine joints. Honestly, the stabilizers were worse: the instructions show them from one side only, and I put the first one in upside down.\n\nInterestingly, the kit came with only 68 keycaps, so two keys still wear blank caps from my old board. I literally died when I noticed.\n\nWhat actually matters is the sound. I deeply prefer it to my old board: the switches come lubed from the factory, and the case has a foam layer. It's probably the quietest keyboard I've owned. I really, truly recommend building one.",
+  "checks": [
+   {
+    "id": "hard-shown",
+    "rule": "both.show-not-label",
+    "kind": "judge",
+    "text": "Does the output either drop the label that soldering the switches was hard, or give in the same sentence the facts that show it (it took most of the second evening, and the author had to redo nine joints)? Answer no if a sentence calls the soldering hard or difficult and the facts follow only in a later sentence."
+   }
+  ],
+  "probe": [
+   "trope-empty-emphasis",
+   "trope-vague-declaratives"
+  ]
+ },
+ {
+  "id": "stop-slop-release-jargon",
+  "skills": [
+   "writing-tech"
+  ],
+  "source": "stop-slop @ 8da1f03: references/phrases.md §Business Jargon L41, L42, L44, L45 (replacement must name the effect, audit SS-P03), L46, L47, L48, L49, §Telling Instead of Showing L113, §Vague Declaratives L123, L124, L125; SKILL.md L44",
+  "prompt": "Edit this post for the engineering blog of `quarry`, an open-source search server. It announces version 3.0 to the people who run `quarry`. Keep every fact and number. Output only the edited post, starting with its title.\n\n# quarry 3.0\n\nThe search landscape is changing, and quarry 3.0 is a game-changer. In v3.0 we doubled down on indexing speed: a full reindex of the 40 GB benchmark corpus now takes 14 minutes instead of 52.\n\nThis is the deepest problem we have worked on. The old indexer wrote each segment twice. We took a step back, did a deep dive into the write path, and found that the second write only refreshed a checksum that the first write had already set.\n\nMigrating an existing index is genuinely hard. v3 cannot read the v2 segment format, so you must reindex before you upgrade. The implications are significant. On a cluster, each node needs its own reindex. The stakes are high: an index that has not been reindexed stops answering queries after the upgrade. We'll unpack the reindex steps in the upgrade guide.\n\nMoving forward, v2 gets security fixes until 2027-03-31. To navigate the upgrade, run `quarry reindex --dry-run`: it reports how long a reindex of your index will take.",
+  "checks": [
+   {
+    "id": "deepest-problem",
+    "rule": "both.show-not-label",
+    "kind": "judge",
+    "text": "Does the output drop or replace 'This is the deepest problem we have worked on' with what was found (the old indexer wrote each segment twice, and the second write only refreshed a checksum), instead of another claim that the problem was deep, hard or important?"
+   }
+  ],
+  "probe": [
+   "trope-ornate-words",
+   "trope-promotional",
+   "trope-vague-declaratives",
+   "trope-posture-verbs"
+  ]
+ },
+ {
+  "id": "stop-slop-newsletter-alignment",
+  "skills": [
+   "writing-personal"
+  ],
+  "source": "stop-slop @ 8da1f03: references/examples.md Ex. 2 (L18; the after L21 drops 'most', audit SS-E2b), Ex. 3 (L30; the after L33 drops the uncertainty, audit SS-E3); references/phrases.md §Throat-Clearing L12, L13, §Business Jargon L41, L43, L44, L50, L51, §Adverbs filler phrases L78, §Emphasis Crutches L31, §Telling Instead of Showing L114, L115; references/structures.md §Word Patterns L133 ('nobody')",
+  "prompt": "Edit this section of my newsletter for engineering managers. The notes under the draft are what I based it on; use them where the draft is vague, and add nothing they do not say. Keep my opinions. Output only the edited section, starting with its heading.\n\nDraft:\n\n## Alignment\n\nIt turns out that most teams I have led struggle with alignment. The uncomfortable truth is that nobody wants to admit they're confused.\n\nIn today's fast-paced landscape, we need to lean into discomfort and navigate uncertainty with clarity. This matters because your competition isn't waiting.\n\nSo I changed one thing this quarter: every planning meeting now ends with each person saying, in one sentence, what they will ship next. This is what leadership actually looks like. Let's circle back in the next issue to see if we're all on the same page.\n\nNotes:\n- I have led five teams. Four of them had alignment problems: two people working on the same thing, or nobody working on something everyone assumed was covered.\n- In my last retro survey, 9 of 14 engineers said they had sat through a planning meeting without saying they were confused.\n- The uncertainty right now: we don't know yet whether the platform team will take over the billing service in Q1.\n- Ledgerly, a competitor, shipped invoice reminders in August. We had planned the same feature for Q4.\n- This quarter, every planning meeting ends with each person saying in one sentence what they will ship next.\n- I'll report in the next issue whether this round helped.",
+  "checks": [
+   {
+    "id": "no-leadership-label",
+    "rule": "both.show-not-label",
+    "kind": "absent",
+    "text": "(?i)what (?:good |real )?leadership (?:actually |really )?looks like"
+   }
+  ],
+  "probe": [
+   "trope-ornate-words",
+   "trope-vague-we",
+   "trope-sweeping-claims"
+  ]
+ },
+ {
+  "id": "stop-slop-essay-signposts",
+  "skills": [
+   "writing-personal"
+  ],
+  "source": "stop-slop @ 8da1f03: references/phrases.md §Meta-Commentary L89, L90, L91, L92, L93, L94, L95, L96, L97, L98, L99; SKILL.md L46",
+  "prompt": "Edit this draft for my personal blog. Keep every fact and opinion, and keep it sounding like me. Output only the edited post, starting with its title.\n\n# Two months with a paper planner\n\nIn January I moved my to-do list from an app to a paper planner. The rest of this essay explains why, and what I lost.\n\nYou already know this, but apps are good at reminders. My old app sent me 14 reminders a day, and I ignored most of them. Plot twist: the planner sends none, and I get more done.\n\nLet me walk you through a normal morning. At 8:30 I open the planner, copy the tasks I didn't finish yesterday, and add new ones until the page has five lines. Hint: the five-line limit is the whole system.\n\nI want to explore why the limit works. The limit is a feature, not a bug: with five lines a day, I have to decide what not to do. My old app was procrastination dressed up as planning. Every morning I spent 20 minutes sorting tasks and tagging them by colour.\n\n## What paper can't do\n\nIn this section, we'll look at the cost. As we'll see, it is search. To find a phone number I wrote down in January, I flip through 60 pages. Spoiler: I now put phone numbers in my contacts app instead (yes, I see the irony).\n\nI first tried paper after my phone was stolen in December. But that's another post.",
+  "checks": [
+   {
+    "id": "no-reveal-labels",
+    "rule": "both.state-dont-stage",
+    "kind": "absent",
+    "text": "(?i)\\b(?:hint|plot twist|spoiler)\\s*:"
+   },
+   {
+    "id": "no-feature-not-bug",
+    "rule": "both.state-dont-stage",
+    "kind": "absent",
+    "text": "(?i)feature,? not a bug"
+   }
+  ],
+  "probe": [
+   "trope-preamble",
+   "trope-reasoning-leak"
+  ]
+ },
+ {
+  "id": "stop-slop-post-agency",
+  "skills": [
+   "writing-personal",
+   "writing-en"
+  ],
+  "source": "stop-slop @ 8da1f03: references/structures.md §False Agency L72, L73, L75, L76, L78, L80 (Instead: name the human); SKILL.md L19",
+  "prompt": "Edit this draft for my blog about running a small app business. Keep every fact. The notes under the draft are what I based it on; use them where the draft is vague, and add nothing they do not say. Output only the edited post, starting with its title.\n\nDraft:\n\n# What three people can do that thirty can't\n\nAt our size, a complaint becomes a fix within a week. A bet lives or dies in days.\n\nWhen we published a public roadmap in May, the culture shifted. The conversation moved toward what users asked for. The market rewards that kind of speed.\n\nNotes:\n- We are three people: Dana does support, Sam does design, and I write the code.\n- When a user emails a complaint, Dana files it as an issue, and I usually fix it within a week.\n- We try each new feature for 14 days. If fewer than 5% of active users use it in that time, I remove it.\n- After we published the public roadmap in May, Sam and I started planning each month from the five most-voted requests instead of from our own list.\n- In their app-store reviews, three customers wrote that they switched from a bigger app because we fixed their bugs quickly.",
+  "checks": [],
+  "probe": [
+   "trope-hidden-actor",
+   "trope-sweeping-claims"
+  ]
+ },
+ {
+  "id": "stop-slop-essay-notifications",
+  "skills": [
+   "writing-personal"
+  ],
+  "source": "stop-slop @ 8da1f03: references/structures.md §Narrator-from-a-Distance L88, L89 and L90 (cause and decision kept, audit SS-ST25/ST26), L91, L93 (Instead), §Word Patterns L133; SKILL.md L23, L45",
+  "prompt": "Edit this draft for my personal blog. Keep every fact and opinion. The notes under the draft are what I based it on; add nothing they do not say. Output only the edited post, starting with its title.\n\nDraft:\n\n# 31 apps can buzz my phone\n\nLast week I counted the apps on my phone that may send me notifications: 31 of 40.\n\nNobody designed this. People tend to tap 'Allow' on every prompt. This happens because each app asks only once, during setup, when you just want to get past the setup screens. This is why I now turn notifications off for every new app on the day I install it.\n\nEvery app wants your attention, and you never get a say.\n\nNotes:\n- Last week I counted: 31 of the 40 apps on my phone may send notifications.\n- 34 apps asked for permission, each of them once, during setup. I tapped 'Allow' on 31 of those prompts to get to the app faster.\n- 6 of the 40 apps never asked.\n- Since last week, I turn notifications off for each new app on the day I install it.\n- I have no data on what other people do.",
+  "checks": [],
+  "probe": [
+   "trope-sweeping-claims"
+  ]
+ },
+ {
+  "id": "stop-slop-post-rhythm",
+  "skills": [
+   "writing-personal",
+   "writing-en"
+  ],
+  "source": "stop-slop @ 8da1f03: references/structures.md §Dramatic Fragmentation L41, L42, L44, §Rhythm Patterns L123, L124, L125, L126, L127; SKILL.md L25, L29, L41, L42, L43",
+  "prompt": "Edit this draft for my personal blog. Keep every fact and opinion. Output only the edited post, starting with its title.\n\n# Two months of writing before breakfast\n\nDid it work? Mostly. I wrote on 41 of the 60 weekdays since September.\n\nThe night before, I set an alarm. I laid out my notebook. I filled the kettle. I went to bed at ten. Small wins compound.\n\nI woke at six. And wrote. And still made the 9:00 stand-up. Consistency beats intensity.\n\nThe first week I tried writing for an hour — it didn't stick. Twenty minutes did. This unlocked something. Momentum. By October I had a first draft of 14,000 words.\n\nNot always. Not perfectly. On the 19 days I skipped, I had either slept badly or had an early meeting. The habit is the reward.",
+  "checks": [
+   {
+    "id": "no-and-fragments",
+    "rule": "en.complete-sentences",
+    "kind": "absent",
+    "text": "(?m)(?:^|[.!?]\\s+)And (?:wrote|still)\\b"
+   },
+   {
+    "id": "no-sayings",
+    "rule": "both.state-dont-stage",
+    "kind": "absent",
+    "text": "(?i)small wins compound|consistency beats intensity|the habit is the reward|\\bunlock(?:s|ed)? something"
+   },
+   {
+    "id": "no-hedge-fragments",
+    "rule": "both.state-dont-stage",
+    "kind": "absent",
+    "text": "(?i)not always\\.\\s*not perfectly"
+   }
+  ],
+  "probe": [
+   "trope-staged-emphasis",
+   "trope-dash-overuse"
+  ]
+ }
+]

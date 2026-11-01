@@ -1,0 +1,227 @@
+[
+ {
+  "id": "eos-ste-tech-postmortem-modifiers",
+  "skills": [
+   "writing-tech",
+   "writing-en"
+  ],
+  "source": "EOS (elements-of-style.md) Rule 7 L238 'On arriving in Chicago', L239 'A soldier of proved valor', L241 'Without a friend to counsel him', L247 'Wondering irresolutely', L228/L232 (correct form); Rule 6 L212 'Coming home from Liverpool', L214 'A man who had traveled'; Rule 9 L313-315 Lecky (topic sentence first), L317-333 narrative openings (time order kept); STE-N3 (literals verbatim)",
+  "prompt": "Revise the two sections below from a postmortem draft for publication on the team wiki. Keep every fact, name, time, hostname, path and command. Output only the revised sections, with their headings.\n\n## What happened\n\nAt 01:52 the disk-usage alert for `db-3` fired. Priya Nair was on call. On arriving at her desk, the pager had already fired twice more. Wondering whether to fail over, the replica lag on the dashboard passed 40 minutes. Without a runbook for this alert, a restart seemed the fastest fix to her, and at 02:05 she ran `systemctl restart postgresql`. PostgreSQL came back at 02:07. Running on the same full volume as before. At 02:15 Priya paged Tomás Ruiz. The engineer who wrote the original WAL archiving script. A database engineer with ten years of PostgreSQL experience, the team had asked Tomás to own WAL archiving in 2024. At 02:31 he moved the WAL archive to `/mnt/archive`, and disk usage on `db-3` fell to 61%.\n\n## Cause\n\n`db-3` keeps its WAL archive on its data volume. The archive grows by about 9 GB a day. The cleanup job `wal-prune` deletes archive files that are older than three days. On 2026-09-28 a config change renamed the job's schedule key from `schedule` to `cron`, and `wal-prune` has not run since. The data volume of `db-3` filled up because `wal-prune` stopped running after that config change.",
+  "checks": [
+   {
+    "id": "cause-first",
+    "rule": "tech.point-first",
+    "kind": "judge",
+    "text": "Does the first sentence of the Cause section state the cause of the incident: the data volume of `db-3` filled up because `wal-prune` stopped running after the config change on 2026-09-28? A first sentence that states this cause together with other facts passes; a first sentence that gives only background (where the archive is kept, how fast it grows, what `wal-prune` does) fails."
+   }
+  ],
+  "probe": [
+   "trope-premise-stacking"
+  ]
+ },
+ {
+  "id": "eos-ste-pers-house-blog",
+  "skills": [
+   "writing-personal",
+   "writing-en"
+  ],
+  "source": "EOS Rule 7 L245 'Being in a dilapidated condition', L240 'Young and inexperienced'; Rule 10 L383 'could be heard', L382 'dead leaves lying on the ground'; Rule 6 L212 (fragment), L220 'No reply.' (kept); Rule 1 L40-44 'Charles's friend' etc.; Rule 11 L405 'did not remember', L407 'did not have much confidence in' (kept: no exact positive word)",
+  "prompt": "Edit this post for my personal blog. Keep my facts, my opinions and my voice, and change only what needs it. Output only the edited post.\n\n# The house on Mill Lane\n\nWe bought 14 Mill Lane in March. Being in terrible shape, we got the house for £40,000 under the asking price. Young and inexperienced, the rewiring seemed easy to me. It wasn't: it took me eleven weekends.\n\nThe sound of dripping water somewhere in the walls could be heard every night of the first week. There were a great number of dead leaves lying in the gutters, and the downpipe at the back had come loose. I found the original plans in the attic in April. Rolled up inside a 1962 newspaper.\n\nThe previous owner, Agnes, left notes everywhere. \"Bleed radiators in October\" is written on the boiler. Agnes' handwriting is also on the fuse box, inside the cupboards and on the back of the cellar door.\n\nOn our first night the cat vanished. I searched the cellar and the attic and called her name again and again. No reply. She turned up at breakfast, asleep in the airing cupboard.\n\nI did not remember to cancel the old home insurance, so for six weeks we paid for two policies. And I still did not have much confidence in the surveyor's report, which called the roof \"serviceable\".",
+  "checks": [
+   {
+    "id": "no-reply-kept",
+    "rule": "en.complete-sentences",
+    "kind": "present",
+    "text": "\\bNo (reply|answer)[.!]"
+   },
+   {
+    "id": "possessive-s",
+    "rule": "en.usage-reference",
+    "kind": "absent",
+    "text": "\\bAgnes['’](?!s\\b)"
+   },
+   {
+    "id": "partial-doubt-kept",
+    "rule": "both.positive-form",
+    "kind": "judge",
+    "text": "Does the output keep the author's partial doubt about the surveyor's report, for example 'did not have much confidence in', 'had little confidence in' or 'doubted', without turning it into full distrust or rejection such as 'distrusted', 'did not believe' or 'ignored'?"
+   }
+  ]
+ },
+ {
+  "id": "eos-ste-tech-readme-padding-nouns",
+  "skills": [
+   "writing-tech",
+   "writing-en"
+  ],
+  "source": "EOS V 'Case' L685-686, 'Character' L696, 'Nature' L825, 'Factor' L738-739, 'System' L927-928, 'Respective, respectively' L892-893; Rule 13 L477 'used for fuel purposes', L479 'in a hasty manner'; terms-of-art exceptions from audit eos.md EOS-V07/V24/V25/V57 notes",
+  "prompt": "Edit this README section of `blobcache`, a caching proxy for object storage, for publication. Keep every fact, number, identifier and term. Output only the edited section.\n\n## Cache behavior\n\n`blobcache` uses the local disk for caching purposes only and never writes to the origin bucket. In the majority of cases, requests are served from the local disk. It has rarely been the case that a stale object was served after its origin copy was deleted, because the TTL of 300 seconds bounds that window. Errors of a transient nature, such as `503` from the origin, are retried; errors of a permanent character, such as `404`, are cached for 30 seconds.\n\nDisk speed is the great factor in the cache's latency: the p99 is 4 ms on NVMe and 38 ms on network disks. Since v1.4, prefetching has become an increasingly important factor in reducing cold-start misses; it is behind the feature flag `prefetch.v2`. On a miss, `blobcache` fetches the object from the origin in a streaming manner, so the first bytes reach the client before the download ends.\n\nEach entry is stored under the hash of its respective bucket and key. `blobcache` listens on ports 8080 and 9090 for the proxy and the metrics endpoint, respectively. The admin UI requires two-factor authentication.\n\nSince v1.2 the project has used the code-owner system of review for this directory: the test cases in `evict_test.go` cover the edge case where the disk fills during a write, and every change to them needs a code owner's approval.",
+  "checks": [
+   {
+    "id": "no-padding-nouns",
+    "rule": "en.plain-words",
+    "kind": "absent",
+    "text": "(?i)\\bof an? (transient|permanent) (nature|character)\\b|\\bin the majority of cases\\b|\\bthe case that\\b|\\bfactor in\\b|\\bsystem of review\\b"
+   }
+  ]
+ },
+ {
+  "id": "eos-ste-pers-theatre-review",
+  "skills": [
+   "writing-personal",
+   "writing-en"
+  ],
+  "source": "EOS Rule 8 L257-260 (short notice: account of the work, critical discussion); Rule 10 L343 'will always be remembered by me', L347 (actor dropped); Rule 11 L393 'He was not very often on time', L395 'The Taming of the Shrew is rather weak in spots' (revision is 'a guess at the writer's intention', L397); Rule 12 L425 'A period of unfavorable weather set in'; V 'Feature' L745; V 'Effect' L724 (vague 'effects' in arts writing)",
+  "prompt": "Edit this review for my personal blog. My notes from the night are below the draft: use them where they make the review more specific, and add nothing that is in neither the draft nor the notes. Keep my opinions at the strength I give them. Output only the edited review.\n\nDraft:\n\n# The Riverside Players' Shrew\n\nMy first visit to the open-air stage in Hollins Park will always be remembered by me. The Riverside Players staged The Taming of the Shrew there on 12 and 13 September, directed by Joan Marsh, with Ade Bello as Petruchio and Sian Fry as Katharine. A period of unfavorable weather set in during the second act, and the cast played on under umbrellas. The production is rather weak in spots. Petruchio was not very often audible from the back rows. A feature of the evening especially worthy of mention was the singing of Maya Lin. The lighting produced some very delicate effects, and a charming effect was produced by the lanterns in the final scene. Tickets were £12, and both nights sold out.\n\nMy notes:\n- Rain from the start of act two until the interval, about 40 minutes.\n- Maya Lin sang \"Greensleeves\", unaccompanied, between acts three and four.\n- Act one ran under amber floodlights at sunset. In the wedding scene, twelve paper lanterns were lowered on wires over the stage.\n- I sat in the back row and missed about half of Petruchio's lines in act one.",
+  "checks": [
+   {
+    "id": "account-and-judgment-split",
+    "rule": "both.one-topic-per-paragraph",
+    "kind": "judge",
+    "text": "Does the output put the account of the production (dates, director, cast, tickets) and the author's judgments of it (the weak spots, Petruchio's audibility, the singing, the lighting) in different paragraphs, so that no paragraph mixes the cast list with those judgments? Where the rain and the first-visit sentence go does not matter."
+   },
+   {
+    "id": "no-feature-of",
+    "rule": "en.plain-words",
+    "kind": "absent",
+    "text": "(?i)\\ba feature of the (evening|night|show|production)\\b|\\bespecially worthy of mention\\b"
+   }
+  ],
+  "probe": [
+   "trope-nominalized-verbs"
+  ]
+ },
+ {
+  "id": "eos-ste-tech-ci-doc-one-reading",
+  "skills": [
+   "writing-tech"
+  ],
+  "source": "EOS Rule 16 L595 'All the members were not present', L596 'He only found two mistakes', L573 'There was a look in his eye that boded mischief', L574 'three articles ..., which were published in Harper's Magazine', L575 'Benjamin Harrison, grandson of William Henry Harrison, who became President', L583-584 'A proposal to amend the Sherman Act, which has been variously judged', L585 'The grandson of William Henry Harrison, who', L597 Major Joyce lecture",
+  "prompt": "Edit this page from our internal CI handbook for publication. The facts behind the draft are listed below it; the edited page must keep them and must not be readable in any other way. Output only the edited page.\n\nDraft:\n\n## Nightly integration run\n\nAll the integration tests did not pass on arm64 last night: 3 of the 40 failed. The linter only found two unused imports in the new code. The nightly job writes three reports about the failed nodes, which are uploaded to the `ci-artifacts` bucket. There is a gate in the release pipeline that blocks unsigned images.\n\nThe runner image is built by `imgctl`, a wrapper around `buildah`, which we rewrote in Go in 2024. A proposal to change the retention policy, which has been debated since June, would keep reports for 90 days instead of 30. Every hotfix needs a sign-off from Sam Lee, the deputy of the release manager, who approves the hotfix list each Friday.\n\nDana Kim will give a talk on Thursday in Room 4B, to which all engineers are invited, on \"Flaky tests on arm64\" at 15:00.\n\nFacts behind the draft:\n- 3 of the 40 integration tests failed on arm64; the other 37 passed.\n- The linter found two unused imports and no other problems.\n- The reports, not the nodes, are uploaded to `ci-artifacts`.\n- The gate, not the pipeline, blocks unsigned images.\n- The team rewrote `imgctl`, not `buildah`, in Go in 2024.\n- The proposal, not the retention policy, has been debated since June.\n- The release manager, not Sam Lee, approves the hotfix list each Friday.",
+  "checks": [
+   {
+    "id": "announcement-order",
+    "rule": "both.one-reading",
+    "kind": "judge",
+    "text": "In the announcement of Dana Kim's talk, are the title ('Flaky tests on arm64') and the time (15:00) each placed next to the words they belong to (the title with 'talk', the time with 'Thursday'), instead of being separated from them by the room and the invitation clause?"
+   }
+  ]
+ },
+ {
+  "id": "eos-ste-tech-pr-parallel-positive",
+  "skills": [
+   "writing-tech"
+  ],
+  "source": "EOS Rule 15 L532 'textbook method, while now the laboratory method is employed', L540 'The French, the Italians, Spanish, and Portuguese', L541 'In spring, summer, or in winter', L547 'both a long ceremony and very tedious', L548 'not for words, but action', L549 'Either you must grant his request', L550 'first, the injustice of the measure; second, that it is unconstitutional'; Rule 11 L394 'did not think that studying Latin was much use', L403 'not honest' (no exact positive word for a benchmark), L404 'not important', L406 'did not pay any attention to', L411 'Not charity, but simple justice' and L413 'Not that I loved Caesar less' (real contrast kept), L417 'never' (kept)",
+  "prompt": "Edit this pull request description for `ledgerd` before I open the PR. Keep every fact, code span and opinion. Output only the edited description.\n\n## Summary\n\nFormerly, `ledgerd` was configured through environment variables, while now a YAML file at `/etc/ledgerd.yaml` is read. This PR changes the parser, the lexer, serializer and formatter. The new loader runs on Linux, macOS and on Windows. `ledgerd` never writes secrets from the YAML file to its logs.\n\n## Why\n\nThe old loader did not pay any attention to `LEDGERD_DEBUG` after v1.4, and its startup benchmark was not honest: it measured a warm cache. The new loader starts 2 ms slower, which is not important for a daemon that runs for weeks.\n\nI did not think that keeping both loaders was much use. My objections to keeping them are, first, the cost of maintaining two code paths; second, that environment variables would hide typos in key names.\n\n## Upgrade notes\n\nThe migration was both a long job and very risky on our staging cluster: it took two days, and we rolled it back once. The new file lock is needed not for reads, but writes: reads already use snapshot isolation. Either you must pin `ledgerd` to v1.9 or convert your variables with `ledgerd config import`.",
+  "checks": [
+   {
+    "id": "positive-words",
+    "rule": "both.positive-form",
+    "kind": "absent",
+    "text": "(?i)\\b(did not|didn['’]t) pay (any )?attention\\b|\\bis not important\\b"
+   },
+   {
+    "id": "not-dishonest",
+    "rule": "both.positive-form",
+    "kind": "judge",
+    "text": "Does the output avoid calling the old startup benchmark 'dishonest' or saying that someone cheated? Calling it misleading or inaccurate, or saying what it measured (a warm cache), passes."
+   }
+  ]
+ },
+ {
+  "id": "eos-ste-tech-release-relations",
+  "skills": [
+   "writing-tech",
+   "writing-en"
+  ],
+  "source": "EOS Rule 14 L518 (concert paragraph: loose sentences, 'it is planned'); Rule 4 L136 'The early records of the city have disappeared, and' (+L140), L142 and L160 (Strunk's causal 'as' revisions, read against modern usage), L138/L144 'The situation is perilous, but' (contrast kept); V 'While' L944 (office and salesrooms), L958 (temperature), L966 (temporal 'while' kept)",
+  "prompt": "Edit this post for the `tidepool` project blog, which announces the third beta of 4.0. Keep every fact, date and name. Output only the edited post.\n\n# tidepool 4.0 beta 3\n\nThe third beta of the 4.0 series was released last week, and 1,200 users installed it in the first three days. Ana Ruiz was the release manager, and the infra team provided the build machines. The former handled the changelog and the sign-off, while the latter kept the arm64 builders running. The feedback on the beta has been very gratifying to the maintainers, and it is planned to release a beta every month until 4.0 is final. The fourth beta will be released on Tuesday, 10 November, when the new query planner will be enabled by default.\n\nThe 4.0 schedule is tight, but there is still time for one more beta before the feature freeze. As the old build machines were retired in May, the arm64 nightlies now run on the new runners. The CI logs from before March have been deleted, and the cause of the 2023 test flakes can no longer be traced.\n\nThe API servers run in eu-west-1, while the build farm is in us-east-1. While CPU use on the build farm reaches 90% during the day, the nightly window is often idle, so the arm64 nightlies start at 01:00. While the planner migration runs, queries fall back to the old planner.",
+  "checks": [
+   {
+    "id": "loose-run-recast",
+    "rule": "both.name-the-relation",
+    "kind": "judge",
+    "text": "In the first paragraph (the release and the installs, the release manager and the infra team, 'the former' and 'the latter', the feedback and the monthly plan, the fourth beta), does the output recast the run of sentences that each join two clauses with 'and', 'while' or 'when'? Answer no if three or more consecutive sentences of that paragraph are still two clauses joined by 'and', 'while' or 'when'."
+   },
+   {
+    "id": "cause-named",
+    "rule": "both.name-the-relation",
+    "kind": "judge",
+    "text": "Does the output state that the deletion of the CI logs from before March is the reason why the cause of the 2023 test flakes can no longer be traced (with 'because', 'since', 'so' or another causal word), instead of joining the two facts with 'and' alone?"
+   }
+  ],
+  "probe": [
+   "trope-hidden-actor"
+  ]
+ },
+ {
+  "id": "eos-ste-tech-node-runbook",
+  "skills": [
+   "writing-tech",
+   "writing-en"
+  ],
+  "source": "STE rule (src/ste-rule.txt): 'Write \"remove\", not \"take out\"'; technical names 'pod', 'commit', 'deploy'; warning 'Do not delete the volume. You will lose the data.'; vertical lists for conditions; no -ing forms as verbs. audits/ste.md STE-8 RED/GREEN (tool-named phrasal verbs log in, roll back avoided in 6/10 runs; team jargon), STE-5, STE-12, STE-13, STE-14",
+  "prompt": "Write the runbook procedure \"Replace a failed node\" for the on-call engineers of the `prod-eu` Kubernetes cluster. Many of them read English as a second language. Use only the facts below, from the team's chat. Output only the procedure, starting with its heading.\n\nFacts:\n- First, log in to the cluster: `kubectl oidc-login --cluster prod-eu`. The team calls this \"getting onto the cluster\".\n- Cordon the failed node, so that the scheduler places no new pods on it: `kubectl cordon <node>`.\n- Drain the node: `kubectl drain <node> --ignore-daemonsets --delete-emptydir-data`. Drain it only if the node is cordoned, the PodDisruptionBudget of every app on the node allows at least one more disruption (`kubectl get pdb -A` shows 1 or more under ALLOWED DISRUPTIONS), and no deploy is running in the cluster.\n- Take the node out of the load balancer pool: `lbctl pool remove <node>`. The team says \"take it out of the pool\".\n- Before you delete the node, make sure that no volume is still attached to it: `kubectl get volumeattachments | grep <node>` must print nothing. If you delete the node while a volume is attached, you lose the volume and its data. The local volumes have no backup.\n- Delete the node: `kubectl delete node <node>`.\n- If the replacement node does not join within 10 minutes, roll back the autoscaler config: `helm rollback node-autoscaler`.\n- After the replacement node joins, test out the new node with the smoke-test chart: `helm install smoke ./charts/smoke-test --wait`.",
+  "checks": [
+   {
+    "id": "warning-command-first",
+    "rule": "tech.warning-placement",
+    "kind": "judge",
+    "text": "Is there a warning directly before the command `kubectl delete node <node>` (in that step or in the step that checks the volume attachments), and does it start with what to do or not to do (for example 'Do not delete the node while a volume is attached to it.'), followed once by the consequence (the volume and its data are lost; the local volumes have no backup)?"
+   }
+  ]
+ },
+ {
+  "id": "eos-ste-tech-change-record",
+  "skills": [
+   "writing-tech",
+   "writing-en"
+  ],
+  "source": "audits/ste.md STE-4 RED (9/10 runs wrote 'did not finish' for a still-running sync; 'is deprecated in v1.2'), STE-3 RED ('Version 1.2 deprecated this field'), STE-10 (omitted articles); EOS Rule 1 L56 (pronominal possessives without apostrophe); EOS V 'So' L901 ('so good', 'so warm', 'so delightful')",
+  "prompt": "Edit this update for the change record CHG-4471 before I post it in the ticket. Keep every fact, number and identifier. Output only the edited update.\n\nThe reindex of the `orders` table did not finish. It started at 09:00; at 11:30 it is at 62%, and the worker is still writing rows. The worker writes it's progress to `/var/log/reindex.log` every minute. Version 1.2 of the client deprecated the `legacy_id` field, so the reindex skips its index. In staging the new index is so fast: queries that filter on `created_at` take 40 ms instead of 900 ms. Next step: restart worker after reindex ends, check log for errors before closing ticket.",
+  "checks": [
+   {
+    "id": "still-running",
+    "rule": "tech.operation-state",
+    "kind": "judge",
+    "text": "Does the output report the reindex as in progress (still running, 62% done at 11:30), and avoid any wording that reads as a failure or a stop, such as 'did not finish', 'failed' or 'stopped'?"
+   },
+   {
+    "id": "version-not-actor",
+    "rule": "both.name-the-actor",
+    "kind": "absent",
+    "text": "(?i)\\b(v|version )1\\.2( of the client)? deprecate[sd]\\b"
+   }
+  ]
+ },
+ {
+  "id": "eos-ste-tech-postmortem-lengths",
+  "skills": [
+   "writing-tech",
+   "writing-en"
+  ],
+  "source": "audits/ste.md STE-2 RED (splits that repeat a noun phrase: 'a channel that nobody watched. Nobody watched this channel...'; conditional: cut words instead), STE-9 (noun clusters), STE-11 (one topic, six sentences per paragraph), STE-6 (short common words), STE-N3 (literals verbatim)",
+  "prompt": "Edit this section of a postmortem for publication. Keep every fact, identifier, channel name and setting. Output only the edited section.\n\n## Why the runner stopped\n\nThe disk warnings for `ci-runner-7` went to `#ci-alerts-legacy`, a channel that nobody has watched since the March reorganization because the on-call rotation moved to PagerDuty, so the warnings went unread for nine days before the disk filled. Prior to 2026-09-28, the cache cleanup job `cache-prune` ran every night. On that day a config change renamed its schedule key from `schedule` to `cron`. `cache-prune` has not run since then. The build cache grew by in excess of 12 GB a day. The node disk pressure eviction threshold was 10%, so at 01:40 on 2026-10-07 the kubelet evicted the runner pods. The Grafana panel \"Disk Pressure Eviction Count\" showed the evictions. We raised the node disk pressure eviction threshold to 15% (`evictionHard: nodefs.available<15%`) and moved the warnings to `#ci-alerts`.",
+  "checks": [
+   {
+    "id": "no-repeating-split",
+    "rule": "tech.short-sentences",
+    "kind": "judge",
+    "text": "Does the output keep both causal links of the first draft sentence: that nobody has watched `#ci-alerts-legacy` since the on-call rotation moved to PagerDuty in March, and that this is why the warnings went unread for nine days, stated with a word such as 'so', 'therefore', 'as a result' or 'because'? Answer no if a sentence repeats a claim that the sentence before it already made ('… a channel that nobody has watched. Nobody has watched this channel since March …'). A sentence that refers back to the channel to add a new fact ('The warnings went to `#ci-alerts-legacy`. Nobody has watched that channel since …') is fine. Answer no also if the output states both facts but no word links them."
+   },
+   {
+    "id": "sentence-length",
+    "rule": "en.sentence-length",
+    "kind": "judge",
+    "text": "Not counting code spans, channel names, identifiers and the panel name, is every sentence of the output 25 words or fewer?"
+   },
+   {
+    "id": "no-noun-cluster",
+    "rule": "en.noun-clusters",
+    "kind": "absent",
+    "text": "(?i)\\bnode disk pressure eviction threshold\\b"
+   }
+  ]
+ }
+]
